@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d3557">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Judo-reisen">
+<title>Haralds judo-reise i Japan 🥋</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥋</text></svg>">
+<style>
+:root{
+  --bg:#fdf6ec; --ink:#1d2433; --muted:#6b7280; --card:#ffffff;
+  --red:#d62828; --blue:#1d4ed8; --navy:#1d3557; --green:#2a9d8f; --gold:#f4a261;
+  --ok:#16a34a; --bad:#dc2626; --radius:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP","Yu Gothic",sans-serif;
+  background:var(--bg) radial-gradient(circle at 85% -10%, #ffd6d6 0, transparent 40%);color:var(--ink);
+  max-width:520px;margin:0 auto;padding:0 14px calc(24px + env(safe-area-inset-bottom));}
+.jpfont{font-family:"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP","Yu Gothic","Meiryo",system-ui,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 2px 8px}
+header h1{font-size:1.15rem;margin:0;line-height:1.2}
+header h1 small{display:block;font-weight:500;color:var(--muted);font-size:.8rem}
+.iconbtn{border:0;background:#fff;border-radius:50%;width:42px;height:42px;font-size:1.25rem;box-shadow:0 2px 6px #0001;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 12px}
+.stat{background:var(--card);border-radius:14px;padding:10px 6px;text-align:center;box-shadow:0 2px 8px #0000000d}
+.stat b{display:block;font-size:1.3rem}
+.stat span{font-size:.75rem;color:var(--muted)}
+.card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 4px 14px #0000000f;margin-bottom:12px}
+.belt{display:inline-block;width:46px;height:12px;border-radius:4px;vertical-align:middle;border:1px solid #0003;position:relative}
+.belt::after{content:"";position:absolute;left:50%;top:-3px;width:8px;height:16px;margin-left:-4px;background:inherit;border:1px solid #0003;border-radius:2px}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px 16px;font-size:1.05rem;font-weight:700;cursor:pointer;
+  background:var(--red);color:#fff;box-shadow:0 4px 0 #9b1c1c;margin:8px 0;transition:transform .05s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #9b1c1c}
+.btn.alt{background:var(--navy);box-shadow:0 4px 0 #0f1e33}
+.btn.green{background:var(--green);box-shadow:0 4px 0 #1c6d63}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 3px 0 #ddd;border:1px solid #e5e7eb}
+.route{list-style:none;margin:0;padding:0;position:relative}
+.route::before{content:"";position:absolute;left:25px;top:20px;bottom:20px;border-left:4px dotted #e3a3a3}
+.stop{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:14px;cursor:pointer;position:relative}
+.stop .dot{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-size:1.3rem;background:#fff;border:3px solid #e5e7eb;z-index:1}
+.stop.done .dot{border-color:var(--ok);background:#ecfdf5}
+.stop.next .dot{border-color:var(--red);background:#fff1f1;animation:pulse 1.6s infinite}
+.stop.locked{opacity:.45;cursor:default}
+.stop .info{flex:1;min-width:0}
+.stop .info b{font-size:1rem}
+.stop .info .sub{font-size:.8rem;color:var(--muted)}
+.stop .tag{font-size:.75rem;padding:3px 8px;border-radius:99px;background:#f3f4f6;white-space:nowrap}
+.stop.next .tag{background:var(--red);color:#fff}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #d6282855}50%{box-shadow:0 0 0 8px #d6282800}}
+.weekbox h3{margin:0 0 6px;font-size:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.75rem;background:#eef2ff;color:#3730a3;padding:4px 9px;border-radius:99px}
+/* match */
+.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;background:var(--navy);color:#fff;border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.fighter{text-align:center}
+.fighter .ava{font-size:2.3rem;display:inline-block;transition:transform .6s}
+.fighter .nm{font-size:.85rem;font-weight:700}
+.fighter .pips{margin-top:4px;font-size:1rem;letter-spacing:2px}
+.fighter.blue .nm{color:#93c5fd}
+.vs{font-weight:800;opacity:.7}
+.thrown{animation:throw .8s ease}
+@keyframes throw{0%{transform:rotate(0)}40%{transform:translateY(-18px) rotate(-200deg)}100%{transform:rotate(-360deg)}}
+.shake{animation:shake .45s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.qmeta{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted);margin-bottom:6px}
+.badge{background:#fff1f1;color:var(--red);font-weight:700;padding:3px 9px;border-radius:99px}
+.prompt{font-size:1.08rem;line-height:1.4;margin:4px 0 10px;font-weight:600}
+.show{text-align:center;margin:10px 0 14px}
+.show .jp{font-size:2rem;font-weight:700}
+.jp{font-family:"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP","Yu Gothic","Meiryo",system-ui,sans-serif}
+.kanji{display:inline-block;margin-left:6px;font-size:.75em;color:var(--muted);font-weight:500}
+.ro{display:block;font-size:.85rem;color:#2563eb;font-style:italic;font-weight:500;margin-top:2px}
+.speak{border:0;background:#eef2ff;border-radius:99px;padding:4px 10px;font-size:.9rem;cursor:pointer;margin-left:6px;vertical-align:middle}
+.choices{display:grid;gap:9px}
+.choice{border:2px solid #e5e7eb;background:#fff;border-radius:14px;padding:13px 12px;text-align:left;font-size:1rem;cursor:pointer;min-height:52px;color:var(--ink)}
+.choice .jp{font-size:1.15rem;font-weight:600}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--ok);background:#ecfdf5}
+.choice.wrong{border-color:var(--bad);background:#fef2f2}
+.feedback{margin-top:12px;padding:12px;border-radius:14px;font-size:.95rem;line-height:1.4;display:none}
+.feedback.ok{display:block;background:#ecfdf5;border:1px solid #a7f3d0}
+.feedback.no{display:block;background:#fef2f2;border:1px solid #fecaca}
+.call{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.6);font-size:3rem;font-weight:900;color:var(--red);
+  text-shadow:0 3px 0 #fff,0 0 18px #fff;pointer-events:none;opacity:0;transition:all .25s;z-index:50;text-align:center;white-space:nowrap}
+.call small{display:block;font-size:1rem;color:var(--navy)}
+.call.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.result{text-align:center}
+.result .big{font-size:4rem}
+.row{display:flex;gap:8px}
+.row .btn{flex:1}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f1f1}
+.toggle:last-child{border-bottom:0}
+select{font-size:1rem;padding:6px;border-radius:8px}
+.switch{position:relative;width:52px;height:30px;flex:0 0 52px}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:#d1d5db;border-radius:99px;transition:.2s;cursor:pointer}
+.switch span::before{content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+span{background:var(--green)}
+.switch input:checked+span::before{transform:translateX(22px)}
+.wordlist{width:100%;border-collapse:collapse}
+.wordlist td{padding:7px 4px;border-bottom:1px solid #f1f1f1;vertical-align:middle}
+.wordlist .jp{font-size:1.1rem}
+h2{font-size:1.1rem;margin:4px 0 10px}
+.muted{color:var(--muted);font-size:.85rem}
+.hidden{display:none!important}
+.topline{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-bottom:12px}
+.progress i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s}
+</style>
+</head>
+<body>
+<header>
+  <h1>🥋 Judo-reisen i Japan<small id="hdrSub">Haralds japanskspill</small></h1>
+  <div>
+    <button class="iconbtn" id="btnWords" title="Ukens ord" aria-label="Ukens ord">📖</button>
+    <button class="iconbtn" id="btnSettings" title="Innstillinger" aria-label="Innstillinger">⚙️</button>
+  </div>
+</header>
+
+<main id="app"></main>
+<div class="call" id="call"></div>
+
+<script>
+/* =====================================================================
+   UKENS TEMA  —  legg til nye uker her (se README.md)
+   ---------------------------------------------------------------------
+   Nøkkel = ukenummer. Hver uke har:
+     label   : visningsnavn
+     topics  : korte stikkord som vises på forsiden
+     vocab   : ord som spillet lager spørsmål av automatisk
+               { no:'norsk betydning', jp:'kana', kanji:'(valgfritt)', ro:'romaji', tema:'...' }
+     lengths : fakta for matte-oppgaver (omgjøring av lengdeenheter)
+               { text:'... {v} {u} ...', v: tall, u:'km'|'m'|'dm'|'cm'|'mm' }
+     questions: egne flervalgsspørsmål.  FØRSTE svaralternativ er ALLTID riktig
+               (spillet stokker rekkefølgen). Et svar kan være tekst (norsk)
+               eller et japansk objekt { jp:'...', ro:'...', kanji:'...' }.
+               show (valgfritt) = japansk tekst som vises stort i spørsmålet.
+   ===================================================================== */
+const WEEK_CONTENT = {
+  46: {
+    label: "Uke 46",
+    topics: ["Lengdeenheter på reisen", "Vær", "Fotball og judo", "Være en god venn", "Advent og vinter", "Natur", "Lesing", "Låneord"],
+    vocab: [
+      // Vær: temperatur, vind, nedbør, skyer
+      { no:"vær", jp:"てんき", kanji:"天気", ro:"tenki", tema:"Vær" },
+      { no:"sol / klarvær", jp:"はれ", kanji:"晴れ", ro:"hare", tema:"Vær" },
+      { no:"overskyet", jp:"くもり", kanji:"曇り", ro:"kumori", tema:"Vær" },
+      { no:"sky", jp:"くも", kanji:"雲", ro:"kumo", tema:"Vær" },
+      { no:"regn", jp:"あめ", kanji:"雨", ro:"ame", tema:"Vær" },
+      { no:"snø", jp:"ゆき", kanji:"雪", ro:"yuki", tema:"Vær" },
+      { no:"vind", jp:"かぜ", kanji:"風", ro:"kaze", tema:"Vær" },
+      { no:"varmt (vær)", jp:"あつい", kanji:"暑い", ro:"atsui", tema:"Vær" },
+      { no:"kaldt (vær)", jp:"さむい", kanji:"寒い", ro:"samui", tema:"Vær" },
+      { no:"lufttemperatur", jp:"きおん", kanji:"気温", ro:"kion", tema:"Vær" },
+      // Sport: fotball og judo
+      { no:"fotball", jp:"サッカー", ro:"sakkā", tema:"Sport" },
+      { no:"ball", jp:"ボール", ro:"bōru", tema:"Sport" },
+      { no:"mål (i fotball)", jp:"ゴール", ro:"gōru", tema:"Sport" },
+      { no:"kamp", jp:"しあい", kanji:"試合", ro:"shiai", tema:"Sport" },
+      { no:"belte", jp:"おび", kanji:"帯", ro:"obi", tema:"Sport" },
+      { no:"treningssal for judo", jp:"どうじょう", kanji:"道場", ro:"dōjō", tema:"Sport" },
+      { no:"trener / sensei", jp:"せんせい", kanji:"先生", ro:"sensei", tema:"Sport" },
+      // Advent og musikk
+      { no:"stearinlys", jp:"ろうそく", ro:"rōsoku", tema:"Advent" },
+      { no:"stjerne", jp:"ほし", kanji:"星", ro:"hoshi", tema:"Advent" },
+      { no:"vinter", jp:"ふゆ", kanji:"冬", ro:"fuyu", tema:"Advent" },
+      { no:"sang", jp:"うた", kanji:"歌", ro:"uta", tema:"Musikk" },
+      { no:"jul", jp:"クリスマス", ro:"kurisumasu", tema:"Advent" },
+      // Natur
+      { no:"skog", jp:"もり", kanji:"森", ro:"mori", tema:"Natur" },
+      { no:"fjell", jp:"やま", kanji:"山", ro:"yama", tema:"Natur" },
+      { no:"tre", jp:"き", kanji:"木", ro:"ki", tema:"Natur" },
+      { no:"elv", jp:"かわ", kanji:"川", ro:"kawa", tema:"Natur" },
+      // Lesing, advent og låneord
+      { no:"bok", jp:"ほん", kanji:"本", ro:"hon", tema:"Lesing" },
+      { no:"lese", jp:"よむ", kanji:"読む", ro:"yomu", tema:"Lesing" },
+      { no:"kirke", jp:"きょうかい", kanji:"教会", ro:"kyōkai", tema:"Advent" },
+      { no:"symaskin", jp:"ミシン", ro:"mishin", tema:"Låneord" },
+      { no:"meter", jp:"メートル", ro:"mētoru", tema:"Matte" },
+      { no:"kilometer", jp:"キロメートル", ro:"kiromētoru", tema:"Matte" }
+    ],
+    lengths: [
+      { text:"Lyntoget (しんかんせん) fra Tokyo til Kyoto kjører ca. {v} {u}.", v:476, u:"km" },
+      { text:"Fra Kyoto til Osaka er det ca. {v} {u} med tog.", v:40, u:"km" },
+      { text:"Fra Osaka til Hiroshima kjører lyntoget ca. {v} {u}.", v:340, u:"km" },
+      { text:"Fra Hiroshima til Fukuoka er det ca. {v} {u}.", v:280, u:"km" },
+      { text:"Tokyo Skytree er {v} {u} høyt.", v:634, u:"m" },
+      { text:"Fjellet Fuji (ふじさん) er {v} {u} høyt.", v:3776, u:"m" },
+      { text:"En tatami-matte er ca. {v} {u} lang.", v:180, u:"cm" },
+      { text:"En judomatte er ca. {v} {u} tykk.", v:4, u:"cm" },
+      { text:"Judobeltet til Harald er ca. {v} {u} langt.", v:270, u:"cm" },
+      { text:"Et fotballmål er {v} {u} bredt.", v:7.32, u:"m" },
+      { text:"Et par spisepinner (はし) er ca. {v} {u} lange.", v:23, u:"cm" }
+    ],
+    questions: [
+      // Vær
+      { tema:"Vær", prompt:"Du ser ut av vinduet: Sola skinner og himmelen er klar. Hvilket ord passer?",
+        choices:[{jp:"はれ",ro:"hare",kanji:"晴れ"},{jp:"くもり",ro:"kumori"},{jp:"ゆき",ro:"yuki"},{jp:"かぜ",ro:"kaze"}],
+        explain:"はれ (晴れ) = sol / klarvær." },
+      { tema:"Vær", prompt:"Du ser opp: Himmelen er helt grå av skyer. Hvilket ord passer?",
+        choices:[{jp:"くもり",ro:"kumori",kanji:"曇り"},{jp:"はれ",ro:"hare"},{jp:"あつい",ro:"atsui"},{jp:"ほし",ro:"hoshi"}],
+        explain:"くもり (曇り) = overskyet. くも = sky." },
+      { tema:"Vær", prompt:"Hva betyr dette?", show:{jp:"かぜが つよいです。",ro:"Kaze ga tsuyoi desu."},
+        choices:["Det blåser kraftig.","Det regner mye.","Det er veldig varmt.","Snøen er dyp."],
+        explain:"かぜ = vind, つよい = sterk." },
+      { tema:"Vær", prompt:"Hva betyr dette?", show:{jp:"あめが ふっています。",ro:"Ame ga futte imasu."},
+        choices:["Det regner.","Det snør.","Sola skinner.","Det er tåke."],
+        explain:"あめ = regn, ふっています = faller (nå)." },
+      { tema:"Vær", prompt:"Hva betyr dette?", show:{jp:"ゆきが ふっています。",ro:"Yuki ga futte imasu."},
+        choices:["Det snør.","Det regner.","Det blåser.","Det er overskyet."],
+        explain:"ゆき = snø. Akkurat som i Norge om vinteren!" },
+      { tema:"Vær", prompt:"Hjemme i Norge er det −3 grader. Hva sier du?",
+        choices:[{jp:"さむいですね。",ro:"Samui desu ne."},{jp:"あついですね。",ro:"Atsui desu ne."},{jp:"おいしいですね。",ro:"Oishii desu ne."},{jp:"はやいですね。",ro:"Hayai desu ne."}],
+        explain:"さむい = kaldt. あつい = varmt." },
+      { tema:"Vær", prompt:"Hvordan spør du «Hvordan er været i dag?»",
+        choices:[{jp:"きょうの てんきは どうですか。",ro:"Kyō no tenki wa dō desu ka."},{jp:"でんきは どこですか。",ro:"Denki wa doko desu ka."},{jp:"きょうは なんようびですか。",ro:"Kyō wa nan'yōbi desu ka."},{jp:"てんきを ください。",ro:"Tenki o kudasai."}],
+        explain:"てんき = vær. Pass på: でんき (denki) betyr strøm/lys!" },
+      // Sport / judo
+      { tema:"Judo", prompt:"Dommeren roper «はじめ!» (hajime). Hva betyr det?",
+        choices:["Begynn!","Stopp!","Bukk!","Du vant!"], explain:"はじめ = begynn. まて (mate) = stopp/vent." },
+      { tema:"Judo", prompt:"Dommeren roper «まて!» (mate). Hva gjør du?",
+        choices:["Stopper og venter","Kaster motstanderen","Bukker og går","Tar av beltet"], explain:"まて = vent/stopp." },
+      { tema:"Judo", prompt:"Hva roper dommeren når et kast er helt perfekt?",
+        choices:[{jp:"いっぽん!",ro:"Ippon!"},{jp:"わざあり!",ro:"Waza-ari!"},{jp:"まて!",ro:"Mate!"},{jp:"れい!",ro:"Rei!"}],
+        explain:"いっぽん (一本) = fullt poeng, kampen er vunnet. わざあり = halvt poeng." },
+      { tema:"Judo", prompt:"Før randori (trening med partner) bukker du og sier:",
+        choices:[{jp:"よろしく おねがいします。",ro:"Yoroshiku onegaishimasu."},{jp:"ごちそうさまでした。",ro:"Gochisōsama deshita."},{jp:"おやすみなさい。",ro:"Oyasuminasai."},{jp:"いくらですか。",ro:"Ikura desu ka."}],
+        explain:"よろしく おねがいします = omtrent «la oss ha en god trening sammen». Respekt!" },
+      { tema:"Sport", prompt:"Du spiller fotball med vennene dine. Hva heter fotball på japansk?",
+        choices:[{jp:"サッカー",ro:"sakkā"},{jp:"じゅうどう",ro:"jūdō"},{jp:"やきゅう",ro:"yakyū"},{jp:"すいえい",ro:"suiei"}],
+        explain:"サッカー (sakkā) = fotball (fra engelsk «soccer»). やきゅう = baseball, すいえい = svømming." },
+      // Være en god venn
+      { tema:"God venn", prompt:"En ny gutt står alene i parken mens dere spiller. Hva kan du si for å inkludere ham?",
+        choices:[{jp:"いっしょに あそぼう!",ro:"Issho ni asobō!"},{jp:"さようなら。",ro:"Sayōnara."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"まて!",ro:"Mate!"}],
+        explain:"いっしょに あそぼう! = La oss leke sammen! Det er å inkludere andre." },
+      { tema:"God venn", prompt:"Vennen din gjorde et kjempefint judokast. Hva sier du?",
+        choices:[{jp:"すごいね!",ro:"Sugoi ne!"},{jp:"さむいね!",ro:"Samui ne!"},{jp:"ねむいね!",ro:"Nemui ne!"},{jp:"たかいね!",ro:"Takai ne!"}],
+        explain:"すごい = fantastisk/kult. Hyggelige ord gjør andre glade." },
+      { tema:"God venn", prompt:"Du dunket borti noen ved et uhell. Hva sier du?",
+        choices:[{jp:"ごめんなさい。",ro:"Gomen nasai."},{jp:"どうぞ。",ro:"Dōzo."},{jp:"いっぽん!",ro:"Ippon!"},{jp:"おはよう。",ro:"Ohayō."}],
+        explain:"ごめんなさい = unnskyld (beklager). すみません brukes også." },
+      { tema:"God venn", prompt:"Noen sier «ありがとう» til deg. Hva svarer du?",
+        choices:[{jp:"どういたしまして。",ro:"Dō itashimashite."},{jp:"ごめんなさい。",ro:"Gomen nasai."},{jp:"はじめ!",ro:"Hajime!"},{jp:"いくらですか。",ro:"Ikura desu ka."}],
+        explain:"どういたしまして = bare hyggelig / ingen årsak." },
+      { tema:"God venn", prompt:"En venn faller i fotballkampen. Hva spør du?",
+        choices:[{jp:"だいじょうぶですか。",ro:"Daijōbu desu ka."},{jp:"おいしいですか。",ro:"Oishii desu ka."},{jp:"なんじですか。",ro:"Nanji desu ka."},{jp:"どこですか。",ro:"Doko desu ka."}],
+        explain:"だいじょうぶですか = Går det bra med deg?" },
+      { tema:"God venn", prompt:"Lagkameraten din skal ta straffe. Hvordan heier du?",
+        choices:[{jp:"がんばって!",ro:"Ganbatte!"},{jp:"ごちそうさま!",ro:"Gochisōsama!"},{jp:"おやすみ!",ro:"Oyasumi!"},{jp:"すみません!",ro:"Sumimasen!"}],
+        explain:"がんばって = Lykke til! / Stå på!" },
+      // Advent / musikk
+      { tema:"Advent", prompt:"Hvilken måned er じゅうにがつ (12がつ)?",
+        choices:["Desember","Februar","Oktober","November"], explain:"じゅうに = 12, がつ = måned. じゅういちがつ = november." },
+      { tema:"Advent", prompt:"I adventstiden tenner man lys. Hva er stearinlys på japansk?",
+        choices:[{jp:"ろうそく",ro:"rōsoku"},{jp:"ほし",ro:"hoshi"},{jp:"ゆき",ro:"yuki"},{jp:"うた",ro:"uta"}],
+        explain:"ろうそく = stearinlys. ほし = stjerne, うた = sang." },
+      // Lesing, presentere seg, låneord
+      { tema:"Lesing", prompt:"Du elsker å lese. Hvordan sier du «Jeg leser en bok»?",
+        choices:[{jp:"ほんを よみます。",ro:"Hon o yomimasu."},{jp:"ほんを たべます。",ro:"Hon o tabemasu."},{jp:"ほんは さむいです。",ro:"Hon wa samui desu."},{jp:"ほんを ください。",ro:"Hon o kudasai."}],
+        explain:"よみます = leser. たべます = spiser (ikke spis boka 😄)." },
+      { tema:"Presentere seg", prompt:"Du skal presentere deg for en ny judoklubb i Japan. Hva sier du først?",
+        choices:[{jp:"こんにちは。わたしは ハラルドです。",ro:"Konnichiwa. Watashi wa Hararudo desu."},{jp:"さようなら。わたしは ハラルドです。",ro:"Sayōnara. Watashi wa Hararudo desu."},{jp:"いただきます。ハラルドです。",ro:"Itadakimasu. Hararudo desu."},{jp:"ごめんなさい。ハラルドです。",ro:"Gomen nasai. Hararudo desu."}],
+        explain:"こんにちは = hei. わたしは ハラルドです = jeg er Harald. Navnet ditt skrives med katakana: ハラルド." },
+      { tema:"Låneord", prompt:"Symaskin heter ミシン (mishin) på japansk. Hvilket engelsk ord kommer det fra?",
+        choices:["machine","mission","mushroom","kitchen"], explain:"ミシン kommer av «(sewing) machine»." },
+      { tema:"Advent", prompt:"Mange går i kirken i adventstiden. Hva betyr きょうかい (教会)?",
+        choices:["kirke","tempel","marked","sykehus"], explain:"きょうかい = kirke. てら (寺) = buddhistisk tempel." },
+      { tema:"Matte", prompt:"Hvor mange meter er 1 キロメートル (kiromētoru)?",
+        choices:["1 000 m","100 m","10 m","10 000 m"], explain:"キロ = kilo = 1000. 1 km = 1 000 m." }
+    ]
+  }
+  // 47: { label:"Uke 47", topics:[...], vocab:[...], lengths:[...], questions:[...] },
+};
+
+/* =====================================================================
+   REISEN: stopp, motstandere og praktiske situasjoner (fast innhold)
+   ===================================================================== */
+const BELTS = [
+  { no:"Hvitt belte",   jp:"しろ",   ro:"shiro",   color:"#ffffff" },
+  { no:"Gult belte",    jp:"きいろ", ro:"kiiro",   color:"#facc15" },
+  { no:"Oransje belte", jp:"オレンジ", ro:"orenji", color:"#fb923c" },
+  { no:"Grønt belte",   jp:"みどり", ro:"midori",  color:"#22c55e" },
+  { no:"Blått belte",   jp:"あお",   ro:"ao",      color:"#3b82f6" },
+  { no:"Brunt belte",   jp:"ちゃいろ", ro:"chairo", color:"#92400e" },
+  { no:"Svart belte",   jp:"くろ",   ro:"kuro",    color:"#111827" }
+];
+
+const STOPS = [
+  { id:"tokyo", name:"Tokyo", jp:"とうきょう", kanji:"東京", ro:"Tōkyō", icon:"🗼",
+    opp:{ name:"Yūto", jp:"ゆうと", ava:"🧑" }, sub:"Judoens hjemby – Kōdōkan",
+    questions:[
+      { tema:"Reise", prompt:"Du lander i Tokyo og møter judotreneren. Det er morgen. Hva sier du?",
+        choices:[{jp:"おはよう ございます。",ro:"Ohayō gozaimasu."},{jp:"こんばんは。",ro:"Konbanwa."},{jp:"おやすみなさい。",ro:"Oyasuminasai."},{jp:"いただきます。",ro:"Itadakimasu."}],
+        explain:"おはよう ございます = god morgen (høflig). こんばんは = god kveld." },
+      { tema:"Judo", prompt:"Judo ble grunnlagt i Tokyo i 1882 av Kanō Jigorō. Hva heter judoklubben han startet?",
+        choices:["Kōdōkan (講道館)","Skytree","Shibuya","Shinkansen"], explain:"Kōdōkan i Tokyo er judoens hjem. Den finnes fortsatt!" },
+      { tema:"Reise", prompt:"Du skal kjøpe billett til lyntoget til Kyoto. Hva sier du i luka?",
+        choices:[{jp:"きょうとまで こども いちまい おねがいします。",ro:"Kyōto made kodomo ichimai onegaishimasu."},{jp:"ラーメンを ひとつ おねがいします。",ro:"Rāmen o hitotsu onegaishimasu."},{jp:"トイレは どこですか。",ro:"Toire wa doko desu ka."},{jp:"いただきます。",ro:"Itadakimasu."}],
+        explain:"〜まで = til, こども = barn, いちまい = én (billett/flatt ark), おねがいします = vær så snill." },
+      { tema:"Judo", prompt:"Hva betyr じゅうどう (柔道)?",
+        choices:["«Den myke veien»","«Den harde knyttneven»","«Den sterke steinen»","«Den raske foten»"],
+        explain:"柔 (jū) = myk/smidig, 道 (dō) = vei. Bruk motstanderens kraft!" }
+    ]},
+  { id:"kyoto", name:"Kyoto", jp:"きょうと", kanji:"京都", ro:"Kyōto", icon:"⛩️",
+    opp:{ name:"Sakura", jp:"さくら", ava:"👧" }, sub:"Templer og gamle gater",
+    questions:[
+      { tema:"Reise", prompt:"Du har gått deg bort i Kyoto. Hvordan spør du hvor stasjonen er?",
+        choices:[{jp:"えきは どこですか。",ro:"Eki wa doko desu ka."},{jp:"いくらですか。",ro:"Ikura desu ka."},{jp:"おなかが すきました。",ro:"Onaka ga sukimashita."},{jp:"さむいですね。",ro:"Samui desu ne."}],
+        explain:"えき = stasjon, どこ = hvor. おなかが すきました = jeg er sulten." },
+      { tema:"Reise", prompt:"Kyoto er kjent for templer. Hva betyr てら (寺)?",
+        choices:["tempel","slott","fjell","marked"], explain:"てら (お寺) = buddhistisk tempel. じんじゃ (神社) = shinto-helligdom." },
+      { tema:"God venn", prompt:"En turist mister kartet sitt. Du plukker det opp og gir det tilbake. Hva sier du?",
+        choices:[{jp:"どうぞ。",ro:"Dōzo."},{jp:"ごちそうさまでした。",ro:"Gochisōsama deshita."},{jp:"まて!",ro:"Mate!"},{jp:"おやすみなさい。",ro:"Oyasuminasai."}],
+        explain:"どうぞ = vær så god (når du gir noe)." },
+      { tema:"Reise", prompt:"Kyoto var Japans hovedstad i over 1000 år. Hva er hovedstaden i dag?",
+        choices:["Tokyo","Osaka","Kyoto","Sapporo"], explain:"Tokyo (東京) betyr faktisk «østlig hovedstad»." }
+    ]},
+  { id:"osaka", name:"Osaka", jp:"おおさか", kanji:"大阪", ro:"Ōsaka", icon:"🐙",
+    opp:{ name:"Kenji", jp:"けんじ", ava:"👦" }, sub:"Japans matbu – takoyaki!",
+    questions:[
+      { tema:"Mat", prompt:"På matmarkedet i Osaka vil du ha ÉN porsjon takoyaki. Hva sier du?",
+        choices:[{jp:"たこやきを ひとつ ください。",ro:"Takoyaki o hitotsu kudasai."},{jp:"たこやきを ふたつ ください。",ro:"Takoyaki o futatsu kudasai."},{jp:"たこやきは どこですか。",ro:"Takoyaki wa doko desu ka."},{jp:"たこやき、さようなら。",ro:"Takoyaki, sayōnara."}],
+        explain:"ひとつ = én, ふたつ = to. ください = vær så snill (gi meg)." },
+      { tema:"Mat", prompt:"Hvordan spør du hva noe koster?",
+        choices:[{jp:"いくらですか。",ro:"Ikura desu ka."},{jp:"なんじですか。",ro:"Nanji desu ka."},{jp:"だれですか。",ro:"Dare desu ka."},{jp:"どこですか。",ro:"Doko desu ka."}],
+        explain:"いくら = hvor mye (pris). なんじ = hva er klokka, だれ = hvem, どこ = hvor." },
+      { tema:"Mat", prompt:"Takoyaki er små baller med たこ inni. Hva er たこ?",
+        choices:["blekksprut","kylling","ost","sjokolade"], explain:"たこ = blekksprut, やき = stekt/grillet." },
+      { tema:"Mat", prompt:"Hva sier man rett FØR man begynner å spise?",
+        choices:[{jp:"いただきます。",ro:"Itadakimasu."},{jp:"ごちそうさまでした。",ro:"Gochisōsama deshita."},{jp:"おやすみなさい。",ro:"Oyasuminasai."},{jp:"さようなら。",ro:"Sayōnara."}],
+        explain:"いただきます før maten, ごちそうさまでした etter maten." }
+    ]},
+  { id:"hiroshima", name:"Hiroshima", jp:"ひろしま", kanji:"広島", ro:"Hiroshima", icon:"🕊️",
+    opp:{ name:"Aoi", jp:"あおい", ava:"🧒" }, sub:"Fredsbyen og øya Miyajima",
+    questions:[
+      { tema:"Reise", prompt:"I Hiroshima ligger Fredsparken. Hva betyr へいわ (平和)?",
+        choices:["fred","krig","vennskap","håp"], explain:"へいわ (平和) = fred. Hiroshima er en by som jobber for fred." },
+      { tema:"Mat", prompt:"Maten var kjempegod, og du er ferdig. Hva sier du?",
+        choices:[{jp:"ごちそうさまでした。",ro:"Gochisōsama deshita."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"はじめ!",ro:"Hajime!"},{jp:"おはよう。",ro:"Ohayō."}],
+        explain:"ごちそうさまでした = takk for maten." },
+      { tema:"Reise", prompt:"På Miyajima står en stor rød port i vannet. Hva heter en slik port?",
+        choices:[{jp:"とりい",ro:"torii",kanji:"鳥居"},{jp:"たたみ",ro:"tatami"},{jp:"おび",ro:"obi"},{jp:"こたつ",ro:"kotatsu"}],
+        explain:"とりい (鳥居) er porten foran en helligdom. たたみ = matte, おび = belte." },
+      { tema:"Mat", prompt:"Hiroshima-okonomiyaki er en slags …",
+        choices:["pannekake med kål og nudler","suppe med fisk","iskrem","sushi"], explain:"おこのみやき betyr omtrent «stek det du liker»." }
+    ]},
+  { id:"fukuoka", name:"Fukuoka", jp:"ふくおか", kanji:"福岡", ro:"Fukuoka", icon:"🍜",
+    opp:{ name:"Hiroshi", jp:"ひろし", ava:"🧔" }, sub:"Hjembyen til Hakata-ramen",
+    questions:[
+      { tema:"Mat", prompt:"Fukuoka er kjent for ramen. Bestill ÉN ramen høflig:",
+        choices:[{jp:"ラーメンを ひとつ おねがいします。",ro:"Rāmen o hitotsu onegaishimasu."},{jp:"ラーメンを みっつ ください。",ro:"Rāmen o mittsu kudasai."},{jp:"ラーメンは さむいです。",ro:"Rāmen wa samui desu."},{jp:"ラーメン、まて!",ro:"Rāmen, mate!"}],
+        explain:"ひとつ = én, みっつ = tre. おねがいします = vær så snill (høflig)." },
+      { tema:"Mat", prompt:"Ramenen smaker fantastisk! Hva sier du?",
+        choices:[{jp:"おいしい!",ro:"Oishii!"},{jp:"さむい!",ro:"Samui!"},{jp:"たかい!",ro:"Takai!"},{jp:"ねむい!",ro:"Nemui!"}],
+        explain:"おいしい = godt/deilig. たかい = dyrt/høyt, ねむい = trøtt." },
+      { tema:"Reise", prompt:"Du må på do på restauranten. Hva spør du?",
+        choices:[{jp:"トイレは どこですか。",ro:"Toire wa doko desu ka."},{jp:"トイレを ください。",ro:"Toire o kudasai."},{jp:"トイレは おいしいです。",ro:"Toire wa oishii desu."},{jp:"いただきます。",ro:"Itadakimasu."}],
+        explain:"トイレ = toalett (katakana). 〜は どこですか = hvor er …?" },
+      { tema:"Reise", prompt:"Fra Fukuoka skal du fly til Sapporo. Hva heter fly på japansk?",
+        choices:[{jp:"ひこうき",ro:"hikōki",kanji:"飛行機"},{jp:"でんしゃ",ro:"densha"},{jp:"くるま",ro:"kuruma"},{jp:"ふね",ro:"fune"}],
+        explain:"ひこうき = fly, でんしゃ = tog, くるま = bil, ふね = båt." }
+    ]},
+  { id:"sapporo", name:"Sapporo", jp:"さっぽろ", kanji:"札幌", ro:"Sapporo", icon:"❄️",
+    opp:{ name:"Yamada-sensei", jp:"やまだせんせい", ava:"🥋" }, sub:"Snøfestival – finalen mot sensei",
+    questions:[
+      { tema:"Vær", prompt:"Sapporo har en kjent snøfestival: ゆきまつり. Hva betyr ゆき?",
+        choices:["snø","is","fjell","vinter"], explain:"ゆき = snø, まつり = festival." },
+      { tema:"Vær", prompt:"Det er −8 grader i Sapporo. Hva sier du til vennen din?",
+        choices:[{jp:"さむいですね!",ro:"Samui desu ne!"},{jp:"あついですね!",ro:"Atsui desu ne!"},{jp:"おいしいですね!",ro:"Oishii desu ne!"},{jp:"おおきいですね!",ro:"Ōkii desu ne!"}],
+        explain:"さむい = kaldt. Litt som i Norge!" },
+      { tema:"Judo", prompt:"Finalen er over. Du bukker til sensei og sier:",
+        choices:[{jp:"ありがとうございました。",ro:"Arigatō gozaimashita."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"はじめ!",ro:"Hajime!"},{jp:"おはよう。",ro:"Ohayō."}],
+        explain:"ありがとうございました = tusen takk (for det som har skjedd, f.eks. treningen)." },
+      { tema:"Judo", prompt:"Svart belte heter くろおび (黒帯). Hva betyr くろ?",
+        choices:["svart","hvit","rød","brun"], explain:"くろ = svart, しろ = hvit, あか = rød, ちゃいろ = brun." }
+    ]}
+];
+// Avstander mellom stoppene (vises på kartet)
+const LEGS = ["", "ca. 476 km med lyntog", "ca. 40 km med tog", "ca. 340 km med lyntog", "ca. 280 km med lyntog", "ca. 1 400 km med fly"];
+
+/* Generelle ord – grunnpakke for Duolingo-nivå */
+const GENERAL_VOCAB = [
+  { no:"hei / god dag", jp:"こんにちは", ro:"konnichiwa" },
+  { no:"takk", jp:"ありがとう", ro:"arigatō" },
+  { no:"unnskyld (meg)", jp:"すみません", ro:"sumimasen" },
+  { no:"vær så snill (be om noe)", jp:"おねがいします", ro:"onegaishimasu" },
+  { no:"ha det", jp:"さようなら", ro:"sayōnara" },
+  { no:"vann", jp:"みず", kanji:"水", ro:"mizu" },
+  { no:"tog", jp:"でんしゃ", kanji:"電車", ro:"densha" },
+  { no:"stasjon", jp:"えき", kanji:"駅", ro:"eki" },
+  { no:"billett", jp:"きっぷ", kanji:"切符", ro:"kippu" },
+  { no:"lyntog", jp:"しんかんせん", kanji:"新幹線", ro:"shinkansen" },
+  { no:"fly", jp:"ひこうき", kanji:"飛行機", ro:"hikōki" },
+  { no:"venn", jp:"ともだち", kanji:"友達", ro:"tomodachi" },
+  { no:"godt / deilig", jp:"おいしい", ro:"oishii" },
+  { no:"stor", jp:"おおきい", kanji:"大きい", ro:"ōkii" },
+  { no:"liten", jp:"ちいさい", kanji:"小さい", ro:"chiisai" },
+  { no:"høyre", jp:"みぎ", kanji:"右", ro:"migi" },
+  { no:"venstre", jp:"ひだり", kanji:"左", ro:"hidari" },
+  { no:"kart", jp:"ちず", kanji:"地図", ro:"chizu" },
+  { no:"ris / måltid", jp:"ごはん", ro:"gohan" },
+  { no:"katt", jp:"ねこ", kanji:"猫", ro:"neko" },
+  { no:"hund", jp:"いぬ", kanji:"犬", ro:"inu" }
+];
+
+/* Kana-lesing: vis kana, velg romaji (romaji skjules alltid her) */
+const KANA_WORDS = [
+  ["すし","sushi"],["ねこ","neko"],["やま","yama"],["さくら","sakura"],["ともだち","tomodachi"],
+  ["じゅうどう","jūdō"],["どうじょう","dōjō"],["おび","obi"],["たたみ","tatami"],["いっぽん","ippon"],
+  ["サッカー","sakkā"],["ラーメン","rāmen"],["テレビ","terebi"],["カメラ","kamera"],["ノルウェー","noruwē"],
+  ["オスロ","osuro"],["ハラルド","hararudo"],["ゆき","yuki"],["かぜ","kaze"],["くもり","kumori"],["きっぷ","kippu"],["えき","eki"]
+];
+
+/* =====================================================================
+   MOTOR
+   ===================================================================== */
+const STORE_KEY = "harald-japansk-v1";
+const defaultState = { points:0, streak:0, bestStreak:0, lastDay:null, stopsWon:0, romaji:true, sound:true,
+  correct:0, answered:0, week:null, matches:0 };
+let S = load();
+function load(){ try{ return Object.assign({}, defaultState, JSON.parse(localStorage.getItem(STORE_KEY)||"{}")); }catch(e){ return {...defaultState}; } }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
+
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const rnd = n => Math.floor(Math.random()*n);
+const pick = a => a[rnd(a.length)];
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; }
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function dayStr(d=new Date()){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function isoWeek(d=new Date()){ const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil(((t-y0)/86400000+1)/7); }
+function weekNums(){ return Object.keys(WEEK_CONTENT).map(Number).sort((a,b)=>a-b); }
+function currentWeek(){
+  const ws = weekNums();
+  if(S.week && WEEK_CONTENT[S.week]) return S.week;
+  const now = isoWeek(); if(WEEK_CONTENT[now]) return now;
+  const lower = ws.filter(w=>w<=now); return lower.length ? lower[lower.length-1] : ws[ws.length-1];
+}
+function W(){ return WEEK_CONTENT[currentWeek()]; }
+function curBelt(){ return BELTS[Math.min(S.stopsWon, BELTS.length-1)]; }
+function fmt(n){ return Number(n).toLocaleString("nb-NO",{maximumFractionDigits:6}); }
+
+/* --- tale (valgfritt, bruker enhetens japanske stemme hvis den finnes) --- */
+let jaVoice=null;
+function findVoice(){ if(!("speechSynthesis" in window)) return; const v=speechSynthesis.getVoices(); jaVoice=v.find(x=>/^ja/i.test(x.lang))||null; }
+if("speechSynthesis" in window){ findVoice(); speechSynthesis.onvoiceschanged=findVoice; }
+function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  const u=new SpeechSynthesisUtterance(text); u.lang="ja-JP"; if(jaVoice) u.voice=jaVoice; u.rate=.85;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+function speakBtn(text){ return ("speechSynthesis" in window) ? `<button class="speak" data-say="${esc(text)}" aria-label="Hør uttale">🔊</button>` : ""; }
+
+/* --- lydeffekter --- */
+let actx=null;
+function beep(ok){
+  if(!S.sound) return;
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const notes = ok ? [523,659,784] : [220,175];
+    notes.forEach((f,i)=>{ const o=actx.createOscillator(), g=actx.createGain(); o.type= ok?"triangle":"sawtooth"; o.frequency.value=f;
+      const t=actx.currentTime+i*0.09; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.18,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.18);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+.2); });
+  }catch(e){}
+}
+
+/* --- visning av japansk --- */
+function jpHTML(o, hideRo){
+  return `<span class="jp">${esc(o.jp)}</span>${o.kanji?`<span class="kanji jp">${esc(o.kanji)}</span>`:""}${(S.romaji && !hideRo && o.ro)?`<span class="ro">${esc(o.ro)}</span>`:""}`;
+}
+function choiceHTML(c, hideRo){ return (typeof c==="string") ? esc(c) : jpHTML(c, hideRo); }
+
+/* --- spørsmålsbyggere --- */
+function fromCustom(q){
+  const correct = q.choices[0];
+  const choices = shuffle(q.choices);
+  return { tema:q.tema||"", prompt:q.prompt, show:q.show||null, choices, answer:choices.indexOf(correct), explain:q.explain||"" };
+}
+function vocabQuestion(pool, w, tema){
+  const others = shuffle(pool.filter(x=>x!==w && x.no!==w.no && x.jp!==w.jp)).slice(0,3);
+  if(others.length<3) return null;
+  if(Math.random()<.5){
+    const choices = shuffle([w, ...others]).map(x=>x.no);
+    return { tema, prompt:"Hva betyr dette ordet?", show:w, choices, answer:choices.indexOf(w.no), explain:`${w.jp}${w.kanji?" ("+w.kanji+")":""} = ${w.no}` };
+  } else {
+    const choices = shuffle([w, ...others]).map(x=>({jp:x.jp, ro:x.ro, kanji:x.kanji}));
+    return { tema, prompt:`Hva er «${w.no}» på japansk?`, show:null, choices, answer:choices.findIndex(c=>c.jp===w.jp), explain:`${w.no} = ${w.jp}${w.kanji?" ("+w.kanji+")":""}, uttales «${w.ro}».` };
+  }
+}
+function kanaQuestion(){
+  const [k,r] = pick(KANA_WORDS);
+  const others = shuffle(KANA_WORDS.filter(x=>x[1]!==r)).slice(0,3).map(x=>x[1]);
+  const choices = shuffle([r, ...others]);
+  return { tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:k}, hideRo:true, choices, answer:choices.indexOf(r), explain:`${k} = ${r}` };
+}
+const UNIT_EXP = { mm:0, cm:1, dm:2, m:3, km:6 };
+function lengthQuestion(fact){
+  const units = Object.keys(UNIT_EXP).filter(u=>u!==fact.u && Math.abs(UNIT_EXP[u]-UNIT_EXP[fact.u])<=3);
+  let target, val;
+  for(let tries=0; tries<20; tries++){
+    target = pick(units);
+    val = Number((fact.v*Math.pow(10, UNIT_EXP[fact.u]-UNIT_EXP[target])).toPrecision(12));
+    if(val>=0.001 && val<=10000000) break;
+  }
+  const cands = [val*10, val/10, val*100, val/100, val*1000, val/1000].map(x=>Number(x.toPrecision(12)));
+  const wrong = shuffle([...new Set(cands)].filter(x=>x!==val && x>=0.0001)).slice(0,3);
+  const opts = shuffle([val, ...wrong]);
+  const choices = opts.map(x=>fmt(x)+" "+target);
+  const factor = Math.pow(10, Math.abs(UNIT_EXP[fact.u]-UNIT_EXP[target]));
+  const how = UNIT_EXP[fact.u] > UNIT_EXP[target] ? `ganger med ${fmt(factor)}` : `deler på ${fmt(factor)}`;
+  return { tema:"Matte", prompt: fact.text.replace("{v}", fmt(fact.v)).replace("{u}", fact.u) + ` Hvor mange ${target} er det?`,
+    show:null, choices, answer:opts.indexOf(val),
+    explain:`Fra ${fact.u} til ${target}: du ${how}. ${fmt(fact.v)} ${fact.u} = ${fmt(val)} ${target}.` };
+}
+function weekQuestion(){
+  const w = W(); const r = Math.random();
+  if(r<.3 && w.lengths && w.lengths.length) return lengthQuestion(pick(w.lengths));
+  if(r<.6 && w.vocab && w.vocab.length>=4){ const v=pick(w.vocab); const q=vocabQuestion(w.vocab, v, v.tema||"Ukens ord"); if(q) return q; }
+  if(w.questions && w.questions.length) return fromCustom(pick(w.questions));
+  return vocabQuestion(GENERAL_VOCAB, pick(GENERAL_VOCAB), "Ord");
+}
+function generalQuestion(){
+  return Math.random()<.5 ? kanaQuestion() : vocabQuestion(GENERAL_VOCAB, pick(GENERAL_VOCAB), "Ord");
+}
+function keyOf(q){ return q.prompt + "|" + (q.show? q.show.jp : "") + "|" + q.choices.map(c=>typeof c==="string"?c:c.jp).sort().join(","); }
+function buildQuestions(stopIdx, mode){
+  const list=[], seen=new Set();
+  const add = q => { if(!q) return false; const k=keyOf(q); if(seen.has(k)) return false; seen.add(k); list.push(q); return true; };
+  if(mode==="week"){
+    let guard=0; while(list.length<12 && guard++<200) add(weekQuestion());
+  } else {
+    shuffle(STOPS[stopIdx].questions).forEach(q=>add(fromCustom(q)));          // 4 praktiske situasjoner fra byen
+    let guard=0; while(list.length<9 && guard++<200) add(weekQuestion());      // 5 fra ukens tema
+    guard=0; while(list.length<12 && guard++<200) add(generalQuestion());      // 3 ord/kana
+  }
+  return shuffle(list);
+}
+
+/* =====================================================================
+   SKJERMER
+   ===================================================================== */
+function beltHTML(b){ return `<span class="belt" style="background:${b.color}"></span>`; }
+
+function renderHome(){
+  const wk = currentWeek(), w = W();
+  const b = curBelt();
+  const today = dayStr();
+  const playedToday = S.lastDay===today;
+  const nextIdx = Math.min(S.stopsWon, STOPS.length-1);
+  const allDone = S.stopsWon>=STOPS.length;
+  $("#hdrSub").textContent = "Haralds japanskspill · " + w.label;
+  app.innerHTML = `
+    <div class="stats">
+      <div class="stat"><b>🔥 ${S.streak}</b><span>dager på rad</span></div>
+      <div class="stat"><b>⭐ ${S.points}</b><span>poeng</span></div>
+      <div class="stat"><b>${beltHTML(b)}</b><span>${esc(b.no)}</span></div>
+    </div>
+    ${playedToday ? "" : `<div class="card" style="background:#fff7ed;border:1px solid #fed7aa;padding:12px 14px"><b>Dagens kamp venter!</b> <span class="muted">Spill én kamp i dag for å holde streaken 🔥</span></div>`}
+    <div class="card">
+      <h2>🗾 Reisen: Tokyo → Sapporo</h2>
+      <ul class="route">
+        ${STOPS.map((s,i)=>{
+          const cls = i<S.stopsWon ? "done" : (i===S.stopsWon ? "next" : "locked");
+          const tag = i<S.stopsWon ? "✅ Vunnet" : (i===S.stopsWon ? "🥋 Kjemp!" : "🔒");
+          return `<li class="stop ${cls}" data-stop="${i}">
+            <div class="dot">${s.icon}</div>
+            <div class="info"><b>${esc(s.name)}</b> <span class="jp muted">${esc(s.kanji)}</span>
+              <div class="sub">${esc(s.sub)}${LEGS[i]?` · ${esc(LEGS[i])}`:""}</div></div>
+            <span class="tag">${tag}</span></li>`; }).join("")}
+      </ul>
+    </div>
+    <button class="btn" id="btnFight">${allDone ? "🏆 Kjemp igjen i Sapporo" : `🥋 Kjemp i ${esc(STOPS[nextIdx].name)}`}</button>
+    <button class="btn alt" id="btnWeek">📚 Ukens trening (${esc(w.label)})</button>
+    <div class="card weekbox">
+      <h3>Ukens tema i spillet</h3>
+      <div class="chips">${(w.topics||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
+    </div>
+    <p class="muted" style="text-align:center">Riktig svar = わざあり (waza-ari). 2 waza-ari = いっぽん (ippon).<br>Først til 3 ippon vinner kampen. Vinn en by → nytt belte!</p>
+  `;
+  $("#btnFight").onclick = ()=> startMatch(allDone ? STOPS.length-1 : nextIdx, "stop");
+  $("#btnWeek").onclick = ()=> startMatch(null, "week");
+  app.querySelectorAll(".stop").forEach(el=>el.onclick=()=>{ const i=+el.dataset.stop; if(i<=S.stopsWon && i<STOPS.length) startMatch(i,"stop"); });
+  window.scrollTo(0,0);
+}
+
+let M = null; // aktiv kamp
+function startMatch(stopIdx, mode){
+  const opp = mode==="week" ? { name:"Sensei", jp:"せんせい", ava:"👩‍🏫" } : STOPS[stopIdx].opp;
+  M = { stopIdx, mode, opp, qs:buildQuestions(stopIdx, mode), qi:0, me:0, them:0, run:0, gained:0, startedAt:Date.now() };
+  renderQuestion();
+}
+function pips(waza){ const ip=Math.floor(waza/2), half=waza%2; return "●".repeat(ip)+(half?"◐":"")+"○".repeat(Math.max(0,3-ip-half)); }
+function renderQuestion(){
+  const q = M.qs[M.qi % M.qs.length];
+  const where = M.mode==="week" ? "Ukens trening" : `${STOPS[M.stopIdx].name} ${STOPS[M.stopIdx].kanji}`;
+  const hideRo = !!q.hideRo;
+  app.innerHTML = `
+    <div class="topline"><button class="iconbtn" id="btnQuit" aria-label="Avslutt">✖</button><b>${esc(where)}</b></div>
+    <div class="scoreboard">
+      <div class="fighter blue"><div class="ava" id="avaMe">🥋</div><div class="nm">Harald</div><div class="pips" id="pipsMe">${pips(M.me)}</div></div>
+      <div class="vs">VS</div>
+      <div class="fighter"><div class="ava" id="avaThem">${M.opp.ava}</div><div class="nm">${esc(M.opp.name)} <span class="jp">${esc(M.opp.jp)}</span></div><div class="pips" id="pipsThem">${pips(M.them)}</div></div>
+    </div>
+    <div class="progress"><i style="width:${Math.min(100,(M.me/6)*100)}%"></i></div>
+    <div class="card">
+      <div class="qmeta"><span class="badge">${esc(q.tema||"Japansk")}</span><span>Spørsmål ${M.qi+1}</span></div>
+      <div class="prompt">${esc(q.prompt)}</div>
+      ${q.show ? `<div class="show">${jpHTML(q.show, hideRo)}${speakBtn(q.show.jp)}</div>` : ""}
+      <div class="choices">
+        ${q.choices.map((c,i)=>`<button class="choice" data-i="${i}">${choiceHTML(c, hideRo)}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  $("#btnQuit").onclick = ()=>{ if(confirm("Avslutte kampen?")) renderHome(); };
+  app.querySelectorAll(".choice").forEach(b=>b.onclick=()=>answer(+b.dataset.i));
+  bindSpeak();
+  window.scrollTo(0,0);
+}
+function bindSpeak(){ app.querySelectorAll("[data-say]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); speak(b.dataset.say); }); }
+function flash(html){ const c=$("#call"); c.innerHTML=html; c.classList.add("on"); setTimeout(()=>c.classList.remove("on"), 900); }
+function answer(i){
+  const q = M.qs[M.qi % M.qs.length];
+  const ok = i===q.answer;
+  const btns = app.querySelectorAll(".choice");
+  btns.forEach((b,j)=>{ b.disabled=true; if(j===q.answer) b.classList.add("right"); else if(j===i) b.classList.add("wrong"); });
+  S.answered++;
+  if(ok){
+    S.correct++; M.me++; M.run++;
+    let pts = 10 + (M.run>=3 ? 5 : 0); M.gained += pts;
+    $("#avaThem").classList.add("thrown");
+    flash(M.me%2===0 ? `いっぽん!<small>Ippon! +${pts}</small>` : `わざあり!<small>Waza-ari! +${pts}</small>`);
+  } else {
+    M.them++; M.run=0;
+    $("#avaMe").classList.add("thrown");
+    app.querySelector(".card").classList.add("shake");
+  }
+  $("#pipsMe").textContent=pips(M.me); $("#pipsThem").textContent=pips(M.them);
+  app.querySelector(".progress i").style.width=Math.min(100,(M.me/6)*100)+"%";
+  beep(ok);
+  const right = q.choices[q.answer];
+  const rightTxt = typeof right==="string" ? esc(right) : jpHTML(right, false);
+  const fb = $("#fb");
+  fb.className = "feedback " + (ok?"ok":"no");
+  const done = M.me>=6 || M.them>=6;
+  const sayTxt = typeof right==="string" ? (q.show? q.show.jp : null) : right.jp;
+  fb.innerHTML = `<b>${ok? "✅ Riktig! " + pick(["すごい!","いいね!","やった!","かんぺき!"]) : "❌ Ikke helt."}</b>
+    ${ok?"":`<div style="margin-top:6px">Riktig svar: ${rightTxt}</div>`}
+    ${q.explain?`<div style="margin-top:6px">💡 ${esc(q.explain)}</div>`:""}
+    ${sayTxt?`<div style="margin-top:6px">Hør: ${speakBtn(sayTxt)}</div>`:""}
+    <button class="btn ${ok?"green":"alt"}" id="btnNext" style="margin-top:10px">${done?"Se resultat":"Neste ➜"}</button>`;
+  bindSpeak();
+  $("#btnNext").onclick = ()=>{ if(done) finishMatch(); else { M.qi++; renderQuestion(); } };
+  save();
+  fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+function markPlayedToday(){
+  const today=dayStr(); if(S.lastDay===today) return;
+  const y=new Date(); y.setDate(y.getDate()-1);
+  S.streak = (S.lastDay===dayStr(y)) ? S.streak+1 : 1;
+  S.bestStreak = Math.max(S.bestStreak, S.streak);
+  S.lastDay = today;
+}
+function finishMatch(){
+  const win = M.me>=6;
+  let newBelt=null;
+  if(win){ M.gained += 50; if(M.mode==="stop" && M.stopIdx===S.stopsWon && S.stopsWon<STOPS.length){ S.stopsWon++; newBelt=curBelt(); } }
+  S.points += M.gained; S.matches++;
+  markPlayedToday(); save();
+  const secs = Math.round((Date.now()-M.startedAt)/1000);
+  const nextName = S.stopsWon<STOPS.length ? STOPS[S.stopsWon].name : null;
+  app.innerHTML = `
+    <div class="card result">
+      <div class="big">${win?"🏆":"🙇"}</div>
+      <h2>${win? "Du vant kampen! かった!" : "Denne gangen vant "+esc(M.opp.name)+"."}</h2>
+      <p>${win? "Flotte kast, Harald!" : "Ingen fare – alle judoka taper noen ganger. Bukk, si «ありがとうございました», og prøv igjen!"}</p>
+      <p><b>+${M.gained} poeng</b> · ${Math.floor(secs/60)} min ${secs%60} s</p>
+      ${newBelt?`<div class="card" style="background:#fffbeb"><div style="font-size:1.1rem">Nytt belte! ${beltHTML(newBelt)}</div>
+        <div style="margin-top:6px"><b>${esc(newBelt.no)}</b> – <span class="jp">${esc(newBelt.jp)}</span>${S.romaji?` <i class="muted">(${esc(newBelt.ro)})</i>`:""}</div>
+        ${nextName?`<div class="muted" style="margin-top:6px">Neste stopp: ${esc(nextName)} (${esc(LEGS[S.stopsWon])})</div>`:`<div style="margin-top:6px">🎌 Du har reist gjennom hele Japan og fått くろおび – svart belte!</div>`}</div>`:""}
+      <p class="muted">🔥 ${S.streak} dag(er) på rad · ⭐ ${S.points} poeng totalt</p>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="btnHome">🗾 Kartet</button>
+      <button class="btn" id="btnAgain">${win && M.mode==="stop" && nextName ? "Neste by ➜" : "Prøv igjen"}</button>
+    </div>`;
+  if(win) beep(true);
+  $("#btnHome").onclick = renderHome;
+  $("#btnAgain").onclick = ()=>{
+    if(M.mode==="week") startMatch(null,"week");
+    else if(win && nextName) startMatch(S.stopsWon,"stop");
+    else startMatch(M.stopIdx,"stop");
+  };
+}
+
+function renderSettings(){
+  const ws = weekNums();
+  app.innerHTML = `
+    <div class="topline"><button class="iconbtn" id="back" aria-label="Tilbake">←</button><b>Innstillinger</b></div>
+    <div class="card">
+      <div class="toggle"><span>Vis romaji (latinske bokstaver)</span><label class="switch"><input type="checkbox" id="tRo" ${S.romaji?"checked":""}><span></span></label></div>
+      <div class="toggle"><span>Lydeffekter</span><label class="switch"><input type="checkbox" id="tSnd" ${S.sound?"checked":""}><span></span></label></div>
+      <div class="toggle"><span>Ukens tema</span><select id="selWeek">
+        <option value="">Automatisk (uke ${isoWeek()})</option>
+        ${ws.map(w=>`<option value="${w}" ${S.week===w?"selected":""}>${esc(WEEK_CONTENT[w].label)}</option>`).join("")}</select></div>
+    </div>
+    <div class="card">
+      <h2>Statistikk</h2>
+      <p class="muted">Kamper: ${S.matches} · Riktige svar: ${S.correct} av ${S.answered} · Lengste streak: ${S.bestStreak} dager</p>
+      <p class="muted">Uttale (🔊) bruker enhetens japanske stemme hvis den finnes${jaVoice?" – japansk stemme funnet ✅":"."}</p>
+      <button class="btn ghost" id="btnReset">Start på nytt (nullstill alt)</button>
+    </div>`;
+  $("#back").onclick = renderHome;
+  $("#tRo").onchange = e=>{ S.romaji=e.target.checked; save(); };
+  $("#tSnd").onchange = e=>{ S.sound=e.target.checked; save(); };
+  $("#selWeek").onchange = e=>{ S.week = e.target.value ? +e.target.value : null; save(); };
+  $("#btnReset").onclick = ()=>{ if(confirm("Er du sikker? Belter, poeng og streak blir slettet.")){ const keep={romaji:S.romaji,sound:S.sound}; S={...defaultState,...keep}; save(); renderHome(); } };
+}
+
+function renderWords(){
+  const w = W();
+  const groups = {};
+  (w.vocab||[]).forEach(v=>{ (groups[v.tema||"Ord"] = groups[v.tema||"Ord"]||[]).push(v); });
+  app.innerHTML = `
+    <div class="topline"><button class="iconbtn" id="back" aria-label="Tilbake">←</button><b>Ukens ord · ${esc(w.label)}</b></div>
+    ${Object.keys(groups).map(g=>`<div class="card"><h2>${esc(g)}</h2><table class="wordlist">
+      ${groups[g].map(v=>`<tr><td>${jpHTML(v,false)}</td><td>${esc(v.no)}</td><td style="text-align:right">${speakBtn(v.jp)}</td></tr>`).join("")}
+    </table></div>`).join("")}`;
+  $("#back").onclick = renderHome;
+  bindSpeak();
+}
+
+$("#btnSettings").onclick = renderSettings;
+$("#btnWords").onclick = renderWords;
+renderHome();
+</script>
+</body>
+</html>
