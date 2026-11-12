@@ -37,5 +37,14 @@ på den enheten Harald bruker.
 * Kamp i en by = 4 praktiske situasjoner fra byen (`STOPS[].questions`) + 5 fra ukens tema + 3 ord/kana.
 * Riktig svar = waza-ari (2 = ippon). Feil svar = waza-ari til motstanderen. Først til 3 ippon vinner.
 * Vinn en ny by → neste belte (hvitt → gult → oransje → grønt → blått → brunt → svart).
-* Poeng: 10 per riktig, +5 ved 3 riktige på rad, +50 for seier. Streak teller dager med minst én fullført kamp.
+* Poeng: 10 per riktig, +5 ved 3 riktige på rad, +50 for seier. Streak teller dager med minst én fullført kamp eller dagens utfordring.
 * «Ukens trening» = kamp bare med ukens tema (gir poeng, ikke belte).
+
+## Dagens utfordring
+På forsiden ligger knappen **⭐ Dagens utfordring**. Harald får **8 oppgaver** som er de samme hele dagen og nye i morgen (trukket fra datoen, med blanding av kategorier). Spørsmål som er brukt, holdes unna i omtrent to uker.
+
+Oppgavebanken ligger i `DAILY_POOL` i `index.html` (judo, reise, mat, tall/tid/penger, kana, hverdagsfraser og setninger). Dette er egne oppgaver, ikke ukens tema. Første svaralternativ er alltid riktig (stokkes i spillet).
+
+Første gjennomføring om dagen gir poeng (10 per riktig, +5 ved tre på rad, +20 for alle riktige) og teller med på streaken. Etterpå kan han øve på nytt uten ekstra poeng. Når den er ferdig, vises «Kom tilbake i morgen for nye oppgaver!». Fremgangen lagres i `localStorage`.
+
+Hele banken er listet i `dagens-utfordring-oversikt.md` til gjennomgang før publisering.

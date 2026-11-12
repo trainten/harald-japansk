@@ -110,6 +110,12 @@ h2{font-size:1.1rem;margin:4px 0 10px}
 .topline{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-bottom:12px}
 .progress i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s}
+
+.btn.gold{background:var(--gold);color:#1d2433;box-shadow:0 4px 0 #c47c3a}
+.btn.gold:active{box-shadow:0 1px 0 #c47c3a}
+.daily-card{background:linear-gradient(180deg,#fff7ed,#fff);border:1px solid #fed7aa}
+.daily-card.done{background:linear-gradient(180deg,#ecfdf5,#fff);border:1px solid #a7f3d0}
+.daily-card h3{margin:0 0 6px;font-size:1.05rem}
 </style>
 </head>
 <body>
@@ -415,12 +421,201 @@ const KANA_WORDS = [
   ["オスロ","osuro"],["ハラルド","hararudo"],["ゆき","yuki"],["かぜ","kaze"],["くもり","kumori"],["きっぷ","kippu"],["えき","eki"]
 ];
 
+
+/* =====================================================================
+   DAGENS UTFORDRING  —  egen oppgavebank (generelle temaer, ikke ukens tema)
+   ---------------------------------------------------------------------
+   8 oppgaver per dag, trukket deterministisk fra datoen (YYYY-MM-DD).
+   Samme sett hele dagen, nytt sett i morgen.
+   Brukte spørsmål holdes unna i ca. 14 dager.
+   FØRSTE svaralternativ er ALLTID riktig (spillet stokker rekkefølgen).
+   ===================================================================== */
+const DAILY_POOL = [
+  {id:"judo-01", tema:"Judo", prompt:"Du kommer inn i dojoen. Hva gjør du først?", choices:["Tar av skoene og bukker","Roper «はじめ!» og løper inn","Setter på deg beltet i gangen","Kaster veska på matta"], explain:"I dojoen tar man av skoene og bukker (れい) både inn og ut. Det viser respekt for stedet og de andre."},
+  {id:"judo-02", tema:"Judo", prompt:"Hva heter judodrakten på japansk?", choices:[{jp:"じゅうどうぎ",ro:"jūdōgi",kanji:"柔道衣"},{jp:"ゆかた",ro:"yukata"},{jp:"じんじゃ",ro:"jinja"},{jp:"ふとん",ro:"futon"}], explain:"じゅうどうぎ (柔道衣) = judodrakt. Den kalles også どうぎ (dōgi). ゆかた er et sommerplagg, ikke til judo."},
+  {id:"judo-03", tema:"Judo", prompt:"Hva betyr うけみ (受け身)?", choices:["Fallteknikk – å lande trygt","Et kast over hofta","Et fast grep i jakka","En pause midt i kampen"], explain:"うけみ = fallteknikk. God ukemi er det første du lærer, så du ikke slår deg når du blir kastet."},
+  {id:"judo-04", tema:"Judo", prompt:"Kastet おおごし (大腰) er et …", choices:["hoftekast","fotkast","hold på ryggen","beltegrep"], explain:"おお = stor, こし/ごし = hofte. おおごし (ōgoshi) er et klassisk hoftekast."},
+  {id:"judo-05", tema:"Judo", prompt:"I judo kalles den som blir kastet for:", choices:[{jp:"うけ",ro:"uke",kanji:"受け"},{jp:"とり",ro:"tori"},{jp:"しんぱん",ro:"shinpan"},{jp:"かんちょう",ro:"kanchō"}], explain:"うけ = den som tar imot kastet. とり = den som utfører teknikken."},
+  {id:"judo-06", tema:"Judo", prompt:"Hva heter den som utfører teknikken?", choices:[{jp:"とり",ro:"tori",kanji:"取り"},{jp:"うけ",ro:"uke"},{jp:"きゅう",ro:"kyū"},{jp:"たたみ",ro:"tatami"}], explain:"とり utfører teknikken, うけ tar imot. Begge øver sammen – uten uke, ingen とり!"},
+  {id:"judo-07", tema:"Judo", prompt:"Dommeren roper «それまで!» (sore made). Hva betyr det?", choices:["Tiden er ute / kampen er over","Fortsett!","Hold fast!","Bytt side!"], explain:"それまで = «det er nok / så langt». Kampen eller øvelsen er ferdig."},
+  {id:"judo-08", tema:"Judo", prompt:"Dommeren roper «よし!» (yoshi) mens du holder. Hva betyr det?", choices:["Fortsett!","Stopp!","Ugyldig kast","Gå tilbake til midten"], explain:"よし = fortsett. Brukes når holdingen fortsatt gjelder."},
+  {id:"judo-09", tema:"Judo", prompt:"Hva betyr おさえこみ (抑え込み)?", choices:["Holding / kontroll på bakken","Et stort fotkast","Å bukke tre ganger","Å bytte til blå drakt"], explain:"おさえこみ = holding. Hvis du holder motstanderen lenge nok, kan du vinne på ippon."},
+  {id:"judo-10", tema:"Judo", prompt:"Hva roper dommeren når holdingen blir brutt?", choices:[{jp:"とけた!",ro:"Toketa!"},{jp:"はじめ!",ro:"Hajime!"},{jp:"れい!",ro:"Rei!"},{jp:"いっぽん!",ro:"Ippon!"}], explain:"とけた = holdingen er brutt. Dere fortsetter å kjempe."},
+  {id:"judo-11", tema:"Judo", prompt:"Trening med partner (ikke konkurranse) heter:", choices:[{jp:"らんどり",ro:"randori",kanji:"乱取り"},{jp:"しあい",ro:"shiai"},{jp:"かた",ro:"kata"},{jp:"れい",ro:"rei"}], explain:"らんどり = fri trening med partner. しあい = konkurransekamp, かた = faste former."},
+  {id:"judo-12", tema:"Judo", prompt:"Faste teknikker i en avtalt rekkefølge heter:", choices:[{jp:"かた",ro:"kata",kanji:"形"},{jp:"らんどり",ro:"randori"},{jp:"おさえこみ",ro:"osaekomi"},{jp:"きもの",ro:"kimono"}], explain:"かた (形) = form. Dere øver teknikker i en bestemt rekkefølge, ofte med れい imellom."},
+  {id:"judo-13", tema:"Judo", prompt:"Hva betyr わざ (技) i judo?", choices:["teknikk","belte","matte","dommer"], explain:"わざ = teknikk. Derfor heter halvt poeng わざあり – «det er teknikk»."},
+  {id:"judo-14", tema:"Judo", prompt:"Kastet おおそとがり (大外刈り) er når du …", choices:["feier motstanderens ytterlegg bakover","holder armene i bakken","kaster over hofta","drar i beltet og løper unna"], explain:"おお = stor, そと = utside, がり = feie. おおそとがり (ōsoto-gari) er et av de første kastene mange lærer."},
+  {id:"judo-15", tema:"Judo", prompt:"Hva heter grepet i jakka (krage og erme)?", choices:[{jp:"くみかた",ro:"kumikata",kanji:"組み方"},{jp:"うけみ",ro:"ukemi"},{jp:"れい",ro:"rei"},{jp:"おび",ro:"obi"}], explain:"くみかた = måten dere griper i hverandres drakt. Et godt grep er starten på mange kast."},
+  {id:"judo-16", tema:"Judo", prompt:"Før og etter trening sitter judoka ofte på knærne. Hva heter den sittestillingen?", choices:[{jp:"せいざ",ro:"seiza",kanji:"正座"},{jp:"たたみ",ro:"tatami"},{jp:"ざぶとん",ro:"zabuton"},{jp:"ふとん",ro:"futon"}], explain:"せいざ = formell sitting på knærne, typisk når dere bukker sammen."},
+  {id:"judo-17", tema:"Judo", prompt:"Når du går inn på matta til en partner, sier du ofte:", choices:[{jp:"おねがいします。",ro:"Onegaishimasu."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"いってきます。",ro:"Ittekimasu."},{jp:"おかえり。",ro:"Okaeri."}], explain:"おねがいします = vær så snill / la oss trene sammen. いただきます sier du før mat, ikke før randori."},
+  {id:"judo-18", tema:"Judo", prompt:"Etter en hard økt kan du si dette til de andre:", choices:[{jp:"おつかれさまでした。",ro:"Otsukaresama deshita."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"はじめまして。",ro:"Hajimemashite."},{jp:"いってらっしゃい。",ro:"Itterasshai."}], explain:"おつかれさまでした = takk for innsatsen / godt jobba, typisk etter trening eller arbeid."},
+  {id:"judo-19", tema:"Judo", prompt:"Hva heter kampdommeren på japansk?", choices:[{jp:"しんぱん",ro:"shinpan",kanji:"審判"},{jp:"せんせい",ro:"sensei"},{jp:"せんぱい",ro:"senpai"},{jp:"かちょう",ro:"kachō"}], explain:"しんぱん = dommer. せんせい = lærer/trener, せんぱい = mer erfaren utøver."},
+  {id:"judo-20", tema:"Judo", prompt:"En mer erfaren utøver i klubben kalles ofte:", choices:[{jp:"せんぱい",ro:"senpai",kanji:"先輩"},{jp:"こうはい",ro:"kōhai"},{jp:"しんぱん",ro:"shinpan"},{jp:"おきゃく",ro:"okyaku"}], explain:"せんぱい = eldre eller mer erfaren. こうはい = den som er nyere enn deg."},
+  {id:"judo-21", tema:"Judo", prompt:"Hva betyr たちわざ (立ち技)?", choices:["teknikker i stående","teknikker på bakken","bare oppvarming","å knyte beltet"], explain:"たち = stående, わざ = teknikk. Teknikker på bakken heter ねわざ."},
+  {id:"judo-22", tema:"Judo", prompt:"Hva betyr ねわざ (寝技)?", choices:["teknikker på bakken","teknikker i stående","å sove i dojoen","å vaske matta"], explain:"ね = liggende, わざ = teknikk. Her øver dere holding og kontroll på bakken."},
+  {id:"judo-23", tema:"Judo", prompt:"I internasjonale kamper har den ene blå drakt. Hva er «blå» på japansk?", choices:[{jp:"あお",ro:"ao",kanji:"青"},{jp:"あか",ro:"aka"},{jp:"きいろ",ro:"kiiro"},{jp:"しろ",ro:"shiro"}], explain:"あお = blå. あか = rød, きいろ = gul, しろ = hvit."},
+  {id:"judo-24", tema:"Judo", prompt:"Grader under svart belte kalles きゅう (級). Hva er きゅう?", choices:["elevgrader (f.eks. 5. kyū)","antall kast i kampen","alderen til utøveren","fargen på matta"], explain:"きゅう (級) = kyū, grader før svart belte. Etter det kommer だん (段)."},
+  {id:"reise-01", tema:"Reise", prompt:"Du skal sjekke inn. Hva heter hotell på japansk?", choices:[{jp:"ホテル",ro:"hoteru"},{jp:"びょういん",ro:"byōin"},{jp:"こうえん",ro:"kōen"},{jp:"としょかん",ro:"toshokan"}], explain:"ホテル = hotell (katakana, fra engelsk). びょういん = sykehus, こうえん = park, としょかん = bibliotek."},
+  {id:"reise-02", tema:"Reise", prompt:"Du har en reservasjon. Hva sier du i resepsjonen?", choices:[{jp:"よやくが あります。",ro:"Yoyaku ga arimasu."},{jp:"きっぷを たべます。",ro:"Kippu o tabemasu."},{jp:"まって、はじめ!",ro:"Matte, hajime!"},{jp:"ゆきが すきです。",ro:"Yuki ga suki desu."}], explain:"よやくが あります = jeg har en reservasjon. よやく (予約) = reservasjon."},
+  {id:"reise-03", tema:"Reise", prompt:"Hva betyr くうこう (空港)?", choices:["flyplass","havn","togstasjon","bussholdeplass"], explain:"くうこう = flyplass. くう = luft/sky, こう = havn – «luft-havn»."},
+  {id:"reise-04", tema:"Reise", prompt:"Hvordan spør du «Hvor er flyplassen?»", choices:[{jp:"くうこうは どこですか。",ro:"Kūkō wa doko desu ka."},{jp:"くうこうを ください。",ro:"Kūkō o kudasai."},{jp:"くうこうは おいしいです。",ro:"Kūkō wa oishii desu."},{jp:"くうこう、がんばって。",ro:"Kūkō, ganbatte."}], explain:"〜は どこですか = hvor er …? Samme mønster som えきは どこですか。"},
+  {id:"reise-05", tema:"Reise", prompt:"Hva heter (trille)koffert ofte på japansk?", choices:[{jp:"スーツケース",ro:"sūtsukēsu"},{jp:"パスポート",ro:"pasupōto"},{jp:"エアコン",ro:"eakon"},{jp:"エレベーター",ro:"erebētā"}], explain:"スーツケース kommer fra engelsk «suitcase». パスポート = pass."},
+  {id:"reise-06", tema:"Reise", prompt:"Passet ditt heter:", choices:[{jp:"パスポート",ro:"pasupōto"},{jp:"カレンダー",ro:"karendā"},{jp:"サンドイッチ",ro:"sandoitchi"},{jp:"フォーク",ro:"fōku"}], explain:"パスポート = pass. Husk det i veska før du går til くうこう!"},
+  {id:"reise-07", tema:"Reise", prompt:"Du skal ta taxi. Hva heter taxi på japansk?", choices:[{jp:"タクシー",ro:"takushī"},{jp:"バイク",ro:"baiku"},{jp:"ボート",ro:"bōto"},{jp:"ケーブル",ro:"kēburu"}], explain:"タクシー = taxi (katakana). バイク = motorsykkel."},
+  {id:"reise-08", tema:"Reise", prompt:"Du vil si «Til stasjonen, vær så snill» til sjåføren:", choices:[{jp:"えきまで おねがいします。",ro:"Eki made onegaishimasu."},{jp:"えきを たべます。",ro:"Eki o tabemasu."},{jp:"えきは さむいです。",ro:"Eki wa samui desu."},{jp:"えき、さようなら。",ro:"Eki, sayōnara."}], explain:"〜まで = til (et sted). おねがいします = vær så snill. Nyttig i taxi!"},
+  {id:"reise-09", tema:"Reise", prompt:"«Rett frem» når noen viser vei, heter:", choices:[{jp:"まっすぐ",ro:"massugu"},{jp:"みぎ",ro:"migi"},{jp:"ひだり",ro:"hidari"},{jp:"うしろ",ro:"ushiro"}], explain:"まっすぐ = rett frem. みぎ = høyre, ひだり = venstre, うしろ = bak."},
+  {id:"reise-10", tema:"Reise", prompt:"Hva betyr うしろ (後ろ)?", choices:["bak","foran","ved siden av","inni"], explain:"うしろ = bak. Det motsatte er まえ (foran)."},
+  {id:"reise-11", tema:"Reise", prompt:"Hva betyr まえ (前)?", choices:["foran","bak","over","under"], explain:"まえ = foran / før. うしろ = bak."},
+  {id:"reise-12", tema:"Reise", prompt:"Inngang heter:", choices:[{jp:"いりぐち",ro:"iriguchi",kanji:"入口"},{jp:"でぐち",ro:"deguchi"},{jp:"まど",ro:"mado"},{jp:"かべ",ro:"kabe"}], explain:"いりぐち = inngang (いる = å gå inn, くち/ぐち = åpning). でぐち = utgang."},
+  {id:"reise-13", tema:"Reise", prompt:"Utgang heter:", choices:[{jp:"でぐち",ro:"deguchi",kanji:"出口"},{jp:"いりぐち",ro:"iriguchi"},{jp:"てんじょう",ro:"tenjō"},{jp:"いす",ro:"isu"}], explain:"でぐち = utgang (でる = å gå ut). På flyplassen ser du ofte でぐち 1, でぐち 2 …"},
+  {id:"reise-14", tema:"Reise", prompt:"Hvordan spør du «Er det langt?»", choices:[{jp:"とおいですか。",ro:"Tōi desu ka."},{jp:"ちかいですか。",ro:"Chikai desu ka."},{jp:"たかいですか。",ro:"Takai desu ka."},{jp:"ひろいですか。",ro:"Hiroi desu ka."}], explain:"とおい = langt unna. ちかい = nær. たかい = dyrt/høyt, ひろい = romslig."},
+  {id:"reise-15", tema:"Reise", prompt:"Hva betyr ちかい (近い)?", choices:["nær","langt unna","dyrt","raskt"], explain:"ちかい = nær. Motsetning: とおい = langt unna."},
+  {id:"reise-16", tema:"Reise", prompt:"Hvordan spør du hvilket spor toget går fra?", choices:[{jp:"なんばんせんですか。",ro:"Nanbansen desu ka."},{jp:"なんじですか。",ro:"Nanji desu ka."},{jp:"なんにんですか。",ro:"Nannin desu ka."},{jp:"なんさいですか。",ro:"Nansai desu ka."}], explain:"ばんせん (番線) = spor/plattformnummer. なんばんせんですか = hvilket spor?"},
+  {id:"reise-17", tema:"Reise", prompt:"Suvenir / gave fra turen heter:", choices:[{jp:"みやげ",ro:"miyage",kanji:"土産"},{jp:"てがみ",ro:"tegami"},{jp:"しお",ro:"shio"},{jp:"かさ",ro:"kasa"}], explain:"みやげ (おみやげ) = suvenir / gave man tar med hjem. En klassiker etter en tur!"},
+  {id:"reise-18", tema:"Reise", prompt:"Hvordan spør du «Hvor lang tid tar det?»", choices:[{jp:"どのぐらい かかりますか。",ro:"Dono gurai kakarimasu ka."},{jp:"いくら はなしますか。",ro:"Ikura hanashimasu ka."},{jp:"だれが いますか。",ro:"Dare ga imasu ka."},{jp:"なんがつですか。",ro:"Nangatsu desu ka."}], explain:"どのぐらい = hvor mye / hvor lenge, かかります = det tar (tid eller penger)."},
+  {id:"reise-19", tema:"Reise", prompt:"Hvordan spør du «Er dette toget til Osaka?»", choices:[{jp:"これは おおさか いきの でんしゃですか。",ro:"Kore wa Ōsaka iki no densha desu ka."},{jp:"これは おおさかを たべますか。",ro:"Kore wa Ōsaka o tabemasu ka."},{jp:"おおさかは ねこですか。",ro:"Ōsaka wa neko desu ka."},{jp:"でんしゃは あめですか。",ro:"Densha wa ame desu ka."}], explain:"〜いき (行き) = bound for / toget som går til … Nyttig på stasjonen!"},
+  {id:"reise-20", tema:"Reise", prompt:"Du har mistet billetten. Hva kan du si?", choices:[{jp:"きっぷを なくしました。",ro:"Kippu o nakushimashita."},{jp:"きっぷを たべました。",ro:"Kippu o tabemashita."},{jp:"きっぷは あついです。",ro:"Kippu wa atsui desu."},{jp:"きっぷ、おやすみ。",ro:"Kippu, oyasumi."}], explain:"なくしました = jeg har mistet (noe). Si det i luken, så hjelper de deg."},
+  {id:"reise-21", tema:"Reise", prompt:"Hva betyr よやく (予約)?", choices:["reservasjon","avbudsreise","visum","turistkort"], explain:"よやく = reservasjon, for både hotell, restaurant og togsete."},
+  {id:"reise-22", tema:"Reise", prompt:"Buss heter:", choices:[{jp:"バス",ro:"basu"},{jp:"フォーク",ro:"fōku"},{jp:"シャツ",ro:"shatsu"},{jp:"ベッド",ro:"beddo"}], explain:"バス = buss (katakana, fra engelsk bus)."},
+  {id:"reise-23", tema:"Reise", prompt:"«Er det ledig rom?» på hotellet:", choices:[{jp:"あきべやは ありますか。",ro:"Akibeya wa arimasu ka."},{jp:"あきべやを のみますか。",ro:"Akibeya o nomimasu ka."},{jp:"へやは サッカーですか。",ro:"Heya wa sakkā desu ka."},{jp:"へや、はじめ!",ro:"Heya, hajime!"}], explain:"あきべや (空き部屋) = ledig rom. ありますか = finnes det / har dere?"},
+  {id:"reise-24", tema:"Reise", prompt:"Du ser skiltet でぐち 3 (出口3) på flyplassen. Hva betyr det?", choices:["utgang 3","inngang 3","spor 3","sete 3"], explain:"でぐち = utgang. でぐち 3 = utgang nummer 3."},
+  {id:"reise-25", tema:"Reise", prompt:"Hvordan sier du «Jeg vil sjekke inn» på hotellet?", choices:[{jp:"チェックイン おねがいします。",ro:"Chekkuin onegaishimasu."},{jp:"チェックアウトを たべます。",ro:"Chekkuauto o tabemasu."},{jp:"チェックインは さむいです。",ro:"Chekkuin wa samui desu."},{jp:"チェキを ください。",ro:"Cheki o kudasai."}], explain:"チェックイン = check-in (katakana). チェックアウト = check-out når du reiser videre."},
+  {id:"mat-01", tema:"Mat", prompt:"En コンビニ (konbini) er en …", choices:["minibutikk som er åpen lenge","stor fiskemarkedshall","judoklubb","togstasjon"], explain:"コンビニ er kort for «convenience store»: en kiosk/minibutikk med mat, drikke og mye rart, ofte åpen døgnet rundt."},
+  {id:"mat-02", tema:"Mat", prompt:"I kiosken vil du ha en risball. Hva heter den?", choices:[{jp:"おにぎり",ro:"onigiri"},{jp:"おさら",ro:"osara"},{jp:"おわん",ro:"owan"},{jp:"おふろ",ro:"ofuro"}], explain:"おにぎり = risball, ofte med fyll og nori rundt. Perfekt konbini-mat! おさら = tallerken, おふろ = bad."},
+  {id:"mat-03", tema:"Mat", prompt:"Du er tørst i kiosken. Hva ber du om?", choices:[{jp:"みずを ください。",ro:"Mizu o kudasai."},{jp:"くつを ください。",ro:"Kutsu o kudasai."},{jp:"ちずを ねます。",ro:"Chizu o nemasu."},{jp:"でんしゃを のみます。",ro:"Densha o nomimasu."}], explain:"みずを ください = vann, vær så snill. ください = gi meg / kan jeg få."},
+  {id:"mat-04", tema:"Mat", prompt:"Hva betyr おちゃ (お茶)?", choices:["te","kaffe","melk","juice"], explain:"おちゃ = te. I Japan får du ofte grønn te. コーヒー = kaffe."},
+  {id:"mat-05", tema:"Mat", prompt:"Kaffe skrives ofte slik:", choices:[{jp:"コーヒー",ro:"kōhī"},{jp:"コーラス",ro:"kōrasu"},{jp:"コート",ro:"kōto"},{jp:"ゴール",ro:"gōru"}], explain:"コーヒー = kaffe (fra engelsk/nederlandsk). Lange ō-lyder skrives コー."},
+  {id:"mat-06", tema:"Mat", prompt:"Hvordan ber du om menyen?", choices:[{jp:"メニューを ください。",ro:"Menyū o kudasai."},{jp:"メニューを きります。",ro:"Menyū o kirimasu."},{jp:"メニューは さむいです。",ro:"Menyū wa samui desu."},{jp:"メニュー、がんばって。",ro:"Menyū, ganbatte."}], explain:"メニューを ください = menyen, vær så snill. きります = å kutte – ikke kutt menyen!"},
+  {id:"mat-07", tema:"Mat", prompt:"Du er ferdig og vil betale. Hva sier du?", choices:[{jp:"おかいけい おねがいします。",ro:"Okaikei onegaishimasu."},{jp:"おかいけいを たべます。",ro:"Okaikei o tabemasu."},{jp:"おんせんは どこですか。",ro:"Onsen wa doko desu ka."},{jp:"れんしゅう しましょう。",ro:"Renshū shimashō."}], explain:"おかいけい (お会計) = regningen. おかいけい おねがいします = kan jeg få betale, vær så snill."},
+  {id:"mat-08", tema:"Mat", prompt:"Hva betyr からい?", choices:["sterk / krydret","søt","sur","bitter"], explain:"からい = sterk, krydret. あまい = søt, すっぱい = sur, にがい = bitter."},
+  {id:"mat-09", tema:"Mat", prompt:"Hva betyr あまい?", choices:["søt","salt","varm","kald"], explain:"あまい = søt. Kakene og isen i Japan kan være あまい!"},
+  {id:"mat-10", tema:"Mat", prompt:"I kiosken vil du ta med maten ut. «Å ta med» heter ofte:", choices:[{jp:"もちかえり",ro:"mochikaeri"},{jp:"ひるね",ro:"hirune"},{jp:"かいもの",ro:"kaimono"},{jp:"かけはし",ro:"kakehashi"}], explain:"もちかえり (持ち帰り) = take-away / å ta med hjem. Du kan også se テイクアウト."},
+  {id:"mat-11", tema:"Mat", prompt:"Hva sier du når du er sulten?", choices:[{jp:"おなかが すきました。",ro:"Onaka ga sukimashita."},{jp:"のどが かわきました。",ro:"Nodo ga kawakimashita."},{jp:"あたまが いたいです。",ro:"Atama ga itai desu."},{jp:"ねむくないです。",ro:"Nemukunai desu."}], explain:"おなかが すきました = jeg er sulten (magen har blitt tom). のどが かわきました = jeg er tørst."},
+  {id:"mat-12", tema:"Mat", prompt:"Hva sier du når du er tørst?", choices:[{jp:"のどが かわきました。",ro:"Nodo ga kawakimashita."},{jp:"おなかが すきました。",ro:"Onaka ga sukimashita."},{jp:"あしが いたいです。",ro:"Ashi ga itai desu."},{jp:"かぜを ひきました。",ro:"Kaze o hikimashita."}], explain:"のど = hals, かわきました = har blitt tørr. Altså: jeg er tørst."},
+  {id:"mat-13", tema:"Mat", prompt:"Spisepinner heter:", choices:[{jp:"はし",ro:"hashi"},{jp:"フォーク",ro:"fōku"},{jp:"ナイフ",ro:"naifu"},{jp:"スプーン",ro:"supūn"}], explain:"はし = spisepinner. フォーク、ナイフ、スプーン er katakana-lånord."},
+  {id:"mat-14", tema:"Mat", prompt:"Soyasaus heter:", choices:[{jp:"しょうゆ",ro:"shōyu"},{jp:"しお",ro:"shio"},{jp:"さとう",ro:"satō"},{jp:"こしょう",ro:"koshō"}], explain:"しょうゆ = soyasaus. しお = salt, さとう = sukker, こしょう = pepper."},
+  {id:"mat-15", tema:"Mat", prompt:"Misosuppe heter:", choices:[{jp:"みそしる",ro:"misoshiru"},{jp:"おすし",ro:"osushi"},{jp:"やきにく",ro:"yakiniku"},{jp:"おにぎり",ro:"onigiri"}], explain:"みそしる = misosuppe, ofte til frokost eller sammen med ごはん."},
+  {id:"mat-16", tema:"Mat", prompt:"En matboks til tur og lunsj heter:", choices:[{jp:"べんとう",ro:"bentō"},{jp:"ふくろ",ro:"fukuro"},{jp:"はこ",ro:"hako"},{jp:"さら",ro:"sara"}], explain:"べんとう (弁当) = matboks. Du ser dem på stasjoner, i kiosker og i butikker."},
+  {id:"mat-17", tema:"Mat", prompt:"Hva er うどん?", choices:["tykke hvete-nudler","en type is","grillet ål","en søt bønnekake"], explain:"うどん = tykke, myke hvete-nudler, ofte i suppe. Tynnere nudler kan være そば eller そうめん."},
+  {id:"mat-18", tema:"Mat", prompt:"Hva er てんぷら (天ぷら)?", choices:["frityrstekt grønnsaker eller sjømat","en fiskesuppe","rå fisk på ris","en dessert med røde bønner"], explain:"てんぷら = mat dyppet i røre og frityrstekt – reker, grønnsaker og mer."},
+  {id:"mat-19", tema:"Mat", prompt:"Karri med ris, en klassiker i Japan, heter:", choices:[{jp:"カレーライス",ro:"karē raisu"},{jp:"チーズケーキ",ro:"chīzukēki"},{jp:"フライドポテト",ro:"furaido poteto"},{jp:"ホットドッグ",ro:"hottodoggu"}], explain:"カレーライス = karri med ris. Milde, tykke sauser – en favoritt for mange barn i Japan."},
+  {id:"mat-20", tema:"Mat", prompt:"Hva er ぎょうざ (餃子)?", choices:["stekte dumplings med fyll","en type grønn te","en fiskesuppe","en søt pannekake"], explain:"ぎょうざ = japanske dumplings, ofte stekt på den ene siden. Godt med しょうゆ!"},
+  {id:"mat-21", tema:"Mat", prompt:"Suppa er veldig varm. Hvilket ord brukes om varm mat og drikke?", choices:[{jp:"あつい",ro:"atsui"},{jp:"つめたい",ro:"tsumetai"},{jp:"おもい",ro:"omoi"},{jp:"かるい",ro:"karui"}], explain:"あつい (熱い) = varm å ta på, om mat og drikke. つめたい = kald å ta på. (あつい 暑い brukes om været.)"},
+  {id:"mat-22", tema:"Mat", prompt:"Hva betyr つめたい?", choices:["kald å ta på","varm å ta på","søt","stor"], explain:"つめたい = kald (om vann, is, hender …). さむい brukes mer om været rundt deg."},
+  {id:"mat-23", tema:"Mat", prompt:"Du peker på noe i disken og vil ha det. Hva sier du?", choices:[{jp:"これを ください。",ro:"Kore o kudasai."},{jp:"だれを ください。",ro:"Dare o kudasai."},{jp:"いつを ください。",ro:"Itsu o kudasai."},{jp:"なぜを ください。",ro:"Naze o kudasai."}], explain:"これを ください = denne, vær så snill. これ = denne (nær deg)."},
+  {id:"mat-24", tema:"Mat", prompt:"Hva betyr ジュース?", choices:["juice","ost","brød","smør"], explain:"ジュース = juice. Et typisk katakana-lånord."},
+  {id:"mat-25", tema:"Mat", prompt:"I konbini ser du サンドイッチ. Hva er det?", choices:["en sandwich","en suppe","en kake","en te"], explain:"サンドイッチ = sandwich. Ofte kuttet i trekanter – typisk japansk kioskmat."},
+  {id:"tid-01", tema:"Tall og tid", prompt:"Hvordan spør du «Hva er klokka?»", choices:[{jp:"なんじですか。",ro:"Nanji desu ka."},{jp:"いくらですか。",ro:"Ikura desu ka."},{jp:"なんさいですか。",ro:"Nansai desu ka."},{jp:"なんにんですか。",ro:"Nannin desu ka."}], explain:"なんじですか = hva er klokka? いくら = pris, なんさい = alder, なんにん = hvor mange personer."},
+  {id:"tid-02", tema:"Tall og tid", prompt:"Hva betyr さんじ?", choices:["klokka tre","tre personer","tre yen","mars"], explain:"さん = tre, じ = time. さんじ = klokka tre. Mars er さんがつ."},
+  {id:"tid-03", tema:"Tall og tid", prompt:"Hva betyr くじ?", choices:["klokka ni","klokka seks","klokka fem","klokka to"], explain:"く (eller きゅう) = ni, じ = time. くじ = klokka ni. Seks er ろくじ."},
+  {id:"tid-04", tema:"Tall og tid", prompt:"Hva er さんじはん?", choices:["klokka halv fire (15:30)","klokka tre presis","klokka halv tre","klokka fire"], explain:"はん = halv (30 minutter). さんじはん = 3:30, som vi kaller halv fire."},
+  {id:"tid-05", tema:"Tall og tid", prompt:"Hva betyr ごぜん?", choices:["formiddag / før kl. 12","ettermiddag","kveld","natt"], explain:"ごぜん (午前) = formiddag, AM. ごご (午後) = ettermiddag, PM."},
+  {id:"tid-06", tema:"Tall og tid", prompt:"Hva betyr ごご?", choices:["ettermiddag / etter kl. 12","formiddag","midnatt","helg"], explain:"ごご (午後) = ettermiddag, PM. ごご にじ = kl. 14."},
+  {id:"tid-07", tema:"Tall og tid", prompt:"«I morgen» heter:", choices:[{jp:"あした",ro:"ashita"},{jp:"きのう",ro:"kinō"},{jp:"きょう",ro:"kyō"},{jp:"いま",ro:"ima"}], explain:"あした = i morgen. きょう = i dag, きのう = i går, いま = nå."},
+  {id:"tid-08", tema:"Tall og tid", prompt:"«I går» heter:", choices:[{jp:"きのう",ro:"kinō"},{jp:"あした",ro:"ashita"},{jp:"あさって",ro:"asatte"},{jp:"おととい",ro:"ototoi"}], explain:"きのう = i går. あさって = i overmorgen, おととい = i forgårs."},
+  {id:"tid-09", tema:"Tall og tid", prompt:"«I dag» heter:", choices:[{jp:"きょう",ro:"kyō"},{jp:"あした",ro:"ashita"},{jp:"まいにち",ro:"mainichi"},{jp:"こんしゅう",ro:"konshū"}], explain:"きょう = i dag. まいにち = hver dag, こんしゅう = denne uka."},
+  {id:"tid-10", tema:"Tall og tid", prompt:"Mandag heter:", choices:[{jp:"げつようび",ro:"getsuyōbi"},{jp:"かようび",ro:"kayōbi"},{jp:"すいようび",ro:"suiyōbi"},{jp:"もくようび",ro:"mokuyōbi"}], explain:"げつようび = mandag (måne-dag). かようび = tirsdag, すいようび = onsdag, もくようび = torsdag."},
+  {id:"tid-11", tema:"Tall og tid", prompt:"Fredag heter:", choices:[{jp:"きんようび",ro:"kin'yōbi"},{jp:"どようび",ro:"doyōbi"},{jp:"にちようび",ro:"nichiyōbi"},{jp:"げつようび",ro:"getsuyōbi"}], explain:"きんようび = fredag (gull-dag). どようび = lørdag, にちようび = søndag."},
+  {id:"tid-12", tema:"Tall og tid", prompt:"Hva betyr いま?", choices:["nå","senere","alltid","aldri"], explain:"いま = nå. いま なんじですか = hva er klokka nå?"},
+  {id:"tid-13", tema:"Tall og tid", prompt:"Tallet 10 heter:", choices:[{jp:"じゅう",ro:"jū"},{jp:"いち",ro:"ichi"},{jp:"さん",ro:"san"},{jp:"ひゃく",ro:"hyaku"}], explain:"じゅう = ti. いち = én, さん = tre, ひゃく = hundre."},
+  {id:"tid-14", tema:"Tall og tid", prompt:"Tallet 100 heter:", choices:[{jp:"ひゃく",ro:"hyaku"},{jp:"せん",ro:"sen"},{jp:"まん",ro:"man"},{jp:"じゅう",ro:"jū"}], explain:"ひゃく = 100. せん = 1 000, まん = 10 000."},
+  {id:"tid-15", tema:"Tall og tid", prompt:"Tallet 1 000 heter:", choices:[{jp:"せん",ro:"sen"},{jp:"ひゃく",ro:"hyaku"},{jp:"まん",ro:"man"},{jp:"おく",ro:"oku"}], explain:"せん = 1 000. まん = 10 000, おく = 100 millioner."},
+  {id:"tid-16", tema:"Tall og tid", prompt:"Tallet 10 000 heter:", choices:[{jp:"まん",ro:"man"},{jp:"せん",ro:"sen"},{jp:"ひゃく",ro:"hyaku"},{jp:"ゼロ",ro:"zero"}], explain:"まん (万) = 10 000. I Japan telles store tall i まん, ikke i tusener."},
+  {id:"tid-17", tema:"Tall og tid", prompt:"Hvordan sier du «klokka er sju»?", choices:[{jp:"しちじです。",ro:"Shichiji desu."},{jp:"しちにんです。",ro:"Shichinin desu."},{jp:"しちえんです。",ro:"Shichien desu."},{jp:"ななこです。",ro:"Nanako desu."}], explain:"しちじ (eller ななじ) = klokka sju. しちにん = sju personer, しちえん = sju yen."},
+  {id:"tid-18", tema:"Tall og tid", prompt:"Toget går kl. 14. Hvordan sies 14:00 ofte?", choices:[{jp:"ごご にじ",ro:"gogo niji"},{jp:"ごぜん にじ",ro:"gozen niji"},{jp:"ごご よじ",ro:"gogo yoji"},{jp:"ごぜん よじ",ro:"gozen yoji"}], explain:"ごご にじ = kl. 14 (2 om ettermiddagen). ごぜん にじ = kl. 08. よじ = kl. 4."},
+  {id:"tid-19", tema:"Tall og tid", prompt:"Hva betyr はん når vi snakker om klokka, f.eks. くじはん?", choices:["tretti minutter over (9:30)","kvart over","kvart på","nøyaktig på slaget"], explain:"はん = halv time. くじはん = 9:30."},
+  {id:"tid-20", tema:"Tall og tid", prompt:"Søndag heter:", choices:[{jp:"にちようび",ro:"nichiyōbi"},{jp:"どようび",ro:"doyōbi"},{jp:"きんようび",ro:"kin'yōbi"},{jp:"すいようび",ro:"suiyōbi"}], explain:"にちようび = søndag (sol-dag). どようび = lørdag."},
+  {id:"penger-01", tema:"Penger", prompt:"Yen, den japanske valutaen, heter:", choices:[{jp:"えん",ro:"en"},{jp:"ドル",ro:"doru"},{jp:"ユーロ",ro:"yūro"},{jp:"クローネ",ro:"kurōne"}], explain:"えん (円) = yen. Symbolet er ¥ eller 円."},
+  {id:"penger-02", tema:"Penger", prompt:"Hvordan sier du 100 yen?", choices:[{jp:"ひゃくえん",ro:"hyaku en"},{jp:"せんえん",ro:"sen en"},{jp:"じゅうえん",ro:"jū en"},{jp:"まんえん",ro:"man en"}], explain:"ひゃくえん = 100 yen. せんえん = 1 000 yen, じゅうえん = 10 yen."},
+  {id:"penger-03", tema:"Penger", prompt:"En flaske te koster ¥150. Hvordan leser du prisen?", choices:[{jp:"ひゃくごじゅうえん",ro:"hyaku gojū en"},{jp:"じゅうごえん",ro:"jūgo en"},{jp:"せんごじゅうえん",ro:"sen gojū en"},{jp:"ごひゃくえん",ro:"gohyaku en"}], explain:"ひゃく = 100, ごじゅう = 50, えん = yen. Til sammen ひゃくごじゅうえん."},
+  {id:"penger-04", tema:"Penger", prompt:"Hva betyr やすい?", choices:["billig","dyrt","raskt","sakte"], explain:"やすい = billig. Motsetning: たかい = dyrt (eller høyt)."},
+  {id:"penger-05", tema:"Penger", prompt:"Hva betyr たかい når du snakker om pris?", choices:["dyrt","billig","søtt","sent"], explain:"たかい = dyrt, eller høyt (f.eks. et fjell). Av sammenhengen merker du hva som menes."},
+  {id:"penger-06", tema:"Penger", prompt:"Hvordan sier du 1 000 yen?", choices:[{jp:"せんえん",ro:"sen en"},{jp:"ひゃくえん",ro:"hyaku en"},{jp:"いちまんえん",ro:"ichiman en"},{jp:"じゅうえん",ro:"jū en"}], explain:"せんえん = 1 000 yen. いちまんえん = 10 000 yen."},
+  {id:"kana-01", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"ホテル"}, hideRo:true, choices:["hoteru","hotaru","hiteru","hotoro"], explain:"ホテル = hoteru"},
+  {id:"kana-02", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"バス"}, hideRo:true, choices:["basu","pasu","batu","bisu"], explain:"バス = basu"},
+  {id:"kana-03", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"タクシー"}, hideRo:true, choices:["takushī","takushai","tekushi","tagushī"], explain:"タクシー = takushī"},
+  {id:"kana-04", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"コンビニ"}, hideRo:true, choices:["konbini","konbani","konbina","kanbini"], explain:"コンビニ = konbini"},
+  {id:"kana-05", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"おにぎり"}, hideRo:true, choices:["onigiri","onigara","unigiri","onikiri"], explain:"おにぎり = onigiri"},
+  {id:"kana-06", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"ジュース"}, hideRo:true, choices:["jūsu","jūshi","jōsu","chūsu"], explain:"ジュース = jūsu"},
+  {id:"kana-07", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"パン"}, hideRo:true, choices:["pan","pon","ban","pen"], explain:"パン = pan"},
+  {id:"kana-08", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"うどん"}, hideRo:true, choices:["udon","uten","odon","udan"], explain:"うどん = udon"},
+  {id:"kana-09", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"パスポート"}, hideRo:true, choices:["pasupōto","pazupōto","pasupāku","basupōto"], explain:"パスポート = pasupōto"},
+  {id:"kana-10", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"トイレ"}, hideRo:true, choices:["toire","toiru","tairu","tere"], explain:"トイレ = toire"},
+  {id:"kana-11", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"チョコレート"}, hideRo:true, choices:["chokorēto","chokorēta","chikorēto","chokorito"], explain:"チョコレート = chokorēto"},
+  {id:"kana-12", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"バナナ"}, hideRo:true, choices:["banana","banena","panana","banane"], explain:"バナナ = banana"},
+  {id:"kana-13", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"チーズ"}, hideRo:true, choices:["chīzu","chīsu","chēzu","shīzu"], explain:"チーズ = chīzu"},
+  {id:"kana-14", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"ピザ"}, hideRo:true, choices:["piza","pisa","piji","biza"], explain:"ピザ = piza"},
+  {id:"kana-15", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"ミルク"}, hideRo:true, choices:["miruku","meruku","miruko","miruka"], explain:"ミルク = miruku"},
+  {id:"kana-16", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"あした"}, hideRo:true, choices:["ashita","asata","ashito","ashite"], explain:"あした = ashita"},
+  {id:"kana-17", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"きょう"}, hideRo:true, choices:["kyō","kiyo","kyū","kayo"], explain:"きょう = kyō"},
+  {id:"kana-18", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"みず"}, hideRo:true, choices:["mizu","misu","mizo","nizu"], explain:"みず = mizu"},
+  {id:"kana-19", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"でんしゃ"}, hideRo:true, choices:["densha","tensha","denshi","desha"], explain:"でんしゃ = densha"},
+  {id:"kana-20", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"ありがとう"}, hideRo:true, choices:["arigatō","origatō","arikatō","arigata"], explain:"ありがとう = arigatō"},
+  {id:"kana-21", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"スポーツ"}, hideRo:true, choices:["supōtsu","subōtsu","supūchi","sipōtsu"], explain:"スポーツ = supōtsu"},
+  {id:"kana-22", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"エレベーター"}, hideRo:true, choices:["erebētā","erevitā","erebētō","erebēto"], explain:"エレベーター = erebētā"},
+  {id:"kana-23", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"サンドイッチ"}, hideRo:true, choices:["sandoitchi","sandoichi","sandotchi","sandoisshi"], explain:"サンドイッチ = sandoitchi"},
+  {id:"kana-24", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"カレー"}, hideRo:true, choices:["karē","karī","karō","karu"], explain:"カレー = karē"},
+  {id:"kana-25", tema:"Kana", prompt:"Les ordet! Hvordan uttales det?", show:{jp:"アイス"}, hideRo:true, choices:["aisu","aiso","aisuū","aisa"], explain:"アイス = aisu"},
+  {id:"fraser-01", tema:"Fraser", prompt:"Du møter noen for første gang. Hva sier du?", choices:[{jp:"はじめまして。",ro:"Hajimemashite."},{jp:"おかえりなさい。",ro:"Okaerinasai."},{jp:"いってきます。",ro:"Ittekimasu."},{jp:"ただいま。",ro:"Tadaima."}], explain:"はじめまして = hyggelig å treffe deg (første gang). Etterpå kan du si よろしく おねがいします。"},
+  {id:"fraser-02", tema:"Fraser", prompt:"Hvordan spør du «Hva heter du?»", choices:[{jp:"おなまえは なんですか。",ro:"Onamae wa nan desu ka."},{jp:"おいくつですか。",ro:"Oikutsu desu ka."},{jp:"どこから きましたか。",ro:"Doko kara kimashita ka."},{jp:"げんきですか。",ro:"Genki desu ka."}], explain:"おなまえ = navn (høflig). おなまえは なんですか = hva heter du?"},
+  {id:"fraser-03", tema:"Fraser", prompt:"Hvordan spør du «Hvor gammel er du?»", choices:[{jp:"なんさいですか。",ro:"Nansai desu ka."},{jp:"なんじですか。",ro:"Nanji desu ka."},{jp:"なんにんですか。",ro:"Nannin desu ka."},{jp:"いくらですか。",ro:"Ikura desu ka."}], explain:"なんさいですか = hvor gammel er du? (til barn og unge). Til voksne er おいくつですか mykere."},
+  {id:"fraser-04", tema:"Fraser", prompt:"Hvordan sier du «Jeg kommer fra Norge»?", choices:[{jp:"ノルウェーから きました。",ro:"Noruwē kara kimashita."},{jp:"ノルウェーへ いきます。",ro:"Noruwē e ikimasu."},{jp:"ノルウェーを たべます。",ro:"Noruwē o tabemasu."},{jp:"ノルウェーは あついですか。",ro:"Noruwē wa atsui desu ka."}], explain:"〜から きました = jeg kommer fra … へ いきます = jeg skal til …"},
+  {id:"fraser-05", tema:"Fraser", prompt:"Du forstod ikke. Hva sier du?", choices:[{jp:"わかりません。",ro:"Wakarimasen."},{jp:"わかります。",ro:"Wakarimasu."},{jp:"わかりました。",ro:"Wakarimashita."},{jp:"わかいです。",ro:"Wakai desu."}], explain:"わかりません = jeg forstår ikke / jeg vet ikke. わかりました = jeg skjønte det. わかい = ung."},
+  {id:"fraser-06", tema:"Fraser", prompt:"Du vil høre setningen én gang til:", choices:[{jp:"もういちど おねがいします。",ro:"Mō ichido onegaishimasu."},{jp:"もう いただきます。",ro:"Mō itadakimasu."},{jp:"いちど はじめまして。",ro:"Ichido hajimemashite."},{jp:"もう おやすみです。",ro:"Mō oyasumi desu."}], explain:"もういちど = én gang til. おねがいします = vær så snill. Superfrase når det går fort!"},
+  {id:"fraser-07", tema:"Fraser", prompt:"«Snakk litt saktere, vær så snill»:", choices:[{jp:"ゆっくり はなして ください。",ro:"Yukkuri hanashite kudasai."},{jp:"はやく はしって ください。",ro:"Hayaku hashitte kudasai."},{jp:"おおきく たって ください。",ro:"Ōkiku tatte kudasai."},{jp:"じっと みて ください。",ro:"Jitto mite kudasai."}], explain:"ゆっくり = sakte / rolig, はなして = snakk (て-form), ください = vær så snill."},
+  {id:"fraser-08", tema:"Fraser", prompt:"«Hvordan har du det?» / «Har du det bra?»", choices:[{jp:"げんきですか。",ro:"Genki desu ka."},{jp:"きれいですか。",ro:"Kirei desu ka."},{jp:"ゆうめいですか。",ro:"Yūmei desu ka."},{jp:"しずかですか。",ro:"Shizuka desu ka."}], explain:"げんきですか = har du det bra? / er du i form? Du kan svare げんきです。"},
+  {id:"fraser-09", tema:"Fraser", prompt:"Når du forlater hjemmet, sier du ofte:", choices:[{jp:"いってきます。",ro:"Ittekimasu."},{jp:"ただいま。",ro:"Tadaima."},{jp:"おかえり。",ro:"Okaeri."},{jp:"いらっしゃいませ。",ro:"Irasshaimase."}], explain:"いってきます = «jeg går, så kommer jeg tilbake». Familien kan svare いってらっしゃい。"},
+  {id:"fraser-10", tema:"Fraser", prompt:"Når du kommer hjem, sier du:", choices:[{jp:"ただいま。",ro:"Tadaima."},{jp:"いってきます。",ro:"Ittekimasu."},{jp:"いってらっしゃい。",ro:"Itterasshai."},{jp:"こんにちは。",ro:"Konnichiwa."}], explain:"ただいま = «jeg er hjemme». Svaret er ofte おかえり (なさい)。"},
+  {id:"fraser-11", tema:"Fraser", prompt:"Noen kommer hjem. Du sier:", choices:[{jp:"おかえり。",ro:"Okaeri."},{jp:"いってきます。",ro:"Ittekimasu."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"それまで。",ro:"Sore made."}], explain:"おかえり = velkommen hjem. Den som kommer inn, har gjerne sagt ただいま。"},
+  {id:"fraser-12", tema:"Fraser", prompt:"«Gratulerer!» heter:", choices:[{jp:"おめでとう。",ro:"Omedetō."},{jp:"がんばって。",ro:"Ganbatte."},{jp:"おねがい。",ro:"Onegai."},{jp:"さようなら。",ro:"Sayōnara."}], explain:"おめでとう = gratulerer! Kan forlenges til おめでとうございます (mer høflig)."},
+  {id:"fraser-13", tema:"Fraser", prompt:"«Gratulerer med dagen»:", choices:[{jp:"たんじょうび おめでとう。",ro:"Tanjōbi omedetō."},{jp:"あき おめでとう。",ro:"Aki omedetō."},{jp:"しあい おめでとう。",ro:"Shiai omedetō."},{jp:"でんしゃ おめでとう。",ro:"Densha omedetō."}], explain:"たんじょうび = bursdag. たんじょうび おめでとう = gratulerer med dagen!"},
+  {id:"fraser-14", tema:"Fraser", prompt:"«Vent litt, vær så snill»:", choices:[{jp:"ちょっと まって ください。",ro:"Chotto matte kudasai."},{jp:"ちょっと たべて ください。",ro:"Chotto tabete kudasai."},{jp:"ちょっと ねて ください。",ro:"Chotto nete kudasai."},{jp:"ちょっと かって ください。",ro:"Chotto katte kudasai."}], explain:"ちょっと = litt / et øyeblikk, まって = vent (て-form av まつ), ください = vær så snill."},
+  {id:"fraser-15", tema:"Fraser", prompt:"Hva betyr はい?", choices:["ja","nei","kanskje","stopp"], explain:"はい = ja (og «jeg hører deg»). いいえ = nei."},
+  {id:"fraser-16", tema:"Fraser", prompt:"Hva betyr いいえ?", choices:["nei","ja","takk","hei"], explain:"いいえ = nei. I Japan brukes det litt mer forsiktig enn «nei» på norsk – ofte med en forklaring etterpå."},
+  {id:"fraser-17", tema:"Fraser", prompt:"Hva betyr ちょっと i en setning som «ちょっと まって»?", choices:["litt / et øyeblikk","alltid","aldri","veldig mye"], explain:"ちょっと = litt, eller «et lite øyeblikk». Veldig vanlig i hverdagen."},
+  {id:"fraser-18", tema:"Fraser", prompt:"«Det går bra» / «jeg har det fint» kan være:", choices:[{jp:"だいじょうぶです。",ro:"Daijōbu desu."},{jp:"だめです。",ro:"Dame desu."},{jp:"あぶないです。",ro:"Abunai desu."},{jp:"むずかしいです。",ro:"Muzukashii desu."}], explain:"だいじょうぶです = det går bra / jeg er OK. だめ = ikke lov / dårlig, あぶない = farlig."},
+  {id:"fraser-19", tema:"Fraser", prompt:"God kveld heter:", choices:[{jp:"こんばんは。",ro:"Konbanwa."},{jp:"おはよう。",ro:"Ohayō."},{jp:"さようなら。",ro:"Sayōnara."},{jp:"おやすみ。",ro:"Oyasumi."}], explain:"こんばんは = god kveld. おはよう = god morgen, おやすみ = god natt (kort form)."},
+  {id:"fraser-20", tema:"Fraser", prompt:"Før du legger deg, sier du:", choices:[{jp:"おやすみなさい。",ro:"Oyasuminasai."},{jp:"おはようございます。",ro:"Ohayō gozaimasu."},{jp:"いってきます。",ro:"Ittekimasu."},{jp:"いただきます。",ro:"Itadakimasu."}], explain:"おやすみなさい = god natt (høflig). Kort og koselig: おやすみ。"},
+  {id:"fraser-21", tema:"Fraser", prompt:"I en butikk blir du møtt med «いらっしゃいませ». Hva betyr det?", choices:["Velkommen inn!","Ha det!","Gratulerer!","Unnskyld!"], explain:"いらっしゃいませ = velkommen (inn i butikken). Du trenger ikke å svare, bare smile er fint."},
+  {id:"fraser-22", tema:"Fraser", prompt:"Du vil gjennom en folkemengde. Hva sier du for å komme forbi?", choices:[{jp:"すみません。",ro:"Sumimasen."},{jp:"いただきます。",ro:"Itadakimasu."},{jp:"はじめ!",ro:"Hajime!"},{jp:"おかえり。",ro:"Okaeri."}], explain:"すみません brukes både som «unnskyld» og «unnskyld, kan jeg komme forbi?». Superhverdagsfrase!"},
+  {id:"setn-01", tema:"Setninger", prompt:"Hvordan sier du «Dette er et kart»?", choices:[{jp:"これは ちずです。",ro:"Kore wa chizu desu."},{jp:"これは ちずを のみます。",ro:"Kore wa chizu o nomimasu."},{jp:"ちずは だれですか。",ro:"Chizu wa dare desu ka."},{jp:"ちず、がんばって。",ro:"Chizu, ganbatte."}], explain:"これ は ちず です = dette er et kart. Mønsteret これは 〜です er gull verdt."},
+  {id:"setn-02", tema:"Setninger", prompt:"Hvordan spør du «Hva er dette?»", choices:[{jp:"これは なんですか。",ro:"Kore wa nan desu ka."},{jp:"これは だれですか。",ro:"Kore wa dare desu ka."},{jp:"これは いつですか。",ro:"Kore wa itsu desu ka."},{jp:"これは どこに ねますか。",ro:"Kore wa doko ni nemasu ka."}], explain:"これは なんですか = hva er dette? だれ = hvem, いつ = når."},
+  {id:"setn-03", tema:"Setninger", prompt:"Hvordan sier du «Jeg liker judo»?", choices:[{jp:"わたしは じゅうどうが すきです。",ro:"Watashi wa jūdō ga suki desu."},{jp:"わたしは じゅうどうが きらいです。",ro:"Watashi wa jūdō ga kirai desu."},{jp:"わたしは じゅうどうを きります。",ro:"Watashi wa jūdō o kirimasu."},{jp:"じゅうどうは わたしを のみます。",ro:"Jūdō wa watashi o nomimasu."}], explain:"すきです = liker. Partikkelen er が: 〜が すきです. きらいです = liker ikke."},
+  {id:"setn-04", tema:"Setninger", prompt:"Hvordan sier du «Jeg liker ikke kaffe»?", choices:[{jp:"コーヒーが きらいです。",ro:"Kōhī ga kirai desu."},{jp:"コーヒーが すきです。",ro:"Kōhī ga suki desu."},{jp:"コーヒーは ねこです。",ro:"Kōhī wa neko desu."},{jp:"コーヒーを はしります。",ro:"Kōhī o hashirimasu."}], explain:"きらいです = liker ikke. Samme mønster som すきです, med が."},
+  {id:"setn-05", tema:"Setninger", prompt:"Hvordan sier du «Jeg skal til Tokyo»?", choices:[{jp:"とうきょうに いきます。",ro:"Tōkyō ni ikimasu."},{jp:"とうきょうを たべます。",ro:"Tōkyō o tabemasu."},{jp:"とうきょうが みずです。",ro:"Tōkyō ga mizu desu."},{jp:"とうきょうから ねます。",ro:"Tōkyō kara nemasu."}], explain:"いきます = å gå / reise. Stedet du skal TIL, får partikkelen に (eller へ)."},
+  {id:"setn-06", tema:"Setninger", prompt:"Hvordan sier du «Jeg kommer fra Oslo»?", choices:[{jp:"オスロから きました。",ro:"Osuro kara kimashita."},{jp:"オスロに ねます。",ro:"Osuro ni nemasu."},{jp:"オスロを かいます。",ro:"Osuro o kaimasu."},{jp:"オスロで うたです。",ro:"Osuro de uta desu."}], explain:"きました = kom (fortid av きます). から = fra."},
+  {id:"setn-07", tema:"Setninger", prompt:"Hvordan sier du «Jeg reiser med tog»?", choices:[{jp:"でんしゃで いきます。",ro:"Densha de ikimasu."},{jp:"でんしゃに たべます。",ro:"Densha ni tabemasu."},{jp:"でんしゃを よみます。",ro:"Densha o yomimasu."},{jp:"でんしゃは みずです。",ro:"Densha wa mizu desu."}], explain:"で markerer middelet: バスで、タクシーで、でんしゃで = med buss / taxi / tog."},
+  {id:"setn-08", tema:"Setninger", prompt:"Hvordan sier du «Jeg kjøper en billett»?", choices:[{jp:"きっぷを かいます。",ro:"Kippu o kaimasu."},{jp:"きっぷに いきます。",ro:"Kippu ni ikimasu."},{jp:"きっぷが はしります。",ro:"Kippu ga hashirimasu."},{jp:"きっぷで ねます。",ro:"Kippu de nemasu."}], explain:"かいます = å kjøpe. Ting du kjøper, får を: きっぷを かいます。"},
+  {id:"setn-09", tema:"Setninger", prompt:"Hvordan sier du «Vennen min er i parken»?", choices:[{jp:"ともだちは こうえんに います。",ro:"Tomodachi wa kōen ni imasu."},{jp:"ともだちは こうえんを たべます。",ro:"Tomodachi wa kōen o tabemasu."},{jp:"こうえんは ともだちを のみます。",ro:"Kōen wa tomodachi o nomimasu."},{jp:"ともだちで こうえんします。",ro:"Tomodachi de kōen shimasu."}], explain:"います brukes om folk og dyr som befinner seg et sted. に markerer stedet."},
+  {id:"setn-10", tema:"Setninger", prompt:"Hvordan sier du «Boka er på bordet»?", choices:[{jp:"ほんは つくえの うえに あります。",ro:"Hon wa tsukue no ue ni arimasu."},{jp:"ほんは つくえを のみます。",ro:"Hon wa tsukue o nomimasu."},{jp:"つくえは ほんが はしります。",ro:"Tsukue wa hon ga hashirimasu."},{jp:"ほんに つくえを します。",ro:"Hon ni tsukue o shimasu."}], explain:"あります brukes om ting. つくえの うえ = oppå bordet. に あります = befinner seg på/i."},
+  {id:"setn-11", tema:"Setninger", prompt:"Hvordan sier du «Jeg drikker vann»?", choices:[{jp:"みずを のみます。",ro:"Mizu o nomimasu."},{jp:"みずを たべます。",ro:"Mizu o tabemasu."},{jp:"みずが はしります。",ro:"Mizu ga hashirimasu."},{jp:"みずで ねます。",ro:"Mizu de nemasu."}], explain:"のみます = å drikke, たべます = å spise. Vann drikker du: みずを のみます。"},
+  {id:"setn-12", tema:"Setninger", prompt:"Hvordan sier du «Jeg spiser ris»?", choices:[{jp:"ごはんを たべます。",ro:"Gohan o tabemasu."},{jp:"ごはんを のみます。",ro:"Gohan o nomimasu."},{jp:"ごはんに いきます。",ro:"Gohan ni ikimasu."},{jp:"ごはんが かいます。",ro:"Gohan ga kaimasu."}], explain:"ごはん = ris / måltid, たべます = spiser. を foran det du spiser."},
+  {id:"setn-13", tema:"Setninger", prompt:"Hvordan sier du «Jeg ser på TV»?", choices:[{jp:"テレビを みます。",ro:"Terebi o mimasu."},{jp:"テレビを ききます。",ro:"Terebi o kikimasu."},{jp:"テレビを のみます。",ro:"Terebi o nomimasu."},{jp:"テレビに ねます。",ro:"Terebi ni nemasu."}], explain:"みます = å se. ききます = å høre (f.eks. på radio eller musikk)."},
+  {id:"setn-14", tema:"Setninger", prompt:"Hvordan sier du «Jeg hører på musikk»?", choices:[{jp:"おんがくを ききます。",ro:"Ongaku o kikimasu."},{jp:"おんがくを みます。",ro:"Ongaku o mimasu."},{jp:"おんがくを たべます。",ro:"Ongaku o tabemasu."},{jp:"おんがくに いきます。",ro:"Ongaku ni ikimasu."}], explain:"おんがく = musikk, ききます = å høre / lytte."},
+  {id:"setn-15", tema:"Setninger", prompt:"Hvordan sier du «Jeg er trøtt»?", choices:[{jp:"ねむいです。",ro:"Nemui desu."},{jp:"はやいです。",ro:"Hayai desu."},{jp:"おもいです。",ro:"Omoi desu."},{jp:"ひろいです。",ro:"Hiroi desu."}], explain:"ねむい = trøtt. はやい = rask/tidlig, おもい = tung, ひろい = romslig."},
+  {id:"setn-16", tema:"Setninger", prompt:"Hvordan sier du «Det er et nytt hotell»?", choices:[{jp:"あたらしい ホテルです。",ro:"Atarashii hoteru desu."},{jp:"ふるい ホテルです。",ro:"Furui hoteru desu."},{jp:"ホテルは ねむいです。",ro:"Hoteru wa nemui desu."},{jp:"ホテルを はしります。",ro:"Hoteru o hashirimasu."}], explain:"あたらしい = ny. ふるい = gammel (om ting, ikke om folk)."},
+  {id:"setn-17", tema:"Setninger", prompt:"Hva betyr ふるい?", choices:["gammel (om ting)","ny","rask","tung"], explain:"ふるい = gammel, om ting (et gammelt hus, en gammel bok). Om folk brukes andre ord."},
+  {id:"setn-18", tema:"Setninger", prompt:"Hvordan sier du «Jeg kan litt japansk»?", choices:[{jp:"にほんごが すこし できます。",ro:"Nihongo ga sukoshi dekimasu."},{jp:"にほんごが たべられます。",ro:"Nihongo ga taberaremasu."},{jp:"にほんごを のみます。",ro:"Nihongo o nomimasu."},{jp:"にほんごは ねこです。",ro:"Nihongo wa neko desu."}], explain:"できます = å kunne / å få til. すこし = litt. にほんごが すこし できます。"},
+  {id:"setn-19", tema:"Setninger", prompt:"Hvordan sier du «La oss gå!»", choices:[{jp:"いきましょう!",ro:"Ikimashō!"},{jp:"いきません!",ro:"Ikimasen!"},{jp:"いきました!",ro:"Ikimashita!"},{jp:"いかないで!",ro:"Ikanaide!"}], explain:"ましょう = la oss … いきましょう = la oss gå! いきません = går ikke, いきました = gikk."},
+  {id:"setn-20", tema:"Setninger", prompt:"Hvordan sier du «Jeg spilte fotball i går»?", choices:[{jp:"きのう サッカーを しました。",ro:"Kinō sakkā o shimashita."},{jp:"あした サッカーを します。",ro:"Ashita sakkā o shimasu."},{jp:"サッカーが きのうです。",ro:"Sakkā ga kinō desu."},{jp:"きのうは サッカーを のみました。",ro:"Kinō wa sakkā o nomimashita."}], explain:"しました = gjorde / spilte (fortid). きのう = i går. あした します = jeg skal i morgen."},
+  {id:"setn-21", tema:"Setninger", prompt:"Hvordan sier du «I morgen skal jeg spise sushi»?", choices:[{jp:"あした すしを たべます。",ro:"Ashita sushi o tabemasu."},{jp:"きのう すしを たべます。",ro:"Kinō sushi o tabemasu."},{jp:"すしが あした のみます。",ro:"Sushi ga ashita nomimasu."},{jp:"あしたは すしを ききます。",ro:"Ashita wa sushi o kikimasu."}], explain:"あした = i morgen, たべます = spiser / skal spise. Tidsordet kommer ofte først i setningen."},
+  {id:"setn-22", tema:"Setninger", prompt:"Hvilken partikkel bruker du i «Jeg går til stasjonen» – えき＿いきます?", choices:[{jp:"に",ro:"ni"},{jp:"を",ro:"o"},{jp:"と",ro:"to"},{jp:"が",ro:"ga"}], explain:"に (eller へ) markerer målet du går til: えきに いきます。"},
+  {id:"setn-23", tema:"Setninger", prompt:"Hvilken partikkel: «Jeg spiser sushi» – すし＿たべます?", choices:[{jp:"を",ro:"o"},{jp:"に",ro:"ni"},{jp:"で",ro:"de"},{jp:"と",ro:"to"}], explain:"を markerer det du gjør noe med – her det du spiser: すしを たべます。"},
+  {id:"setn-24", tema:"Setninger", prompt:"Hvilken partikkel: «Jeg reiser med buss» – バス＿いきます?", choices:[{jp:"で",ro:"de"},{jp:"を",ro:"o"},{jp:"が",ro:"ga"},{jp:"へ",ro:"e"}], explain:"で markerer middelet du bruker: バスで いきます。 へ brukes mer om retning («mot»)."},
+  {id:"setn-25", tema:"Setninger", prompt:"Hvordan sier du «Jeg vil gjerne spise»?", choices:[{jp:"たべたいです。",ro:"Tabetai desu."},{jp:"たべたくないです。",ro:"Tabetakunai desu."},{jp:"たべました。",ro:"Tabemashita."},{jp:"たべません。",ro:"Tabemasen."}], explain:"たいです = å ha lyst til å … たべたいです = jeg vil gjerne spise. たくない = vil ikke."},
+  {id:"setn-26", tema:"Setninger", prompt:"Hvordan sier du «Dette er veska mi»?", choices:[{jp:"これは わたしの かばんです。",ro:"Kore wa watashi no kaban desu."},{jp:"これは わたしを かばんです。",ro:"Kore wa watashi o kaban desu."},{jp:"かばんは わたしが のみます。",ro:"Kaban wa watashi ga nomimasu."},{jp:"わたしです かばんの これ。",ro:"Watashi desu kaban no kore."}], explain:"の viser eieform: わたしの かばん = veska mi. これは 〜です = dette er …"},
+];
+const DAILY_N = 8;
+const DAILY_COOLDOWN_DAYS = 14;
+
 /* =====================================================================
    MOTOR
    ===================================================================== */
 const STORE_KEY = "harald-japansk-v1";
 const defaultState = { points:0, streak:0, bestStreak:0, lastDay:null, stopsWon:0, romaji:true, sound:true,
-  correct:0, answered:0, week:null, matches:0 };
+  correct:0, answered:0, week:null, matches:0,
+  dailyDate:null, dailyIds:[], dailyDone:null,
+  dailyLast:{date:null, correct:0, total:8, points:0}, dailyHistory:{} };
 let S = load();
 function load(){ try{ return Object.assign({}, defaultState, JSON.parse(localStorage.getItem(STORE_KEY)||"{}")); }catch(e){ return {...defaultState}; } }
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
@@ -477,7 +672,7 @@ function choiceHTML(c, hideRo){ return (typeof c==="string") ? esc(c) : jpHTML(c
 function fromCustom(q){
   const correct = q.choices[0];
   const choices = shuffle(q.choices);
-  return { tema:q.tema||"", prompt:q.prompt, show:q.show||null, choices, answer:choices.indexOf(correct), explain:q.explain||"" };
+  return { tema:q.tema||"", prompt:q.prompt, show:q.show||null, hideRo:!!q.hideRo, choices, answer:choices.indexOf(correct), explain:q.explain||"" };
 }
 function vocabQuestion(pool, w, tema){
   const others = shuffle(pool.filter(x=>x!==w && x.no!==w.no && x.jp!==w.jp)).slice(0,3);
@@ -539,6 +734,96 @@ function buildQuestions(stopIdx, mode){
   return shuffle(list);
 }
 
+/* --- Dagens utfordring: datostyrt utvalg --- */
+function hashStr(s){
+  let h = 2166136261;
+  for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function rngFrom(seed){
+  let a = seed >>> 0;
+  return function(){
+    a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function shuffleSeeded(arr, rand){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j = Math.floor(rand()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function parseDay(s){ const [y,m,d]=s.split("-").map(Number); return Date.UTC(y,m-1,d); }
+function pruneDailyHistory(hist, today){
+  const keep = {};
+  const t = parseDay(today);
+  Object.keys(hist||{}).forEach(d=>{
+    const diff = (t - parseDay(d))/86400000;
+    if(diff>=0 && diff<=21) keep[d]=hist[d];
+  });
+  return keep;
+}
+function usedIdsLastDays(hist, today, days){
+  const used = new Set();
+  const t = parseDay(today);
+  Object.keys(hist||{}).forEach(d=>{
+    if(d===today) return;
+    const diff = (t - parseDay(d))/86400000;
+    if(diff>0 && diff<=days) (hist[d]||[]).forEach(id=>used.add(id));
+  });
+  return used;
+}
+function pickDailyIds(dateStr, history){
+  const used = usedIdsLastDays(history, dateStr, DAILY_COOLDOWN_DAYS);
+  let pool = DAILY_POOL.filter(q=>!used.has(q.id));
+  if(pool.length < DAILY_N){
+    const last = {};
+    Object.keys(history||{}).forEach(d=>{
+      if(d===dateStr) return;
+      (history[d]||[]).forEach(id=>{ if(!last[id] || d>last[id]) last[id]=d; });
+    });
+    pool = DAILY_POOL.slice().sort((a,b)=>{
+      const da=last[a.id]||"0000", db=last[b.id]||"0000";
+      if(da!==db) return da<db ? -1 : 1;
+      return a.id<b.id ? -1 : 1;
+    });
+  }
+  const rand = rngFrom(hashStr("daily-"+dateStr));
+  const byCat = {};
+  pool.forEach(q=>{ (byCat[q.tema]=byCat[q.tema]||[]).push(q); });
+  const cats = shuffleSeeded(Object.keys(byCat), rand);
+  const picked = [];
+  const seen = new Set();
+  for(const c of cats){
+    if(picked.length>=DAILY_N) break;
+    const cand = shuffleSeeded(byCat[c], rand).find(q=>!seen.has(q.id));
+    if(cand){ picked.push(cand.id); seen.add(cand.id); }
+  }
+  const rest = shuffleSeeded(pool.filter(q=>!seen.has(q.id)), rand);
+  for(const q of rest){
+    if(picked.length>=DAILY_N) break;
+    picked.push(q.id); seen.add(q.id);
+  }
+  return picked;
+}
+function getTodayDaily(dateStr){
+  if(S.dailyDate===dateStr && Array.isArray(S.dailyIds) && S.dailyIds.length===DAILY_N) return S.dailyIds;
+  S.dailyHistory = pruneDailyHistory(S.dailyHistory||{}, dateStr);
+  const ids = pickDailyIds(dateStr, S.dailyHistory);
+  S.dailyDate = dateStr;
+  S.dailyIds = ids;
+  S.dailyHistory[dateStr] = ids;
+  save();
+  return ids;
+}
+function dailyQsFor(dateStr){
+  const byId = {};
+  DAILY_POOL.forEach(q=>{ byId[q.id]=q; });
+  return getTodayDaily(dateStr).map(id=>fromCustom(byId[id])).filter(Boolean);
+}
+
+
 /* =====================================================================
    SKJERMER
    ===================================================================== */
@@ -559,6 +844,23 @@ function renderHome(){
       <div class="stat"><b>${beltHTML(b)}</b><span>${esc(b.no)}</span></div>
     </div>
     ${playedToday ? "" : `<div class="card" style="background:#fff7ed;border:1px solid #fed7aa;padding:12px 14px"><b>Dagens kamp venter!</b> <span class="muted">Spill én kamp i dag for å holde streaken 🔥</span></div>`}
+    ${(()=>{
+        const done = S.dailyDone===today;
+        const last = S.dailyLast||{};
+        if(done){
+          return `<div class="card daily-card done">
+            <h3>⭐ Dagens utfordring</h3>
+            <p style="margin:4px 0"><b>Ferdig i dag!</b> ${last.correct||0}/${last.total||DAILY_N} riktige · +${last.points||0} poeng</p>
+            <p class="muted" style="margin:4px 0 8px">Kom tilbake i morgen for nye oppgaver!</p>
+            <button class="btn ghost" id="btnDailyReplay">Prøv igjen (ingen ekstra poeng)</button>
+          </div>`;
+        }
+        return `<div class="card daily-card">
+          <h3>⭐ Dagens utfordring</h3>
+          <p class="muted" style="margin:4px 0 8px">Åtte nye oppgaver i dag – judo, reise, mat og mer. Nytt sett i morgen!</p>
+          <button class="btn gold" id="btnDaily">⭐ Start dagens utfordring</button>
+        </div>`;
+      })()}
     <div class="card">
       <h2>🗾 Reisen: Tokyo → Sapporo</h2>
       <ul class="route">
@@ -582,6 +884,8 @@ function renderHome(){
   `;
   $("#btnFight").onclick = ()=> startMatch(allDone ? STOPS.length-1 : nextIdx, "stop");
   $("#btnWeek").onclick = ()=> startMatch(null, "week");
+  const bd = $("#btnDaily"); if(bd) bd.onclick = ()=> startDaily(false);
+  const br = $("#btnDailyReplay"); if(br) br.onclick = ()=> startDaily(true);
   app.querySelectorAll(".stop").forEach(el=>el.onclick=()=>{ const i=+el.dataset.stop; if(i<=S.stopsWon && i<STOPS.length) startMatch(i,"stop"); });
   window.scrollTo(0,0);
 }
@@ -695,6 +999,102 @@ function finishMatch(){
   };
 }
 
+
+let D = null; // dagens utfordring
+function startDaily(replay){
+  const today = dayStr();
+  const already = S.dailyDone===today;
+  D = { qs:dailyQsFor(today), qi:0, correct:0, gained:0, run:0, replay: already || !!replay, today, startedAt:Date.now() };
+  renderDailyQ();
+}
+function renderDailyQ(){
+  const q = D.qs[D.qi];
+  const hideRo = !!q.hideRo;
+  const n = D.qs.length;
+  app.innerHTML = `
+    <div class="topline"><button class="iconbtn" id="btnQuit" aria-label="Avslutt">✖</button><b>⭐ Dagens utfordring</b></div>
+    <div class="progress"><i style="width:${(D.qi/n)*100}%"></i></div>
+    <p class="muted" style="text-align:center;margin:0 0 10px">Oppgave ${D.qi+1} av ${n}${D.replay?" · øving (ingen ekstra poeng)":""}</p>
+    <div class="card">
+      <div class="qmeta"><span class="badge">${esc(q.tema||"Japansk")}</span><span>⭐ I dag</span></div>
+      <div class="prompt">${esc(q.prompt)}</div>
+      ${q.show ? `<div class="show">${jpHTML(q.show, hideRo)}${speakBtn(q.show.jp)}</div>` : ""}
+      <div class="choices">
+        ${q.choices.map((c,i)=>`<button class="choice" data-i="${i}">${choiceHTML(c, hideRo)}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  $("#btnQuit").onclick = ()=>{ if(confirm("Avslutte dagens utfordring?")) renderHome(); };
+  app.querySelectorAll(".choice").forEach(b=>b.onclick=()=>answerDaily(+b.dataset.i));
+  bindSpeak();
+  window.scrollTo(0,0);
+}
+function answerDaily(i){
+  const q = D.qs[D.qi];
+  const ok = i===q.answer;
+  app.querySelectorAll(".choice").forEach((b,j)=>{ b.disabled=true; if(j===q.answer) b.classList.add("right"); else if(j===i) b.classList.add("wrong"); });
+  if(!D.replay){ S.answered++; }
+  if(ok){
+    if(!D.replay) S.correct++;
+    D.correct++; D.run++;
+    const pts = 10 + (D.run>=3 ? 5 : 0);
+    if(!D.replay) D.gained += pts;
+    const ptsTxt = D.replay ? "Bra jobba!" : ((D.run>=3 ? "På rad! " : "Riktig! ") + "+"+pts);
+    flash((D.run>=3 ? "すごい!" : "やった!") + `<small>${ptsTxt}</small>`);
+  } else {
+    D.run=0;
+    app.querySelector(".card").classList.add("shake");
+  }
+  beep(ok);
+  const right = q.choices[q.answer];
+  const rightTxt = typeof right==="string" ? esc(right) : jpHTML(right, false);
+  const fb = $("#fb");
+  fb.className = "feedback " + (ok?"ok":"no");
+  const last = D.qi+1>=D.qs.length;
+  const sayTxt = typeof right==="string" ? (q.show? q.show.jp : null) : right.jp;
+  fb.innerHTML = `<b>${ok? "✅ Riktig! " + pick(["すごい!","いいね!","やった!","かんぺき!"]) : "❌ Ikke helt."}</b>
+    ${ok?"":`<div style="margin-top:6px">Riktig svar: ${rightTxt}</div>`}
+    ${q.explain?`<div style="margin-top:6px">💡 ${esc(q.explain)}</div>`:""}
+    ${sayTxt?`<div style="margin-top:6px">Hør: ${speakBtn(sayTxt)}</div>`:""}
+    <button class="btn ${ok?"green":"alt"}" id="btnNext" style="margin-top:10px">${last?"Se resultat":"Neste ➜"}</button>`;
+  bindSpeak();
+  $("#btnNext").onclick = ()=>{ if(last) finishDaily(); else { D.qi++; renderDailyQ(); } };
+  if(!D.replay) save();
+  fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+function finishDaily(){
+  const today=D.today, total=D.qs.length;
+  let awarded=0;
+  const first = !D.replay && S.dailyDone!==today;
+  if(first){
+    if(D.correct===total) D.gained += 20;
+    awarded = D.gained;
+    S.points += awarded;
+    S.dailyDone = today;
+    S.dailyLast = { date:today, correct:D.correct, total, points:awarded };
+    markPlayedToday();
+    save();
+  }
+  const perfect = D.correct===total;
+  app.innerHTML = `
+    <div class="card result daily-card ${first?"done":""}">
+      <div class="big">${perfect?"🌟":"⭐"}</div>
+      <h2>${first ? (perfect? "Perfekt i dag! かんぺき!":"Dagens utfordring er ferdig!") : "Øving ferdig!"}</h2>
+      <p>${D.correct} av ${total} riktige${first?` · <b>+${awarded} poeng</b>`:" · ingen ekstra poeng"}</p>
+      ${first && perfect ? `<p class="muted">Bonus for alle riktige: +20 poeng</p>`:""}
+      <p><b>Kom tilbake i morgen for nye oppgaver!</b></p>
+      <p class="muted">🔥 ${S.streak} dag(er) på rad · ⭐ ${S.points} poeng totalt</p>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="btnHome">🗾 Kartet</button>
+      <button class="btn gold" id="btnAgain">Prøv igjen (ingen ekstra poeng)</button>
+    </div>`;
+  if(first && perfect) beep(true);
+  $("#btnHome").onclick = renderHome;
+  $("#btnAgain").onclick = ()=> startDaily(true);
+}
+
+
 function renderSettings(){
   const ws = weekNums();
   app.innerHTML = `
@@ -734,6 +1134,8 @@ function renderWords(){
 
 $("#btnSettings").onclick = renderSettings;
 $("#btnWords").onclick = renderWords;
+window.__pickDailyIds = pickDailyIds;
+window.__DAILY_POOL = DAILY_POOL;
 renderHome();
 </script>
 </body>
