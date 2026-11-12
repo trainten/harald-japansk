@@ -44,7 +44,7 @@ header h1 small{display:block;font-weight:500;color:var(--muted);font-size:.8rem
 .stop .dot{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-size:1.3rem;background:#fff;border:3px solid #e5e7eb;z-index:1}
 .stop.done .dot{border-color:var(--ok);background:#ecfdf5}
 .stop.next .dot{border-color:var(--red);background:#fff1f1;animation:pulse 1.6s infinite}
-.stop.locked{opacity:.45;cursor:default}
+.stop.locked{opacity:.72;cursor:pointer}
 .stop .info{flex:1;min-width:0}
 .stop .info b{font-size:1rem}
 .stop .info .sub{font-size:.8rem;color:var(--muted)}
@@ -69,15 +69,15 @@ header h1 small{display:block;font-weight:500;color:var(--muted);font-size:.8rem
 .qmeta{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted);margin-bottom:6px}
 .badge{background:#fff1f1;color:var(--red);font-weight:700;padding:3px 9px;border-radius:99px}
 .prompt{font-size:1.08rem;line-height:1.4;margin:4px 0 10px;font-weight:600}
-.show{text-align:center;margin:10px 0 14px}
-.show .jp{font-size:2rem;font-weight:700}
+.show{text-align:center;margin:10px 0 14px;line-height:2.35;padding-top:6px}
+.show .jp{font-size:2rem;font-weight:700;line-height:2.35}
 .jp{font-family:"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP","Yu Gothic","Meiryo",system-ui,sans-serif}
 .kanji{display:inline-block;margin-left:6px;font-size:.75em;color:var(--muted);font-weight:500}
 .ro{display:block;font-size:.85rem;color:#2563eb;font-style:italic;font-weight:500;margin-top:2px}
 .speak{border:0;background:#eef2ff;border-radius:99px;padding:4px 10px;font-size:.9rem;cursor:pointer;margin-left:6px;vertical-align:middle}
 .choices{display:grid;gap:9px}
-.choice{border:2px solid #e5e7eb;background:#fff;border-radius:14px;padding:13px 12px;text-align:left;font-size:1rem;cursor:pointer;min-height:52px;color:var(--ink)}
-.choice .jp{font-size:1.15rem;font-weight:600}
+.choice{border:2px solid #e5e7eb;background:#fff;border-radius:14px;padding:16px 12px 12px;text-align:left;font-size:1rem;cursor:pointer;min-height:52px;color:var(--ink);line-height:1.85}
+.choice .jp{font-size:1.15rem;font-weight:600;line-height:1.85}
 .choice:disabled{cursor:default}
 .choice.right{border-color:var(--ok);background:#ecfdf5}
 .choice.wrong{border-color:var(--bad);background:#fef2f2}
@@ -102,7 +102,7 @@ select{font-size:1rem;padding:6px;border-radius:8px}
 .switch input:checked+span{background:var(--green)}
 .switch input:checked+span::before{transform:translateX(22px)}
 .wordlist{width:100%;border-collapse:collapse}
-.wordlist td{padding:7px 4px;border-bottom:1px solid #f1f1f1;vertical-align:middle}
+.wordlist td{padding:10px 4px 8px;border-bottom:1px solid #f1f1f1;vertical-align:middle}
 .wordlist .jp{font-size:1.1rem}
 h2{font-size:1.1rem;margin:4px 0 10px}
 .muted{color:var(--muted);font-size:.85rem}
@@ -116,6 +116,23 @@ h2{font-size:1.1rem;margin:4px 0 10px}
 .daily-card{background:linear-gradient(180deg,#fff7ed,#fff);border:1px solid #fed7aa}
 .daily-card.done{background:linear-gradient(180deg,#ecfdf5,#fff);border:1px solid #a7f3d0}
 .daily-card h3{margin:0 0 6px;font-size:1.05rem}
+
+ruby{ruby-position:over;ruby-align:center;white-space:nowrap}
+rt{font-size:.5em;font-weight:600;color:#4b5563;font-style:normal;line-height:1.05;font-family:inherit}
+.choice,.wordlist td{overflow-wrap:break-word}
+.facts li{line-height:1.85;word-break:keep-all}
+.placegrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.place{border:2px solid #e5e7eb;border-radius:16px;padding:12px 8px 10px;text-align:center;background:#fff;cursor:pointer;position:relative}
+.place:active{transform:translateY(1px)}
+.place .ico{font-size:2rem}
+.place b{display:block;margin-top:4px}
+.place .sub{font-size:.75rem;color:var(--muted);min-height:2.2em}
+.place.picked{border-color:var(--gold);background:#fff7ed}
+.place .infoi{position:absolute;top:6px;right:6px;border:0;background:#eef2ff;border-radius:99px;width:28px;height:28px;cursor:pointer;font-size:.9rem}
+.facts{margin:0;padding-left:1.15em}
+.facts li{margin:0 0 8px;line-height:1.45}
+.wish-banner{background:linear-gradient(180deg,#eef2ff,#fff);border:1px solid #c7d2fe;border-radius:var(--radius);padding:12px 14px;margin-bottom:12px}
+.maphint{text-align:center;margin:8px 0 0}
 </style>
 </head>
 <body>
@@ -607,6 +624,509 @@ const DAILY_POOL = [
 ];
 const DAILY_N = 8;
 const DAILY_COOLDOWN_DAYS = 14;
+const DEST_N = 3;
+
+/* Reisemål: info, ønskeliste og destinasjonsspørsmål */
+const PLACES = [
+  {id:"tokyo",name:"Tokyo",jp:"とうきょう",kanji:"東京",ro:"Tōkyō",icon:"🗼",journey:true,sub:"Judoens hjemby – Kōdōkan",facts:["Tokyo er hovedstaden i Japan. Navnet 東京 betyr «østlig hovedstad».","Judoens hjem, Kōdōkan (講道館), ble startet her i 1882 av Kanō Jigorō. Den finnes fortsatt.","Tokyo Skytree er et 634 meter høyt tårn der du kan se ut over byen.","I Asakusa ligger Sensō-ji, et av Tokyos eldste templer, med en stor lanterne i porten.","Shibuya er kjent for et stort fotgjengerfelt der mange mennesker krysser samtidig.","Keiseren bor i Det keiserlige palasset, midt i byen, med en stor park rundt."],words:[{no:"Tokyo",jp:"とうきょう",kanji:"東京",ro:"Tōkyō"},{no:"treningssal",jp:"どうじょう",kanji:"道場",ro:"dōjō"},{no:"tog",jp:"でんしゃ",kanji:"電車",ro:"densha"},{no:"stasjon",jp:"えき",kanji:"駅",ro:"eki"},{no:"tårn",jp:"タワー",ro:"tawā"}],questions:[{id:"dest-tokyo-01",tema:"Tokyo",prompt:"Hvordan skrives Tokyo med kanji?",choices:[{jp:"とうきょう",ro:"Tōkyō",kanji:"東京"},{jp:"きょうと",ro:"Kyōto",kanji:"京都"},{jp:"おおさか",ro:"Ōsaka",kanji:"大阪"},{jp:"さっぽろ",ro:"Sapporo",kanji:"札幌"}],explain:"東京 = Tokyo. 東 betyr øst, 京 betyr hovedstad."},{id:"dest-tokyo-02",tema:"Tokyo",prompt:"Judoens viktigste dojo, Kōdōkan (講道館), ligger i:",choices:["Tokyo","Kyoto","Osaka","Sapporo"],explain:"Kōdōkan i Tokyo ble grunnlagt i 1882 av Kanō Jigorō. Det er judoens hjem."},{id:"dest-tokyo-03",tema:"Tokyo",prompt:"Det høye tårnet i Tokyo der du kan se ut over byen, heter:",choices:["Tokyo Skytree","Kinkaku-ji","Tōdai-ji","Tōshō-gū"],explain:"Tokyo Skytree er 634 meter høyt. Fra toppen ser du vida rundt – og av og til Fuji."},{id:"dest-tokyo-04",tema:"Tokyo",prompt:"Sensō-ji i Asakusa er kjent som:",choices:["et av Tokyos eldste templer","et slott av gull","en judoklubb","en flyplass"],explain:"浅草寺 (Sensō-ji) i Asakusa har en stor rød lanterne i porten. Mange går dit for å se og be."},{id:"dest-tokyo-05",tema:"Tokyo",prompt:"Hvordan sier du «Jeg er i Tokyo»?",choices:[{jp:"とうきょうに います。",ro:"Tōkyō ni imasu."},{jp:"とうきょうを たべます。",ro:"Tōkyō o tabemasu."},{jp:"とうきょうは ねこです。",ro:"Tōkyō wa neko desu."},{jp:"とうきょうから ねます。",ro:"Tōkyō kara nemasu."}],explain:"に います = er i / befinner seg i. とうきょうに います。"},{id:"dest-tokyo-06",tema:"Tokyo",prompt:"Shibuya er spesielt kjent for:",choices:["et stort fotgjengerfelt med mange mennesker","en isbre","en ørken","en undersjøisk tunnel til Amerika"],explain:"I Shibuya krysser folk fra mange kanter samtidig. Det er et av de mest kjente stedene i Tokyo."},{id:"dest-tokyo-07",tema:"Tokyo",prompt:"Hvordan spør du «Hvor er Skytree?»",choices:[{jp:"スカイツリーは どこですか。",ro:"Sukaitorī wa doko desu ka."},{jp:"スカイツリーを ください。",ro:"Sukaitorī o kudasai."},{jp:"スカイツリーは おいしいです。",ro:"Sukaitorī wa oishii desu."},{jp:"スカイツリー、はじめ!",ro:"Sukaitorī, hajime!"}],explain:"〜は どこですか = hvor er …? Nyttig foran et kjent landemerke."},{id:"dest-tokyo-08",tema:"Tokyo",prompt:"Hvem bor i Det keiserlige palasset i Tokyo?",choices:["Keiseren","Dommeren i judo","Kapteinen på lyntoget","Ordføreren i Kyoto"],explain:"Palasset ligger midt i Tokyo, med vollgraver og park rundt. Det er keiserfamiliens hjem."},{id:"dest-tokyo-09",tema:"Tokyo",prompt:"Hva betyr kanjiene 東京?",choices:["østlig hovedstad","vestlig tempel","sørlig slott","nordlig fjell"],explain:"東 = øst, 京 = hovedstad. Før het byen Edo. Navnet Tokyo kom da hovedstaden ble flyttet hit."}]},
+  {id:"kyoto",name:"Kyoto",jp:"きょうと",kanji:"京都",ro:"Kyōto",icon:"⛩️",journey:true,sub:"Templer og gamle gater",facts:["Kyoto var Japans hovedstad i over tusen år, fra 794 til 1868.","Byen er kjent for templer og helligdommer, blant annet Kinkaku-ji (Det gylne paviljongen).","Ved Fushimi Inari står tusenvis av oransjerøde torii-porter oppover fjellet.","Kiyomizu-dera er et stort tempel med en treterrasse som ser ut over byen.","I bydelen Gion kan du se tradisjonell klesdrakt, musikk og dans.","Kyoto er også kjent for grønn te og fin, milde smaker i maten."],words:[{no:"Kyoto",jp:"きょうと",kanji:"京都",ro:"Kyōto"},{no:"tempel",jp:"てら",kanji:"寺",ro:"tera"},{no:"helligdom",jp:"じんじゃ",kanji:"神社",ro:"jinja"},{no:"port (torii)",jp:"とりい",kanji:"鳥居",ro:"torii"},{no:"grønn te / matcha",jp:"まっちゃ",kanji:"抹茶",ro:"maccha"}],questions:[{id:"dest-kyoto-01",tema:"Kyoto",prompt:"Hvordan skrives Kyoto med kanji?",choices:[{jp:"きょうと",ro:"Kyōto",kanji:"京都"},{jp:"とうきょう",ro:"Tōkyō",kanji:"東京"},{jp:"なら",ro:"Nara",kanji:"奈良"},{jp:"こうべ",ro:"Kōbe",kanji:"神戸"}],explain:"京都 = Kyoto. 京 = hovedstad, 都 = by. Kyoto var hovedstad i over tusen år."},{id:"dest-kyoto-02",tema:"Kyoto",prompt:"Kinkaku-ji er kjent som:",choices:["Det gylne paviljongen","Det høye tårnet i Tokyo","En judohall","Et lyntog"],explain:"金閣寺 (Kinkaku-ji) er et tempel der øverste etasjer er dekket med bladgull. Det speiler seg i dammen foran."},{id:"dest-kyoto-03",tema:"Kyoto",prompt:"Fushimi Inari er spesielt kjent for:",choices:["tusenvis av oransjerøde torii-porter","en skibakke","en flyplass","et fotballstadion"],explain:"Fushimi Inari-helligdommen har lange rekker av røde porter oppover fjellet. Et av Kyotos mest kjente syn."},{id:"dest-kyoto-04",tema:"Kyoto",prompt:"Kyoto var Japans hovedstad fra 794 til:",choices:["1868","1945","1882","1972"],explain:"I 1868 ble hovedstaden flyttet til Tokyo. Kyoto har likevel beholdt mange gamle templer og gater."},{id:"dest-kyoto-05",tema:"Kyoto",prompt:"Kiyomizu-dera er et tempel med:",choices:["en stor treterrasse med utsikt over byen","en innendørs skøytebane","et undervannshotell","en ørkenhage"],explain:"清水寺 (Kiyomizu-dera) betyr omtrent «rent vann-tempelet». Terrassen er bygd i tre og er svært kjent."},{id:"dest-kyoto-06",tema:"Kyoto",prompt:"Hvordan spør du «Hvor er helligdommen?»",choices:[{jp:"じんじゃは どこですか。",ro:"Jinja wa doko desu ka."},{jp:"じんじゃを たべます。",ro:"Jinja o tabemasu."},{jp:"じんじゃは さむいです。",ro:"Jinja wa samui desu."},{jp:"じんじゃ、がんばって。",ro:"Jinja, ganbatte."}],explain:"じんじゃ (神社) = shinto-helligdom. てら (寺) = buddhistisk tempel."},{id:"dest-kyoto-07",tema:"Kyoto",prompt:"Gion i Kyoto er en bydel kjent for:",choices:["tradisjonell klesdrakt, musikk og dans","alpineski","bilsport","en stor fiskeflåte"],explain:"I Gion kan du se gamle trehus og tradisjonell kultur. Gå rolig og vis respekt hvis du møter noen i arbeid der."},{id:"dest-kyoto-08",tema:"Kyoto",prompt:"Kyoto er også kjent for denne drikken:",choices:[{jp:"まっちゃ",ro:"maccha",kanji:"抹茶"},{jp:"コーヒー",ro:"kōhī"},{jp:"ジュース",ro:"jūsu"},{jp:"ミルク",ro:"miruku"}],explain:"抹茶 (maccha) er finmalt grønn te. Kyoto har lange tradisjoner med teseremoni."},{id:"dest-kyoto-09",tema:"Kyoto",prompt:"Hvordan sier du «Her er Kyoto»?",choices:[{jp:"ここは きょうとです。",ro:"Koko wa Kyōto desu."},{jp:"ここは きょうとを のみます。",ro:"Koko wa Kyōto o nomimasu."},{jp:"きょうとは ねこです。",ro:"Kyōto wa neko desu."},{jp:"きょうと、おやすみ。",ro:"Kyōto, oyasumi."}],explain:"ここは 〜です = her er … / dette stedet er …"}]},
+  {id:"osaka",name:"Osaka",jp:"おおさか",kanji:"大阪",ro:"Ōsaka",icon:"🐙",journey:true,sub:"Japans matbu – takoyaki!",facts:["Osaka kalles ofte «Japans kjøkken» fordi byen er kjent for gate mat og god, uhøytidelig mat.","Takoyaki – små stekte kuler med blekksprut – kommer herfra.","Dōtonbori er en kjent gate med mange lysskilt, matboder og den berømte Glico-mannen som løper.","Osaka-jø (大阪城), Osaka-slottet, har en stor park rundt seg og er et landemerke i byen.","I Osaka-okonomiyaki røres ingrediensene sammen i røren før den stekes som en tykk pannekake.","Fornøyelsesparken Universal Studios Japan ligger i Osaka – kjent blant barn og unge."],words:[{no:"Osaka",jp:"おおさか",kanji:"大阪",ro:"Ōsaka"},{no:"takoyaki",jp:"たこやき",kanji:"たこ焼き",ro:"takoyaki"},{no:"slott",jp:"しろ",kanji:"城",ro:"shiro"},{no:"godt / deilig",jp:"おいしい",kanji:"美味しい",ro:"oishii"},{no:"kjøkken / mat",jp:"キッチン",ro:"kitchin"}],questions:[{id:"dest-osaka-01",tema:"Osaka",prompt:"Hvordan skrives Osaka med kanji?",choices:[{jp:"おおさか",ro:"Ōsaka",kanji:"大阪"},{jp:"とうきょう",ro:"Tōkyō",kanji:"東京"},{jp:"こうべ",ro:"Kōbe",kanji:"神戸"},{jp:"なごや",ro:"Nagoya",kanji:"名古屋"}],explain:"大阪 = Osaka. En stor by vest i Japan, ikke langt fra Kyoto og Kobe."},{id:"dest-osaka-02",tema:"Osaka",prompt:"Hvorfor kalles Osaka ofte «Japans kjøkken»?",choices:["Byen er kjent for mye god og uhøytidelig mat","Der dyrkes all risen i Japan","Der ligger keiserpalasset","Der starter alle lyntog"],explain:"Osaka har et rykte for å elske mat. Takoyaki og okonomiyaki er typiske smaker fra byen."},{id:"dest-osaka-03",tema:"Osaka",prompt:"Dōtonbori i Osaka er kjent for:",choices:["lys, skilt og masse matboder","en stille bambusskog","en isbre","et keiserpalass"],explain:"道頓堀 (Dōtonbori) er en livlig gate ved kanalen, med store skilt – blant annet Glico-mannen som løper."},{id:"dest-osaka-04",tema:"Osaka",prompt:"Osaka-slottet heter på japansk:",choices:[{jp:"おおさかじょう",ro:"Ōsakajō",kanji:"大阪城"},{jp:"なごやじょう",ro:"Nagoyajō"},{jp:"しろくじょ",ro:"Shirokujo"},{jp:"やまのしろ",ro:"Yama no shiro"}],explain:"城 (じょう) = slott når det står bak et stedsnavn. 大阪城 er et kjent landemerke med park rundt."},{id:"dest-osaka-05",tema:"Osaka",prompt:"Hva er typisk for Osaka-okonomiyaki?",choices:["Ingrediensene røres sammen i røren før den stekes","Den lages bare av is","Den spises bare til frokost i skibakken","Den er alltid søt"],explain:"I Osaka blandes kål og mer i røren. I Hiroshima legges ingrediensene ofte i lag i stedet."},{id:"dest-osaka-06",tema:"Osaka",prompt:"En kjent fornøyelsespark i Osaka er:",choices:["Universal Studios Japan","Kōdōkan","Kenroku-en","Tōshō-gū"],explain:"Universal Studios Japan ligger i Osaka og er et populært sted for familier."},{id:"dest-osaka-07",tema:"Osaka",prompt:"Du er sulten i Osaka. Hva sier du?",choices:[{jp:"おなかが すきました。",ro:"Onaka ga sukimashita."},{jp:"ねむくないです。",ro:"Nemukunai desu."},{jp:"さむいです。",ro:"Samui desu."},{jp:"たかすぎます、ねこ。",ro:"Takasugimasu, neko."}],explain:"おなかが すきました = jeg er sulten. En nyttig setning i «Japans kjøkken»."},{id:"dest-osaka-08",tema:"Osaka",prompt:"Takoyaki kommer særlig fra Osaka. Hva er たこ?",choices:["blekksprut","ost","sjokolade","ris"],explain:"たこ = blekksprut, やき = stekt. Små, runde og ofte spist med pinne rett fra stova."},{id:"dest-osaka-09",tema:"Osaka",prompt:"Hvordan sier du «Jeg skal til Osaka»?",choices:[{jp:"おおさかに いきます。",ro:"Ōsaka ni ikimasu."},{jp:"おおさかを たべます。",ro:"Ōsaka o tabemasu."},{jp:"おおさかは いぬです。",ro:"Ōsaka wa inu desu."},{jp:"おおさかから ねます。",ro:"Ōsaka kara nemasu."}],explain:"に いきます = skal til / reiser til."}]},
+  {id:"hiroshima",name:"Hiroshima",jp:"ひろしま",kanji:"広島",ro:"Hiroshima",icon:"🕊️",journey:true,sub:"Fredsbyen og øya Miyajima",facts:["I 1945 ble Hiroshima rammet av en atombombe. I dag er byen en fredsby.","Fredsparken og Fredsmuseet minner om at krig aldri må skje igjen. Der står også Atombombe-domen.","På øya Miyajima (Itsukushima) står en kjent rød torii-port ute i vannet.","Hiroshima-okonomiyaki lages ofte i lag, med kål og nudler.","I byen kan du kjøre trikk gjennom gatene – en gammel og praktisk måte å reise på.","Bilmerket Mazda har røtter i Hiroshima."],words:[{no:"Hiroshima",jp:"ひろしま",kanji:"広島",ro:"Hiroshima"},{no:"fred",jp:"へいわ",kanji:"平和",ro:"heiwa"},{no:"øy",jp:"しま",kanji:"島",ro:"shima"},{no:"port (torii)",jp:"とりい",kanji:"鳥居",ro:"torii"},{no:"trikk",jp:"でんしゃ",kanji:"電車",ro:"densha"}],questions:[{id:"dest-hiroshima-01",tema:"Hiroshima",prompt:"Hvordan skrives Hiroshima med kanji?",choices:[{jp:"ひろしま",ro:"Hiroshima",kanji:"広島"},{jp:"ふくおか",ro:"Fukuoka",kanji:"福岡"},{jp:"かなざわ",ro:"Kanazawa",kanji:"金沢"},{jp:"おきなわ",ro:"Okinawa",kanji:"沖縄"}],explain:"広島 = Hiroshima. 広 kan bety vid, 島 betyr øy."},{id:"dest-hiroshima-02",tema:"Hiroshima",prompt:"Hvorfor kalles Hiroshima en fredsby?",choices:["Byen jobber for fred etter atombomben i 1945","Der ble judo oppfunnet","Der bor keiseren","Der er det aldri regn"],explain:"Fredsparken, museet og Atombombe-domen minner oss om hvor viktig fred er. へいわ = fred."},{id:"dest-hiroshima-03",tema:"Hiroshima",prompt:"Øya med den røde porten i vannet heter:",choices:["Miyajima (Itsukushima)","Shibuya","Nara-parken","Lake Ashi"],explain:"宮島 (Miyajima), også kalt Itsukushima, er kjent for torii-porten som står i sjøen."},{id:"dest-hiroshima-04",tema:"Hiroshima",prompt:"Hva er typisk for Hiroshima-okonomiyaki?",choices:["Den lages i lag, ofte med kål og nudler","Den er bare søt is","Den lages uten plate","Den kommer fra Sapporo"],explain:"I Hiroshima bygger kokken lag på lag. I Osaka røres det mer sammen. Begge er gode – bare ulike stiler."},{id:"dest-hiroshima-05",tema:"Hiroshima",prompt:"I gatene i Hiroshima kan du fortsatt kjøre:",choices:["trikk","hundespann","underjordisk båt","taktog gjennom ørkenen"],explain:"Trikken er en praktisk og gammel del av bybildet. På japansk er det en type でんしゃ."},{id:"dest-hiroshima-06",tema:"Hiroshima",prompt:"Hvordan sier du «fred» på japansk?",choices:[{jp:"へいわ",ro:"heiwa",kanji:"平和"},{jp:"せんそう",ro:"sensō"},{jp:"かぜ",ro:"kaze"},{jp:"やま",ro:"yama"}],explain:"平和 (へいわ) = fred. Et viktig ord i Hiroshima."},{id:"dest-hiroshima-07",tema:"Hiroshima",prompt:"Hvordan sier du «Jeg skal til Hiroshima»?",choices:[{jp:"ひろしまに いきます。",ro:"Hiroshima ni ikimasu."},{jp:"ひろしまを のみます。",ro:"Hiroshima o nomimasu."},{jp:"ひろしまは ボールです。",ro:"Hiroshima wa bōru desu."},{jp:"ひろしま、おやすみ。",ro:"Hiroshima, oyasumi."}],explain:"に いきます = skal til."},{id:"dest-hiroshima-08",tema:"Hiroshima",prompt:"Hvilken kjent bilprodusent har røtter i Hiroshima?",choices:["Mazda","Toyota (hovedkontor i Aichi, nær Nagoya)","Volvo","Ferrari"],explain:"Mazda har sterk tilknytning til Hiroshima. (Toyota hører mer til området rundt Nagoya.)"},{id:"dest-hiroshima-09",tema:"Hiroshima",prompt:"Hva betyr 島 i navnet 広島 og i 宮島?",choices:["øy","fjell","elv","bro"],explain:"島 = øy. Du ser det både i Hiroshima og i Miyajima."}]},
+  {id:"fukuoka",name:"Fukuoka",jp:"ふくおか",kanji:"福岡",ro:"Fukuoka",icon:"🍜",journey:true,sub:"Hjembyen til Hakata-ramen",facts:["Fukuoka er en stor by på øya Kyūshū, sør-vest i Japan.","Byen er kjent for Hakata-ramen, ofte med kraftig suppe av svinebein (tonkotsu).","Om kvelden kan du se yatai – små, åpne matboder langs elva og gatene.","Hakata er det gamle navnet på den ene delen av byen, og brukes fortsatt om stasjonen og ramenen.","Hakata Gion Yamakasa er en kjent festival der lag bærer store, pyntede vogner gjennom byen.","Mentaiko – krydret torskerogn – er en typisk smak fra Fukuoka."],words:[{no:"Fukuoka",jp:"ふくおか",kanji:"福岡",ro:"Fukuoka"},{no:"Hakata",jp:"はかた",kanji:"博多",ro:"Hakata"},{no:"matbod (yatai)",jp:"やたい",kanji:"屋台",ro:"yatai"},{no:"ramen",jp:"ラーメン",ro:"rāmen"},{no:"øy",jp:"しま",kanji:"島",ro:"shima"}],questions:[{id:"dest-fukuoka-01",tema:"Fukuoka",prompt:"Hvordan skrives Fukuoka med kanji?",choices:[{jp:"ふくおか",ro:"Fukuoka",kanji:"福岡"},{jp:"ひろしま",ro:"Hiroshima",kanji:"広島"},{jp:"さっぽろ",ro:"Sapporo",kanji:"札幌"},{jp:"なごや",ro:"Nagoya",kanji:"名古屋"}],explain:"福岡 = Fukuoka. En stor by på Kyūshū."},{id:"dest-fukuoka-02",tema:"Fukuoka",prompt:"Hakata-ramen fra Fukuoka er ofte:",choices:["kraftig, laget på svinebein (tonkotsu)","helt uten suppe","en type is","en søt kake"],explain:"とんこつラーメン er kjent fra Hakata/Fukuoka: hvit, kraftig suppe og tynne nudler."},{id:"dest-fukuoka-03",tema:"Fukuoka",prompt:"Hva er やたい (屋台) i Fukuoka?",choices:["små, åpne matboder utendørs","et slott","en skiheis","en type lyntog"],explain:"屋台 er typiske for Fukuoka, særlig om kvelden ved elva. Du kan sitte og spise ramen under taket."},{id:"dest-fukuoka-04",tema:"Fukuoka",prompt:"Fukuoka ligger på øya:",choices:["Kyūshū","Hokkaidō","Okinawa","Shikoku"],explain:"Kyūshū er den sørvestlige av Japans hovedøyer. Fukuoka er en inngangsbom til øya."},{id:"dest-fukuoka-05",tema:"Fukuoka",prompt:"Hakata Gion Yamakasa er:",choices:["en kjent festival i Fukuoka","et fjell i Tokyo","en type sushi","et judokast"],explain:"Under festivalen bærer lag store, pyntede vogner gjennom gatene. Hakata er et gammelt navn som fortsatt brukes."},{id:"dest-fukuoka-06",tema:"Fukuoka",prompt:"En typisk smak fra Fukuoka er mentaiko. Hva er det?",choices:["krydret torskerogn","grillet ål i sjokolade","en iskrem med te","tørket eple"],explain:"明太子 (mentaiko) er en kjent spesialitet fra Fukuoka, ofte spist med ris eller i pasta."},{id:"dest-fukuoka-07",tema:"Fukuoka",prompt:"Hvordan spør du «Hvor er matboden?»",choices:[{jp:"やたいは どこですか。",ro:"Yatai wa doko desu ka."},{jp:"やたいを きります。",ro:"Yatai o kirimasu."},{jp:"やたいは さむいね、いぬ。",ro:"Yatai wa samui ne, inu."},{jp:"やたい、おやすみ。",ro:"Yatai, oyasumi."}],explain:"やたいは どこですか = hvor er matboden?"},{id:"dest-fukuoka-08",tema:"Fukuoka",prompt:"Hvordan sier du «Jeg skal til Fukuoka»?",choices:[{jp:"ふくおかに いきます。",ro:"Fukuoka ni ikimasu."},{jp:"ふくおかを のみます。",ro:"Fukuoka o nomimasu."},{jp:"ふくおかは ぼーるです。",ro:"Fukuoka wa bōru desu."},{jp:"ふくおかから ねます。",ro:"Fukuoka kara nemasu."}],explain:"に いきます = skal til."},{id:"dest-fukuoka-09",tema:"Fukuoka",prompt:"Hakata er:",choices:["et gammelt navn som fortsatt brukes om en del av Fukuoka","et fjell på Hokkaido","keiserens slott i Tokyo","et annet ord for judo"],explain:"博多 (Hakata) er blant annet navnet på hovedstasjonen og på den kjente ramenen."}]},
+  {id:"sapporo",name:"Sapporo",jp:"さっぽろ",kanji:"札幌",ro:"Sapporo",icon:"❄️",journey:true,sub:"Snøfestival – finalen mot sensei",facts:["Sapporo er hovedstaden på Hokkaidō, Japans nordlige hovedøy.","Snøfestivalen (ゆきまつり) er kjent for store skulpturer av snø og is, som regel i februar.","Byen arrangerte vinter-OL i 1972.","Sapporo-ramen er ofte miso-ramen, med en fyldig, rødbrun suppe.","Klokketårnet (時計台) er et gammelt, trebygget landemerke midt i byen.","Soup curry – en suppe med karri og grønnsaker – er også en populær rett her."],words:[{no:"Sapporo",jp:"さっぽろ",kanji:"札幌",ro:"Sapporo"},{no:"snø",jp:"ゆき",kanji:"雪",ro:"yuki"},{no:"festival",jp:"まつり",kanji:"祭り",ro:"matsuri"},{no:"kaldt",jp:"さむい",kanji:"寒い",ro:"samui"},{no:"Hokkaido",jp:"ほっかいどう",kanji:"北海道",ro:"Hokkaidō"}],questions:[{id:"dest-sapporo-01",tema:"Sapporo",prompt:"Hvordan skrives Sapporo med kanji?",choices:[{jp:"さっぽろ",ro:"Sapporo",kanji:"札幌"},{jp:"とうきょう",ro:"Tōkyō",kanji:"東京"},{jp:"あおもり",ro:"Aomori",kanji:"青森"},{jp:"はこね",ro:"Hakone",kanji:"箱根"}],explain:"札幌 = Sapporo, hovedstaden på Hokkaidō."},{id:"dest-sapporo-02",tema:"Sapporo",prompt:"Sapporo-snøfestivalen er kjent for store skulpturer, som regel i:",choices:["februar","juli","oktober","mai"],explain:"ゆきまつり holdes om vinteren, vanligvis i februar, med store figurer av snø og is."},{id:"dest-sapporo-03",tema:"Sapporo",prompt:"Sapporo arrangerte vinter-OL i:",choices:["1972","1882","1868","1945"],explain:"I 1972 var Sapporo den første byen i Asia som arrangerte et vinter-OL."},{id:"dest-sapporo-04",tema:"Sapporo",prompt:"Sapporo-ramen er ofte:",choices:["miso-ramen","bare kald nuddel-salat","en type kake","uten nudler"],explain:"Miso gir en fyldig, rødbrun suppe. Hokkaidō er kjent for denne stilen."},{id:"dest-sapporo-05",tema:"Sapporo",prompt:"Sapporo er hovedstad på:",choices:[{jp:"ほっかいどう",ro:"Hokkaidō",kanji:"北海道"},{jp:"きゅうしゅう",ro:"Kyūshū",kanji:"九州"},{jp:"おきなわ",ro:"Okinawa",kanji:"沖縄"},{jp:"しこく",ro:"Shikoku",kanji:"四国"}],explain:"北海道 = Hokkaidō, den store øya i nord. Der kan det være skikkelig さむい om vinteren."},{id:"dest-sapporo-06",tema:"Sapporo",prompt:"Klokketårnet i Sapporo er:",choices:["et gammelt trebygning-landemerke midt i byen","et 634 meter høyt tårn","et slott av gull","en judohall"],explain:"時計台 (tokeidai) er lite og gammelt, og et kjent møtested i sentrum."},{id:"dest-sapporo-07",tema:"Sapporo",prompt:"En populær rett i Sapporo, ved siden av ramen, er:",choices:["soup curry","takoyaki (fra Osaka)","mentai-pasta fra Fukuoka","kaisike fra Kyoto"],explain:"Soup curry er en varm suppe med karri, grønnsaker og ofte kylling. God når det er kaldt!"},{id:"dest-sapporo-08",tema:"Sapporo",prompt:"Hvordan sier du «Jeg er i Sapporo»?",choices:[{jp:"さっぽろに います。",ro:"Sapporo ni imasu."},{jp:"さっぽろを たべます。",ro:"Sapporo o tabemasu."},{jp:"さっぽろは いすです。",ro:"Sapporo wa isu desu."},{jp:"さっぽろから ねます。",ro:"Sapporo kara nemasu."}],explain:"に います = er i."},{id:"dest-sapporo-09",tema:"Sapporo",prompt:"Hva betyr ゆき in ゆきまつり?",choices:["snø","regn","vind","blomst"],explain:"ゆき (雪) = snø, まつり (祭り) = festival. Snøfestivalen er Sapporos mest kjente feiring."}]},
+  {id:"nara",name:"Nara",jp:"なら",kanji:"奈良",ro:"Nara",icon:"🦌",journey:false,sub:"Hjorter og den store Buddha",facts:["Nara var Japans første faste hovedstad, kalt Heijō-kyō, fra 710 til 784.","I Nara-parken går sikahjort fritt blant folk. Mange av dem bøyer hodet når de vil ha en kjeks.","I tempelet Tōdai-ji sitter en enorm bronse-Buddha, kalt daibutsu (大仏).","Du kan kjøpe しかせんべい – spesielle kjeks som er laget til hjortene (ikke til oss).","Kasuga-taisha er en helligdom kjent for mange steinlykter langs stiene.","Nara ligger sør for Kyoto og er en typisk dagsutflukt derfra."],words:[{no:"Nara",jp:"なら",kanji:"奈良",ro:"Nara"},{no:"hjort",jp:"しか",kanji:"鹿",ro:"shika"},{no:"stor Buddha",jp:"だいぶつ",kanji:"大仏",ro:"daibutsu"},{no:"tempel",jp:"てら",kanji:"寺",ro:"tera"},{no:"park",jp:"こうえん",kanji:"公園",ro:"kōen"}],questions:[{id:"dest-nara-01",tema:"Nara",prompt:"Hvordan skrives Nara med kanji?",choices:[{jp:"なら",ro:"Nara",kanji:"奈良"},{jp:"きょうと",ro:"Kyōto",kanji:"京都"},{jp:"かまくら",ro:"Kamakura",kanji:"鎌倉"},{jp:"にっこう",ro:"Nikkō",kanji:"日光"}],explain:"奈良 = Nara. Japans første faste hovedstad lå her."},{id:"dest-nara-02",tema:"Nara",prompt:"Hva er spesielt med Nara-parken?",choices:["Sikahjort går fritt blant folk","Det er en innendørs skibakke","Der står Tokyo Skytree","Der ligger Kōdōkan"],explain:"Hjortene er en del av byens preg. Mange bøyer hodet – nesten som en liten れい – når de vil ha kjeks."},{id:"dest-nara-03",tema:"Nara",prompt:"Den store Buddha-statuen kalles:",choices:[{jp:"だいぶつ",ro:"daibutsu",kanji:"大仏"},{jp:"とりい",ro:"torii"},{jp:"おんせん",ro:"onsen"},{jp:"やたい",ro:"yatai"}],explain:"大仏 = stor Buddha. I Tōdai-ji i Nara sitter en veldig stor statue av bronse."},{id:"dest-nara-04",tema:"Nara",prompt:"Nara var Japans første faste hovedstad fra 710 til:",choices:["784","1868","1945","1972"],explain:"Hovedstaden het Heijō-kyō. I 794 ble hovedstaden flyttet til Kyoto."},{id:"dest-nara-05",tema:"Nara",prompt:"Hvordan sier du «hjort» på japansk?",choices:[{jp:"しか",ro:"shika",kanji:"鹿"},{jp:"ねこ",ro:"neko"},{jp:"いぬ",ro:"inu"},{jp:"とり",ro:"tori"}],explain:"鹿 (しか) = hjort. Kjeksene heter しかせんべい."},{id:"dest-nara-06",tema:"Nara",prompt:"しかせんべい er:",choices:["spesielle kjeks til hjortene","en type sushi","et judobelte","et lyntog"],explain:"Kjøp dem i parken og gi dem rolig til hjorten. De er ikke ment som snack til mennesker."},{id:"dest-nara-07",tema:"Nara",prompt:"Tempelet med den store Buddha i Nara heter:",choices:["Tōdai-ji","Kinkaku-ji","Kōdōkan","Tōshō-gū"],explain:"東大寺 (Tōdai-ji) er et av Japans mest kjente templer, nettopp på grunn av daibutsu."},{id:"dest-nara-08",tema:"Nara",prompt:"Hvordan sier du «Jeg skal til Nara»?",choices:[{jp:"ならに いきます。",ro:"Nara ni ikimasu."},{jp:"ならを たべます。",ro:"Nara o tabemasu."},{jp:"ならは ボールです。",ro:"Nara wa bōru desu."},{jp:"ならから ねます。",ro:"Nara kara nemasu."}],explain:"に いきます = skal til. Nara er en lett tur fra Kyoto."},{id:"dest-nara-09",tema:"Nara",prompt:"Kasuga-taisha i Nara er kjent for:",choices:["mange steinlykter langs stiene","en innendørs skiheis","et fiskemarked på taket","et fotballmuseum"],explain:"Kasuga-taisha er en gammel helligdom. Steinlyktene tennes ved spesielle anledninger."}]},
+  {id:"okinawa",name:"Okinawa",jp:"おきなわ",kanji:"沖縄",ro:"Okinawa",icon:"🏖️",journey:false,sub:"Øyer, hav og karate",facts:["Okinawa er en øygruppe sør i Japan, med varmt klima og fine strender.","Karate oppstod her, i det gamle Ryūkyū-riket, før det spredte seg til resten av Japan og verden.","På tak og porter ser du ofte shīsā (シーサー) – løve-hund-figurer som skal beskytte huset.","Shurijō i Naha er et kjent slott fra Ryūkyū-riket. Det har blitt bygd opp igjen etter branner.","Okinawa-soba er ikke de samme tynne bokhvete-nudlene som på hovedøyene, men tykkere hvetenudler i suppe.","Havet rundt øyene er turkost, og うみ (hav) er et viktig ord her."],words:[{no:"Okinawa",jp:"おきなわ",kanji:"沖縄",ro:"Okinawa"},{no:"hav",jp:"うみ",kanji:"海",ro:"umi"},{no:"øy",jp:"しま",kanji:"島",ro:"shima"},{no:"slott",jp:"しろ",kanji:"城",ro:"shiro"},{no:"karate",jp:"からて",kanji:"空手",ro:"karate"}],questions:[{id:"dest-okinawa-01",tema:"Okinawa",prompt:"Hvordan skrives Okinawa med kanji?",choices:[{jp:"おきなわ",ro:"Okinawa",kanji:"沖縄"},{jp:"ほっかいどう",ro:"Hokkaidō",kanji:"北海道"},{jp:"ふくおか",ro:"Fukuoka",kanji:"福岡"},{jp:"なら",ro:"Nara",kanji:"奈良"}],explain:"沖縄 = Okinawa, øygruppen langt sør i Japan."},{id:"dest-okinawa-02",tema:"Okinawa",prompt:"Hvilken kampsport oppstod i Okinawa?",choices:["karate","judo (grunnlagt i Tokyo)","sumo i Edo-slottet","alpin ski"],explain:"空手 (karate) har røtter i Ryūkyū/Okinawa. Judo ble grunnlagt av Kanō Jigorō i Tokyo."},{id:"dest-okinawa-03",tema:"Okinawa",prompt:"Hva er シーサー (shīsā) i Okinawa?",choices:["løve-hund-figurer som skal beskytte huset","en type lyntog","et judokast","en iskrem"],explain:"Du ser dem ofte i par på tak og ved porter: én med åpen munn og én med lukket."},{id:"dest-okinawa-04",tema:"Okinawa",prompt:"Shurijō i Naha er:",choices:["et kjent slott fra Ryūkyū-riket","Tokyo Skytree","Kōdōkan","en skiheis"],explain:"首里城 har blitt ødelagt og bygd opp igjen flere ganger, sist etter en brann i 2019. Det er likevel et viktig symbol."},{id:"dest-okinawa-05",tema:"Okinawa",prompt:"Hvordan sier du «hav» på japansk?",choices:[{jp:"うみ",ro:"umi",kanji:"海"},{jp:"やま",ro:"yama"},{jp:"かわ",ro:"kawa"},{jp:"もり",ro:"mori"}],explain:"海 (うみ) = hav. Et naturlig ord å lære når du tenker på Okinawa."},{id:"dest-okinawa-06",tema:"Okinawa",prompt:"Okinawa-soba er:",choices:["tykkere hvetenudler i suppe","de samme tynne bokhvete-nudlene som i Tokyo","en type kake","grillet fisk uten nudel"],explain:"Navnet «soba» kan være forvirrende. På Okinawa er det en egen, lokal nudelrett."},{id:"dest-okinawa-07",tema:"Okinawa",prompt:"Hvordan sier du «Jeg skal til Okinawa»?",choices:[{jp:"おきなわに いきます。",ro:"Okinawa ni ikimasu."},{jp:"おきなわを たべます。",ro:"Okinawa o tabemasu."},{jp:"おきなわは いぬです。",ro:"Okinawa wa inu desu."},{jp:"おきなわから ねます。",ro:"Okinawa kara nemasu."}],explain:"に いきます = skal til. Dit reiser de fleste med fly."},{id:"dest-okinawa-08",tema:"Okinawa",prompt:"På Okinawa hører du av og til はいさい. Det er:",choices:["en måte å si hei på i den lokale dialekten","et judokast","et fjell","en type belte"],explain:"はいさい brukes som hilsen i Okinawa. På standardspråket sier du こんにちは."},{id:"dest-okinawa-09",tema:"Okinawa",prompt:"Hvordan skriver du karate med kanji?",choices:[{jp:"からて",ro:"karate",kanji:"空手"},{jp:"じゅうどう",ro:"jūdō",kanji:"柔道"},{jp:"すもう",ro:"sumō"},{jp:"けんどう",ro:"kendō",kanji:"剣道"}],explain:"空手 betyr omtrent «tom hånd». 柔道 = judo, «den myke veien»."}]},
+  {id:"nikko",name:"Nikkō",jp:"にっこう",kanji:"日光",ro:"Nikkō",icon:"🌲",journey:false,sub:"Helligdommer blant sedertre",facts:["Nikkō ligger nord for Tokyo, i fjellene i Tochigi.","Tōshō-gū er en rikt pyntet helligdom for shogunen Tokugawa Ieyasu.","Et gammelt ordtak sier: «Si ikke kekkō (flott nok) før du har sett Nikkō.»","Blant treskjæringene på Tōshō-gū finner du de tre apene som ikke ser, hører eller sier noe ondt – og den lille sovende katten.","Kegon-fossen og innsjøen Chūzenji ligger like ved, oppe i fjellet.","Navnet 日光 betyr omtrent «sollys»: 日 = sol, 光 = lys."],words:[{no:"Nikkō",jp:"にっこう",kanji:"日光",ro:"Nikkō"},{no:"lys",jp:"ひかり",kanji:"光",ro:"hikari"},{no:"sol / dag",jp:"ひ",kanji:"日",ro:"hi"},{no:"fossefall",jp:"たき",kanji:"滝",ro:"taki"},{no:"helligdom",jp:"じんじゃ",kanji:"神社",ro:"jinja"}],questions:[{id:"dest-nikko-01",tema:"Nikkō",prompt:"Hvordan skrives Nikkō med kanji?",choices:[{jp:"にっこう",ro:"Nikkō",kanji:"日光"},{jp:"とうきょう",ro:"Tōkyō",kanji:"東京"},{jp:"きょうと",ro:"Kyōto",kanji:"京都"},{jp:"はこね",ro:"Hakone",kanji:"箱根"}],explain:"日光 = Nikkō. 日 = sol, 光 = lys."},{id:"dest-nikko-02",tema:"Nikkō",prompt:"Tōshō-gū i Nikkō er en helligdom for:",choices:["Tokugawa Ieyasu","Kanō Jigorō","keiseren som bor i Tokyo","oppfinneren av takoyaki"],explain:"Tōshō-gū er rikt utskåret og malt. Ieyasu var grunnleggeren av Tokugawa-shogunatet."},{id:"dest-nikko-03",tema:"Nikkō",prompt:"Det gamle ordtaket om Nikkō sier omtrent:",choices:["Si ikke «flott nok» før du har sett Nikkō","Løp forbi uten å se deg tilbake","Bare reis dit om sommeren","Der er det aldri regn"],explain:"「日光を見ずして結構と言うなかれ」 – et klassisk rosende ordtak om stedet."},{id:"dest-nikko-04",tema:"Nikkō",prompt:"På Tōshō-gū kan du finne en kjent treskjæring av:",choices:["tre aper som ikke ser, hører eller sier noe ondt","en jumbo-jet","en fotball","et lyntog"],explain:"De tre apene er et kjent motiv. Der finnes også en liten «sovende katt»."},{id:"dest-nikko-05",tema:"Nikkō",prompt:"Hva betyr 光 (ひかり)?",choices:["lys","mørke","vind","salt"],explain:"光 = lys. Det er det andre tegnet i 日光."},{id:"dest-nikko-06",tema:"Nikkō",prompt:"Kegon i Nikkō er kjent som:",choices:["en foss, like ved innsjøen Chūzenji","et slott av gull","en judoklubb","en flyplass"],explain:"華厳の滝 (Kegon no taki) er en av de mest kjente fossene i Japan, oppe i fjellet ved Nikkō."},{id:"dest-nikko-07",tema:"Nikkō",prompt:"Hvordan sier du «Jeg skal til Nikkō»?",choices:[{jp:"にっこうに いきます。",ro:"Nikkō ni ikimasu."},{jp:"にっこうを のみます。",ro:"Nikkō o nomimasu."},{jp:"にっこうは ねこです。",ro:"Nikkō wa neko desu."},{jp:"にっこうから ねます。",ro:"Nikkō kara nemasu."}],explain:"に いきます = skal til. Nikkō er en typisk tur fra Tokyo."},{id:"dest-nikko-08",tema:"Nikkō",prompt:"Hvordan sier du «fossefall»?",choices:[{jp:"たき",ro:"taki",kanji:"滝"},{jp:"かわ",ro:"kawa"},{jp:"うみ",ro:"umi"},{jp:"もり",ro:"mori"}],explain:"滝 (たき) = foss. 川 = elv, 海 = hav, 森 = skog."},{id:"dest-nikko-09",tema:"Nikkō",prompt:"Nikkō ligger:",choices:["i fjellet nord for Tokyo","på Okinawa","inne i Osaka-slottet","på Hokkaidō"],explain:"Nikkō ligger i Tochigi, i fjellene. Om høsten er løvet særlig fint."}]},
+  {id:"kamakura",name:"Kamakura",jp:"かまくら",kanji:"鎌倉",ro:"Kamakura",icon:"🧘",journey:false,sub:"Daibutsu ved havet",facts:["Kamakura ligger ved havet, sør for Tokyo, og er en typisk dagsutflukt derfra.","Her lå det første samurai-styret i Japan, Kamakura-shogunatet, fra 1185 til 1333.","Utenfor tempelet Kōtoku-in sitter en stor bronse-Buddha under åpen himmel. Du kan til og med gå inn i statuen.","Tsurugaoka Hachimangū er byens viktigste helligdom, med en lang gate opp mot den.","Hase-dera er et annet kjent tempel, med utsikt mot sjøen.","På strendene i Kamakura og nabobyen kan du bade om sommeren."],words:[{no:"Kamakura",jp:"かまくら",kanji:"鎌倉",ro:"Kamakura"},{no:"stor Buddha",jp:"だいぶつ",kanji:"大仏",ro:"daibutsu"},{no:"hav",jp:"うみ",kanji:"海",ro:"umi"},{no:"tempel",jp:"てら",kanji:"寺",ro:"tera"},{no:"samurai (kriger)",jp:"さむらい",kanji:"侍",ro:"samurai"}],questions:[{id:"dest-kamakura-01",tema:"Kamakura",prompt:"Hvordan skrives Kamakura med kanji?",choices:[{jp:"かまくら",ro:"Kamakura",kanji:"鎌倉"},{jp:"かなざわ",ro:"Kanazawa",kanji:"金沢"},{jp:"くまもと",ro:"Kumamoto",kanji:"熊本"},{jp:"なら",ro:"Nara",kanji:"奈良"}],explain:"鎌倉 = Kamakura, en by ved havet sør for Tokyo."},{id:"dest-kamakura-02",tema:"Kamakura",prompt:"Kamakura-shogunatet, det første samurai-styret, varte fra 1185 til:",choices:["1333","1868","794","1972"],explain:"Fra 1185 til 1333 var Kamakura maktsenteret for samuraiene, før makten senere flyttet videre."},{id:"dest-kamakura-03",tema:"Kamakura",prompt:"Daibutsu i Kamakura er spesiell fordi den:",choices:["sitter under åpen himmel, og du kan gå inn i den","står på bunnen av en innsjø","er laget av is","står inne i Tokyo Skytree"],explain:"I Kōtoku-in sitter Buddha i friluft. Taket forsvant i en storm for flere hundre år siden, og slik har den blitt stående."},{id:"dest-kamakura-04",tema:"Kamakura",prompt:"Kamakura ligger:",choices:["ved havet, sør for Tokyo","på Hokkaidō","inne i Kyoto-stasjonen","på Okinawa"],explain:"Det er en typisk dagsutflukt med tog fra Tokyo. Du kan kombinere templer og strand."},{id:"dest-kamakura-05",tema:"Kamakura",prompt:"Hvordan sier du «stor Buddha»?",choices:[{jp:"だいぶつ",ro:"daibutsu",kanji:"大仏"},{jp:"おんせん",ro:"onsen"},{jp:"しんかんせん",ro:"shinkansen"},{jp:"やたい",ro:"yatai"}],explain:"大仏 brukes både i Kamakura og i Nara, men statuene og stedene er ulike."},{id:"dest-kamakura-06",tema:"Kamakura",prompt:"Tsurugaoka Hachimangū er:",choices:["den viktigste helligdommen i Kamakura","et lyntog","en type ramen","et judokast"],explain:"En lang gate fører opp mot helligdommen. Den er byens midtpunkt ved festivaler."},{id:"dest-kamakura-07",tema:"Kamakura",prompt:"Hvordan sier du «Jeg skal til Kamakura»?",choices:[{jp:"かまくらに いきます。",ro:"Kamakura ni ikimasu."},{jp:"かまくらを のみます。",ro:"Kamakura o nomimasu."},{jp:"かまくらは いすです。",ro:"Kamakura wa isu desu."},{jp:"かまくらから ねます。",ro:"Kamakura kara nemasu."}],explain:"に いきます = skal til."},{id:"dest-kamakura-08",tema:"Kamakura",prompt:"Hvordan sier du «hav»?",choices:[{jp:"うみ",ro:"umi",kanji:"海"},{jp:"やま",ro:"yama"},{jp:"かわ",ro:"kawa"},{jp:"もり",ro:"mori"}],explain:"海 (うみ) = hav. Kamakura ligger rett ved sjøen."},{id:"dest-kamakura-09",tema:"Kamakura",prompt:"Hase-dera i Kamakura er kjent for:",choices:["et tempel med utsikt mot sjøen","en innendørs skøytebane","Kōdōkan","et gullslott"],explain:"長谷寺 (Hase-dera) ligger i bakken, og fra hagen kan du se mot havet."}]},
+  {id:"fuji",name:"Fuji-san",jp:"ふじさん",kanji:"富士山",ro:"Fuji-san",icon:"🗻",journey:false,sub:"Japans høyeste fjell",facts:["Fuji-san er Japans høyeste fjell, 3776 meter over havet.","Det er en vulkan som nå er i ro, og et av de mest kjente symbolene på Japan.","Fjellet står på UNESCOs verdensarvliste.","Mange klatrer om sommeren, typisk i juli og august, når de offisielle løypene er åpne.","På klare dager kan du se Fuji fra lyntoget mellom Tokyo og Kyoto eller Osaka.","Fra Hakone og flere innsjøer rundt fjellet er det også fine utsikter når skyene letter."],words:[{no:"Fuji-san",jp:"ふじさん",kanji:"富士山",ro:"Fuji-san"},{no:"fjell",jp:"やま",kanji:"山",ro:"yama"},{no:"vulkan",jp:"かざん",kanji:"火山",ro:"kazan"},{no:"topp / fjelltopp",jp:"いただき",kanji:"頂",ro:"itadaki"},{no:"utsikt",jp:"けしき",kanji:"景色",ro:"keshiki"}],questions:[{id:"dest-fuji-01",tema:"Fuji-san",prompt:"Hvordan skrives Mount Fuji med kanji?",choices:[{jp:"ふじさん",ro:"Fuji-san",kanji:"富士山"},{jp:"たかさん",ro:"Taka-san"},{jp:"やまさん",ro:"Yama-san"},{jp:"うみやま",ro:"Umiyama"}],explain:"富士山 = Fuji-san. 山 betyr fjell. På japansk sier vi Fuji-san, ikke «Mount» først."},{id:"dest-fuji-02",tema:"Fuji-san",prompt:"Hvor høyt er Fuji-san?",choices:["3776 meter","634 meter","1882 meter","100 meter"],explain:"3776 m gjør Fuji til Japans høyeste fjell. 634 m er høyden på Tokyo Skytree, ikke fjellet."},{id:"dest-fuji-03",tema:"Fuji-san",prompt:"Fuji-san er:",choices:["en vulkan som nå er i ro","en ørken","en innsjø","et lyntog"],explain:"富士山 er en vulkan. Den har vært i ro i lang tid, og er et viktig symbol i kunst og bilder."},{id:"dest-fuji-04",tema:"Fuji-san",prompt:"Når er de vanlige klatre-løypene typisk åpne?",choices:["om sommeren, typisk i juli og august","bare i desember","bare om natten hele året","aldri, det er forbudt"],explain:"Sesongen er kort. Utenom den bør du ikke regne med åpne hytter og merkede hovedløyper."},{id:"dest-fuji-05",tema:"Fuji-san",prompt:"Hvordan sier du «fjell» på japansk?",choices:[{jp:"やま",ro:"yama",kanji:"山"},{jp:"かわ",ro:"kawa"},{jp:"うみ",ro:"umi"},{jp:"もり",ro:"mori"}],explain:"山 (やま) = fjell. Det er det siste tegnet i 富士山."},{id:"dest-fuji-06",tema:"Fuji-san",prompt:"På klare dager kan du ofte se Fuji fra:",choices:["lyntoget mellom Tokyo og Kyoto eller Osaka","inne i en t-banetunnel","bunnen av et svømmebasseng","Okinawa-jungelen"],explain:"Sitt på den rette siden og se ut når det er opphold. Skyer skjuler toppen ofte, så det er heldig når den vises."},{id:"dest-fuji-07",tema:"Fuji-san",prompt:"Hvordan sier du «Jeg skal til Fuji-san»?",choices:[{jp:"ふじさんに いきます。",ro:"Fuji-san ni ikimasu."},{jp:"ふじさんを たべます。",ro:"Fuji-san o tabemasu."},{jp:"ふじさんは ねこです。",ro:"Fuji-san wa neko desu."},{jp:"ふじさんから ねます。",ro:"Fuji-san kara nemasu."}],explain:"に いきます = skal til. Mange bor i nærheten, for eksempel i Hakone, og ser på fjellet derfra."},{id:"dest-fuji-08",tema:"Fuji-san",prompt:"Hva betyr 山 i 富士山?",choices:["fjell","hav","sol","te"],explain:"山 = fjell. 富士 er navnet, 山 forteller at det er et fjell."},{id:"dest-fuji-09",tema:"Fuji-san",prompt:"Fuji-san står på listen til:",choices:["UNESCO (verdensarv)","FIFA som fotballstadion","Kōdōkan som dojo","Den internasjonale romstasjonen"],explain:"Fjellet er verdensarv, både som natur og som kulturlandskap rundt."}]},
+  {id:"hakone",name:"Hakone",jp:"はこね",kanji:"箱根",ro:"Hakone",icon:"♨️",journey:false,sub:"Onsen og utsikt til Fuji",facts:["Hakone er et fjellområde sør-vest for Tokyo, kjent for varme kilder (おんせん).","Fra innsjøen Ashinoko kan du på klare dager se Fuji-san. Der går også sightseeing-båter.","Hakone-helligdommen har en rød torii som står i vannet ved innsjøen.","I Ōwakudani kokes egg i den varme kilden, og skallet blir svart. De kalles kuro-tamago.","Hakone lå ved den gamle Tōkaidō-veien mellom Edo (Tokyo) og Kyoto, med en kjent kontrollpost.","Utendørsmuseet i Hakone har skulpturer i en park med fjell rundt."],words:[{no:"Hakone",jp:"はこね",kanji:"箱根",ro:"Hakone"},{no:"varm kilde",jp:"おんせん",kanji:"温泉",ro:"onsen"},{no:"innsjø",jp:"みずうみ",kanji:"湖",ro:"mizuumi"},{no:"egg",jp:"たまご",kanji:"卵",ro:"tamago"},{no:"varmt (vann/mat)",jp:"あつい",kanji:"熱い",ro:"atsui"}],questions:[{id:"dest-hakone-01",tema:"Hakone",prompt:"Hvordan skrives Hakone med kanji?",choices:[{jp:"はこね",ro:"Hakone",kanji:"箱根"},{jp:"はこだて",ro:"Hakodate",kanji:"函館"},{jp:"にっこう",ro:"Nikkō",kanji:"日光"},{jp:"かまくら",ro:"Kamakura",kanji:"鎌倉"}],explain:"箱根 = Hakone. Et fjellområde kjent for onsen og utsikt til Fuji."},{id:"dest-hakone-02",tema:"Hakone",prompt:"Hakone er spesielt kjent for:",choices:[{jp:"おんせん",ro:"onsen",kanji:"温泉"},{jp:"ゆきまつり",ro:"yukimatsuri"},{jp:"からて",ro:"karate"},{jp:"たこやき",ro:"takoyaki"}],explain:"温泉 = varm kilde / innendørs eller utendørs bad med naturlig varmt vann. Hakone er fullt av slike steder."},{id:"dest-hakone-03",tema:"Hakone",prompt:"Innsjøen i Hakone heter:",choices:["Ashinoko (Lake Ashi)","Chūzenji","Biwa","Tōkyō-ko"],explain:"芦ノ湖 (Ashinoko) er innsjøen der sightseeing-båtene går. På klare dager speiler Fuji seg i vannet."},{id:"dest-hakone-04",tema:"Hakone",prompt:"Kuro-tamago i Hakone er:",choices:["egg kokt i en varm kilde, med svart skall","en type belte i judo","et lyntog","en iskrem"],explain:"くろたまご kokes i Ōwakudani. Skallet blir svart av kilden, mens inni er det et vanlig egg."},{id:"dest-hakone-05",tema:"Hakone",prompt:"Hvordan sier du «varm kilde»?",choices:[{jp:"おんせん",ro:"onsen",kanji:"温泉"},{jp:"れいぞうこ",ro:"reizōko"},{jp:"プール",ro:"pūru"},{jp:"かざん",ro:"kazan"}],explain:"温 = varm, 泉 = kilde. おんせん er både selve kilden og badeplassen."},{id:"dest-hakone-06",tema:"Hakone",prompt:"Hakone-helligdommen er kjent for:",choices:["en rød torii som står i vannet ved innsjøen","en innendørs skøytebane","Kōdōkan","Tokyo Skytree"],explain:"Porten i vannet er et yndet fotomotiv, litt på samme måte som torii-en ved Miyajima – men her er det en innsjø."},{id:"dest-hakone-07",tema:"Hakone",prompt:"Hvordan sier du «Jeg skal til Hakone»?",choices:[{jp:"はこねに いきます。",ro:"Hakone ni ikimasu."},{jp:"はこねを たべます。",ro:"Hakone o tabemasu."},{jp:"はこねは いぬです。",ro:"Hakone wa inu desu."},{jp:"はこねから ねます。",ro:"Hakone kara nemasu."}],explain:"に いきます = skal til. Mange reiser fra Tokyo for å bade og se på Fuji."},{id:"dest-hakone-08",tema:"Hakone",prompt:"Utendørsmuseet i Hakone er:",choices:["en park med skulpturer og fjell rundt","et fiskemarked","en flyplass","et svømmeanlegg under bakken"],explain:"Hakone Open-Air Museum viser skulpturer utendørs. Fint å gå der når været er pent."},{id:"dest-hakone-09",tema:"Hakone",prompt:"Før i tiden lå Hakone ved:",choices:["Tōkaidō-veien mellom Edo (Tokyo) og Kyoto","en skiheis til Sapporo","en bro til Okinawa","Kōdōkan-porten"],explain:"Der sto en kontrollpost. Reisende mellom den gamle hovedstaden og Edo måtte innom Hakone."}]},
+  {id:"nagoya",name:"Nagoya",jp:"なごや",kanji:"名古屋",ro:"Nagoya",icon:"🐯",journey:false,sub:"Slottet med de gylne fiskene",facts:["Nagoya er en av Japans største byer og ligger midt mellom Tokyo og Osaka, med lyntog-stopp.","På taket av Nagoya-jø (名古屋城) sitter gylne shachihoko – fabeldyr som er halvparten tiger og halvparten fisk.","Området rundt Nagoya er kjent for bilindustri. Toyota-byen ligger i nærheten, i Aichi.","Hitsumabushi er en kjent lokal rett: ål på ris, som ofte spises i flere runder.","Andre typiske smaker er miso-katsu (schnitzel med miso-saus), kishimen-nudler og tebasaki (kyllingvinger).","Byen er et knutepunkt i midten av hovedøya Honshū."],words:[{no:"Nagoya",jp:"なごや",kanji:"名古屋",ro:"Nagoya"},{no:"slott",jp:"しろ",kanji:"城",ro:"shiro"},{no:"Nagoya-slottet",jp:"なごやじょう",kanji:"名古屋城",ro:"Nagoyajō"},{no:"tog / lyntog",jp:"しんかんせん",kanji:"新幹線",ro:"shinkansen"},{no:"ris",jp:"ごはん",kanji:"ご飯",ro:"gohan"}],questions:[{id:"dest-nagoya-01",tema:"Nagoya",prompt:"Hvordan skrives Nagoya med kanji?",choices:[{jp:"なごや",ro:"Nagoya",kanji:"名古屋"},{jp:"おおさか",ro:"Ōsaka",kanji:"大阪"},{jp:"かなざわ",ro:"Kanazawa",kanji:"金沢"},{jp:"はこね",ro:"Hakone",kanji:"箱根"}],explain:"名古屋 = Nagoya, en av de største byene, midt mellom Tokyo og Osaka."},{id:"dest-nagoya-02",tema:"Nagoya",prompt:"På taket av Nagoya-slottet sitter:",choices:["gylne shachihoko (tiger-fisk)","en skiheis","en kjempe-lykt fra Asakusa","en judodrakt"],explain:"しゃちほこ er fabeldyr som skulle beskytte slottet mot brann. De gylne figurene er byens kjennemerke."},{id:"dest-nagoya-03",tema:"Nagoya",prompt:"Nagoya-slottet heter på japansk:",choices:[{jp:"なごやじょう",ro:"Nagoyajō",kanji:"名古屋城"},{jp:"おおさかじょう",ro:"Ōsakajō"},{jp:"しろやま",ro:"Shiroyama"},{jp:"やましろ",ro:"Yamashiro"}],explain:"城 (じょう) = slott når det står bak navnet. 名古屋城 ligger i en park i byen."},{id:"dest-nagoya-04",tema:"Nagoya",prompt:"Området rundt Nagoya er særlig kjent for:",choices:["bilindustri (Toyota ligger i nærheten)","alpin-ski i sentrum","keiserpalasset","Snøfestivalen"],explain:"Toyota-byen ligger i Aichi, ikke langt unna. Nagoya er et viktig industrisenter."},{id:"dest-nagoya-05",tema:"Nagoya",prompt:"Hitsumabushi er en kjent Nagoya-rett med:",choices:["ål på ris, ofte spist i flere runder","bare is og bær","takoyaki-kuler","suppe av is"],explain:"Du spiser gjerne først som den er, så med krydder, og til slutt med te eller suppe over risen."},{id:"dest-nagoya-06",tema:"Nagoya",prompt:"Nagoya ligger:",choices:["mellom Tokyo og Osaka, med lyntog-stopp","på Okinawa","nord for Sapporo","inne i Nara-parken"],explain:"Shinkansen stopper i Nagoya. Det er et naturlig stopp midt på Honshū."},{id:"dest-nagoya-07",tema:"Nagoya",prompt:"Hvordan sier du «Jeg skal til Nagoya»?",choices:[{jp:"なごやに いきます。",ro:"Nagoya ni ikimasu."},{jp:"なごやを のみます。",ro:"Nagoya o nomimasu."},{jp:"なごやは いすです。",ro:"Nagoya wa isu desu."},{jp:"なごやから ねます。",ro:"Nagoya kara nemasu."}],explain:"に いきます = skal til."},{id:"dest-nagoya-08",tema:"Nagoya",prompt:"Tebasaki, en typisk Nagoya-mat, er:",choices:["krydrede kyllingvinger","en type lyntog","et slottstårn","en helligdomsport"],explain:"手羽先 (tebasaki) er kyllingvinger, ofte sprø og lett søt-sterke. En typisk smak fra byen."},{id:"dest-nagoya-09",tema:"Nagoya",prompt:"Hvordan sier du «slott» når det står i navn som 名古屋城?",choices:[{jp:"じょう",ro:"jō",kanji:"城"},{jp:"やま",ro:"yama"},{jp:"かわ",ro:"kawa"},{jp:"うみ",ro:"umi"}],explain:"I stedsnavn leses 城 ofte じょう. Et slott alene kan også leses しろ."}]},
+  {id:"kanazawa",name:"Kanazawa",jp:"かなざわ",kanji:"金沢",ro:"Kanazawa",icon:"🥇",journey:false,sub:"Hagebyen med bladgull",facts:["Kanazawa ligger mot Japanhavet, i Ishikawa, og er kjent for at mange gamle gater er bevart.","Kenroku-en er en av Japans tre mest berømte hager, med dammer, broer og steiner.","Byen er kjent for bladgull (きんぱく). Det brukes på porselen, pynt og av og til på mat.","Nagamachi er et gammelt samurai-strøk, og Higashi Chaya er et tehus-strøk med trehus.","Kanazawa-jø (金沢城) ligger like ved Kenroku-en.","Navnet 金沢 inneholder kanji for gull: 金."],words:[{no:"Kanazawa",jp:"かなざわ",kanji:"金沢",ro:"Kanazawa"},{no:"gull",jp:"きん",kanji:"金",ro:"kin"},{no:"bladgull",jp:"きんぱく",kanji:"金箔",ro:"kinpaku"},{no:"hage",jp:"にわ",kanji:"庭",ro:"niwa"},{no:"slott",jp:"しろ",kanji:"城",ro:"shiro"}],questions:[{id:"dest-kanazawa-01",tema:"Kanazawa",prompt:"Hvordan skrives Kanazawa med kanji?",choices:[{jp:"かなざわ",ro:"Kanazawa",kanji:"金沢"},{jp:"かまくら",ro:"Kamakura",kanji:"鎌倉"},{jp:"かなざき",ro:"Kanazaki"},{jp:"かわさき",ro:"Kawasaki",kanji:"川崎"}],explain:"金沢 = Kanazawa. 金 betyr gull."},{id:"dest-kanazawa-02",tema:"Kanazawa",prompt:"Kenroku-en i Kanazawa er:",choices:["en av Japans tre mest berømte hager","et lyntog","en judohall","en flyplass"],explain:"兼六園 (Kenroku-en) har dammer, broer og nøye satt stein og trær. Den skifter preg gjennom året."},{id:"dest-kanazawa-03",tema:"Kanazawa",prompt:"Kanazawa er kjent for きんぱく. Hva er det?",choices:["bladgull, brukt på pynt og av og til på mat","en type ramen","et judokast","en skibakke"],explain:"金箔 = bladgull. Byen har lange tradisjoner med å slå gull tynt og bruke det til kunst og håndverk."},{id:"dest-kanazawa-04",tema:"Kanazawa",prompt:"Hva betyr 金 i navnet 金沢?",choices:["gull","vann","tre","vind"],explain:"金 (きん) = gull. Derfor er bladgull et passende kjennemerke for byen."},{id:"dest-kanazawa-05",tema:"Kanazawa",prompt:"Nagamachi og Higashi Chaya er kjent for:",choices:["gamle samurai- og tehus-gater som er bevart","en innendørs alpinebane","Tokyo Skytree","Kōdōkan"],explain:"Mange gamle gater i Kanazawa er bevart, og det gir byen et roligere, eldre preg enn mange storbyer."},{id:"dest-kanazawa-06",tema:"Kanazawa",prompt:"Hvordan sier du «hage» på japansk?",choices:[{jp:"にわ",ro:"niwa",kanji:"庭"},{jp:"うみ",ro:"umi"},{jp:"やたい",ro:"yatai"},{jp:"きっぷ",ro:"kippu"}],explain:"庭 (にわ) = hage. Kenroku-en er nettopp en stor, klassisk hage."},{id:"dest-kanazawa-07",tema:"Kanazawa",prompt:"Hvordan sier du «Jeg skal til Kanazawa»?",choices:[{jp:"かなざわに いきます。",ro:"Kanazawa ni ikimasu."},{jp:"かなざわを たべます。",ro:"Kanazawa o tabemasu."},{jp:"かなざわは いぬです。",ro:"Kanazawa wa inu desu."},{jp:"かなざわから ねます。",ro:"Kanazawa kara nemasu."}],explain:"に いきます = skal til. Lyntoget Hokuriku shinkansen går hit fra Tokyo."},{id:"dest-kanazawa-08",tema:"Kanazawa",prompt:"Kanazawa-slottet ligger:",choices:["like ved hagen Kenroku-en","på toppen av Fuji","inne i Dōtonbori","på Miyajima"],explain:"金沢城 og Kenroku-en hører sammen som et par midt i byen."},{id:"dest-kanazawa-09",tema:"Kanazawa",prompt:"Hvordan sier du «gull»?",choices:[{jp:"きん",ro:"kin",kanji:"金"},{jp:"ぎん",ro:"gin"},{jp:"みず",ro:"mizu"},{jp:"き",ro:"ki"}],explain:"金 = gull, 銀 = sølv. 金箔 er bladgull."}]},
+  {id:"kobe",name:"Kobe",jp:"こうべ",kanji:"神戸",ro:"Kōbe",icon:"⚓",journey:false,sub:"Havnebyen ved fjellet",facts:["Kobe er en havneby i Hyōgo, like ved Osaka, med hav på den ene siden og fjellet Rokkō på den andre.","Byen er kjent for Kobe-storfekjøtt, en svært berømt matvare fra området.","Ved havna ligger Meriken Park og Kobe Port Tower – fine steder å gå en tur.","I Kitano står gamle hus der utenlandske familier bodde da havna ble åpnet for handel.","Etter et stort jordskjelv i 1995 ble byen bygd opp igjen. Havna er i dag et hyggelig sted å være.","Nankinmachi er Kobes Chinatown, med matboder og røde porter."],words:[{no:"Kobe",jp:"こうべ",kanji:"神戸",ro:"Kōbe"},{no:"havn",jp:"みなと",kanji:"港",ro:"minato"},{no:"hav",jp:"うみ",kanji:"海",ro:"umi"},{no:"fjell",jp:"やま",kanji:"山",ro:"yama"},{no:"tårn",jp:"タワー",ro:"tawā"}],questions:[{id:"dest-kobe-01",tema:"Kobe",prompt:"Hvordan skrives Kobe med kanji?",choices:[{jp:"こうべ",ro:"Kōbe",kanji:"神戸"},{jp:"きょうと",ro:"Kyōto",kanji:"京都"},{jp:"おおさか",ro:"Ōsaka",kanji:"大阪"},{jp:"はこね",ro:"Hakone",kanji:"箱根"}],explain:"神戸 = Kōbe. 神 kan bety guddom, 戸 betyr dør eller port."},{id:"dest-kobe-02",tema:"Kobe",prompt:"Kobe er en havneby like ved:",choices:["Osaka","Sapporo","Nikkō","Fuji-toppen"],explain:"Kobe og Osaka ligger nær hverandre i Kansai-området. Du kan reise mellom dem på kort tid."},{id:"dest-kobe-03",tema:"Kobe",prompt:"Kobe er særlig kjent for denne maten:",choices:["Kobe-storfekjøtt","Hakata-ramen","takoyaki som ble oppfunnet her","snø-is fra februar"],explain:"神戸牛 (Kōbe-gyū) er et kjent, lokalt storfekjøtt. Det er en av tingene byen er mest kjent for i utlandet."},{id:"dest-kobe-04",tema:"Kobe",prompt:"Hvordan sier du «havn» på japansk?",choices:[{jp:"みなと",ro:"minato",kanji:"港"},{jp:"やま",ro:"yama"},{jp:"もり",ro:"mori"},{jp:"そら",ro:"sora"}],explain:"港 (みなと) = havn. Kobe Port Tower står nettopp ved みなと."},{id:"dest-kobe-05",tema:"Kobe",prompt:"Kitano i Kobe er kjent for:",choices:["gamle hus der utenlandske familier bodde da havna ble åpnet","en innendørs isbre","Kōdōkan","en ørken"],explain:"Da Kobe ble en internasjonal havn, flyttet flere utenlandske familier hit. Husene i Kitano står der ennå."},{id:"dest-kobe-06",tema:"Kobe",prompt:"I 1995 rammet et stort jordskjelv Kobe. Hva skjedde etterpå?",choices:["Byen ble bygd opp igjen, og havna er i dag et fint sted å gå","Byen ble fraflyttet for godt","Havna ble flyttet til Hokkaidō","Slottet ble sendt til Tokyo"],explain:"Jordskjelvet var alvorlig, men byen ble bygd opp. I dag kan du gå i parken ved havna og se ut over vannet."},{id:"dest-kobe-07",tema:"Kobe",prompt:"Hvordan sier du «Jeg skal til Kobe»?",choices:[{jp:"こうべに いきます。",ro:"Kōbe ni ikimasu."},{jp:"こうべを のみます。",ro:"Kōbe o nomimasu."},{jp:"こうべは ねこです。",ro:"Kōbe wa neko desu."},{jp:"こうべから ねます。",ro:"Kōbe kara nemasu."}],explain:"に いきます = skal til."},{id:"dest-kobe-08",tema:"Kobe",prompt:"Nankinmachi i Kobe er:",choices:["Chinatown, med matboder og røde porter","et judostevne","en skiheis","et keiserpalass"],explain:"南京町 (Nankinmachi) er Kobes Chinatown, et livlig sted å spise og se på porter og lanterner."},{id:"dest-kobe-09",tema:"Kobe",prompt:"Kobe har hav på den ene siden og på den andre:",choices:["fjellet Rokkō","ørkenen Sahara","Tokyo Skytree","Nara-parken"],explain:"六甲山 (Rokkō-san) ligger bak byen. Du kan ta banen opp og se ut over havna."}]},
+];
+const PLACES_BY_ID = Object.fromEntries(PLACES.map(p=>[p.id,p]));
+function placeOf(id){ return PLACES_BY_ID[id]||null; }
+function placeTitle(p){ return `${p.icon} ${p.name}`; }
+
+/* Kanji + furigana */
+const KANJI_DICT = {
+  "だいじょうぶですか":"大丈夫ですか",
+  "ひゃくごじゅうえん":"百五十円",
+  "いってらっしゃい":"行ってらっしゃい",
+  "せんごじゅうえん":"千五十円",
+  "たべたくないです":"食べたくないです",
+  "だいじょうぶです":"大丈夫です",
+  "おいしいですね":"美味しいですね",
+  "おおさかじょう":"大阪城",
+  "おかえりなさい":"お帰りなさい",
+  "おねがいします":"お願いします",
+  "むずかしいです":"難しいです",
+  "ゆうめいですか":"有名ですか",
+  "あぶないです":"危ないです",
+  "いきましょう":"行きましょう",
+  "いちまんえん":"一万円",
+  "いってきます":"行ってきます",
+  "おいしいです":"美味しいです",
+  "おおそとがり":"大外刈り",
+  "かわきました":"渇きました",
+  "きゅうしゅう":"九州",
+  "きよみずでら":"清水寺",
+  "けんろくえん":"兼六園",
+  "げんきですか":"元気ですか",
+  "こうとくいん":"高徳院",
+  "こうどうかん":"講道館",
+  "こうべぎゅう":"神戸牛",
+  "ごひゃくえん":"五百円",
+  "さむいですね":"寒いですね",
+  "しずかですか":"静かですか",
+  "しゅりじょう":"首里城",
+  "しんかんせん":"新幹線",
+  "じゅうごえん":"十五円",
+  "じゅうどうぎ":"柔道衣",
+  "たかいですか":"高いですか",
+  "たべたいです":"食べたいです",
+  "たべられます":"食べられます",
+  "たんじょうび":"誕生日",
+  "だいじょうぶ":"大丈夫",
+  "ちかいですか":"近いですか",
+  "とおいですか":"遠いですか",
+  "どうとんぼり":"道頓堀",
+  "なくしました":"失くしました",
+  "なごやじょう":"名古屋城",
+  "なんばんせん":"何番線",
+  "はじめまして":"始めまして",
+  "ひろいですか":"広いですか",
+  "ふしみいなり":"伏見稲荷",
+  "ふっています":"降っています",
+  "ほっかいどう":"北海道",
+  "わかりました":"分かりました",
+  "わかりません":"分かりません",
+  "あたらしい":"新しい",
+  "いかないで":"行かないで",
+  "いきました":"行きました",
+  "いきません":"行きません",
+  "いっしょに":"一緒に",
+  "おかあさん":"お母さん",
+  "おかいけい":"お会計",
+  "おさえこみ":"抑え込み",
+  "おとうさん":"お父さん",
+  "おもいです":"重いです",
+  "がんばって":"頑張って",
+  "きょうかい":"教会",
+  "きんかくじ":"金閣寺",
+  "きんようび":"金曜日",
+  "げつようび":"月曜日",
+  "げんきです":"元気です",
+  "こんしゅう":"今週",
+  "さむいです":"寒いです",
+  "さんじはん":"三時半",
+  "じゅうえん":"十円",
+  "じゅうどう":"柔道",
+  "すいようび":"水曜日",
+  "すきました":"空きました",
+  "せんそうじ":"浅草寺",
+  "たかいです":"高いです",
+  "たべました":"食べました",
+  "たべません":"食べません",
+  "てんじょう":"天井",
+  "とうきょう":"東京",
+  "とうだいじ":"東大寺",
+  "としょかん":"図書館",
+  "どうじょう":"道場",
+  "なんようび":"何曜日",
+  "にちようび":"日曜日",
+  "ねむいです":"眠いです",
+  "ねむくない":"眠くない",
+  "のみました":"飲みました",
+  "はしります":"走ります",
+  "はなします":"話します",
+  "はやいです":"速いです",
+  "ひきました":"引きました",
+  "ひゃくえん":"百円",
+  "びょういん":"病院",
+  "むずかしい":"難しい",
+  "もういちど":"もう一度",
+  "もくようび":"木曜日",
+  "もちかえり":"持ち帰り",
+  "れんしゅう":"練習",
+  "わかいです":"若いです",
+  "わかります":"分かります",
+  "あきべや":"空き部屋",
+  "あさくさ":"浅草",
+  "あさって":"明後日",
+  "あそぼう":"遊ぼう",
+  "あぶない":"危ない",
+  "いきます":"行きます",
+  "いちまい":"一枚",
+  "いっぽん":"一本",
+  "いりぐち":"入口",
+  "おいしい":"美味しい",
+  "おおきい":"大きい",
+  "おおきく":"大きく",
+  "おおごし":"大腰",
+  "おおさか":"大阪",
+  "おかえり":"お帰り",
+  "おきなわ":"沖縄",
+  "おきゃく":"お客",
+  "おととい":"一昨日",
+  "おなまえ":"お名前",
+  "おんがく":"音楽",
+  "おんせん":"温泉",
+  "かいます":"買います",
+  "かちょう":"課長",
+  "かなざわ":"金沢",
+  "かまくら":"鎌倉",
+  "かようび":"火曜日",
+  "ききます":"聞きます",
+  "きました":"来ました",
+  "きょうと":"京都",
+  "きります":"切ります",
+  "きんぱく":"金箔",
+  "ぎょうざ":"餃子",
+  "くうこう":"空港",
+  "くじはん":"九時半",
+  "くみかた":"組み方",
+  "こうえん":"公園",
+  "こうはい":"後輩",
+  "こしょう":"胡椒",
+  "さっぽろ":"札幌",
+  "さむらい":"侍",
+  "さんにん":"三人",
+  "ざぶとん":"座布団",
+  "しちえん":"七円",
+  "しちにん":"七人",
+  "しょうゆ":"醤油",
+  "しんぱん":"審判",
+  "じゅうじ":"十時",
+  "じんじゃ":"神社",
+  "すいえい":"水泳",
+  "せんえん":"千円",
+  "せんせい":"先生",
+  "せんぱい":"先輩",
+  "たちわざ":"立ち技",
+  "たべます":"食べます",
+  "だいぶつ":"大仏",
+  "ちいさい":"小さい",
+  "ちゃいろ":"茶色",
+  "つめたい":"冷たい",
+  "てばさき":"手羽先",
+  "てんぷら":"天ぷら",
+  "できます":"出来ます",
+  "でんしゃ":"電車",
+  "ともだち":"友達",
+  "どようび":"土曜日",
+  "なんがつ":"何月",
+  "なんさい":"何歳",
+  "なんにん":"何人",
+  "にっこう":"日光",
+  "にほんご":"日本語",
+  "のみます":"飲みます",
+  "はしって":"走って",
+  "はなして":"話して",
+  "ばんせん":"番線",
+  "ひこうき":"飛行機",
+  "ひろしま":"広島",
+  "ふくおか":"福岡",
+  "ふじさん":"富士山",
+  "べんとう":"弁当",
+  "まいにち":"毎日",
+  "まっすぐ":"真っ直ぐ",
+  "まんえん":"万円",
+  "みずうみ":"湖",
+  "みそしる":"味噌汁",
+  "みやじま":"宮島",
+  "やきにく":"焼肉",
+  "やきゅう":"野球",
+  "ゆうめい":"有名",
+  "よみます":"読みます",
+  "らんどり":"乱取り",
+  "わざあり":"技あり",
+  "あおい":"青い",
+  "あかい":"赤い",
+  "あした":"明日",
+  "あたま":"頭",
+  "あまい":"甘い",
+  "いたい":"痛い",
+  "いちじ":"一時",
+  "いちど":"一度",
+  "うけみ":"受け身",
+  "うしろ":"後ろ",
+  "えいが":"映画",
+  "おさら":"お皿",
+  "おすし":"お寿司",
+  "おちゃ":"お茶",
+  "おなか":"お腹",
+  "おもい":"重い",
+  "おわん":"お椀",
+  "かざん":"火山",
+  "かぜを":"風を",
+  "かばん":"鞄",
+  "からい":"辛い",
+  "からて":"空手",
+  "かるい":"軽い",
+  "きいろ":"黄色",
+  "きおん":"気温",
+  "きっぷ":"切符",
+  "きのう":"昨日",
+  "きます":"来ます",
+  "きもの":"着物",
+  "きゅう":"級",
+  "きょう":"今日",
+  "きらい":"嫌い",
+  "くもり":"曇り",
+  "くるま":"車",
+  "くろい":"黒い",
+  "けしき":"景色",
+  "げんき":"元気",
+  "こうべ":"神戸",
+  "こども":"子供",
+  "ごぜん":"午前",
+  "ごはん":"ご飯",
+  "さとう":"砂糖",
+  "さむい":"寒い",
+  "さんじ":"三時",
+  "しあい":"試合",
+  "しこく":"四国",
+  "しずか":"静か",
+  "しちじ":"七時",
+  "しぶや":"渋谷",
+  "しろい":"白い",
+  "じゅう":"十",
+  "すこし":"少し",
+  "すわり":"座り",
+  "せいざ":"正座",
+  "たかい":"高い",
+  "たたみ":"畳",
+  "たって":"立って",
+  "たべて":"食べて",
+  "たまご":"卵",
+  "ちかい":"近い",
+  "つくえ":"机",
+  "つよい":"強い",
+  "てがみ":"手紙",
+  "てんき":"天気",
+  "でぐち":"出口",
+  "でんき":"電気",
+  "とおい":"遠い",
+  "とけた":"解けた",
+  "とりい":"鳥居",
+  "どうぎ":"道衣",
+  "なごや":"名古屋",
+  "なまえ":"名前",
+  "なんじ":"何時",
+  "にほん":"日本",
+  "ねます":"寝ます",
+  "ねむい":"眠い",
+  "ねわざ":"寝技",
+  "はかた":"博多",
+  "はこね":"箱根",
+  "はじめ":"始め",
+  "はちじ":"八時",
+  "はやい":"速い",
+  "はやく":"速く",
+  "ひかり":"光",
+  "ひだり":"左",
+  "ひとつ":"一つ",
+  "ひとり":"一人",
+  "ひゃく":"百",
+  "ひろい":"広い",
+  "ふくろ":"袋",
+  "ふたつ":"二つ",
+  "ふたり":"二人",
+  "ふとん":"布団",
+  "ふるい":"古い",
+  "まって":"待って",
+  "まつり":"祭り",
+  "みっつ":"三つ",
+  "みどり":"緑",
+  "みなと":"港",
+  "みます":"見ます",
+  "みやげ":"土産",
+  "やすい":"安い",
+  "やたい":"屋台",
+  "ゆかた":"浴衣",
+  "よやく":"予約",
+  "ろくじ":"六時",
+  "わかい":"若い",
+  "わたし":"私",
+  "あお":"青",
+  "あか":"赤",
+  "あき":"秋",
+  "あさ":"朝",
+  "あし":"足",
+  "あめ":"雨",
+  "いき":"行き",
+  "いす":"椅子",
+  "いち":"一",
+  "いぬ":"犬",
+  "いま":"今",
+  "うえ":"上",
+  "うけ":"受け",
+  "うた":"歌",
+  "うみ":"海",
+  "えき":"駅",
+  "えん":"円",
+  "おく":"億",
+  "おび":"帯",
+  "かさ":"傘",
+  "かぜ":"風",
+  "かた":"形",
+  "かべ":"壁",
+  "かわ":"川",
+  "きん":"金",
+  "ぎん":"銀",
+  "くじ":"九時",
+  "くつ":"靴",
+  "くも":"雲",
+  "くろ":"黒",
+  "ごご":"午後",
+  "ごじ":"五時",
+  "さら":"皿",
+  "さん":"三",
+  "しお":"塩",
+  "しか":"鹿",
+  "した":"下",
+  "しち":"七",
+  "しま":"島",
+  "すき":"好き",
+  "すし":"寿司",
+  "せん":"千",
+  "たき":"滝",
+  "だれ":"誰",
+  "だん":"段",
+  "ちず":"地図",
+  "ちゃ":"茶",
+  "てら":"寺",
+  "とり":"取り",
+  "なか":"中",
+  "なつ":"夏",
+  "なな":"七",
+  "なは":"那覇",
+  "なら":"奈良",
+  "なん":"何",
+  "にじ":"二時",
+  "にわ":"庭",
+  "ねこ":"猫",
+  "ねて":"寝て",
+  "のど":"喉",
+  "はこ":"箱",
+  "はし":"箸",
+  "はち":"八",
+  "はる":"春",
+  "はれ":"晴れ",
+  "はん":"半",
+  "ひる":"昼",
+  "ふね":"船",
+  "ふゆ":"冬",
+  "へや":"部屋",
+  "ほし":"星",
+  "ほん":"本",
+  "まえ":"前",
+  "まて":"待て",
+  "まど":"窓",
+  "まん":"万",
+  "みぎ":"右",
+  "みず":"水",
+  "みて":"見て",
+  "もり":"森",
+  "やま":"山",
+  "ゆき":"雪",
+  "よじ":"四時",
+  "よる":"夜",
+  "よん":"四",
+  "れい":"礼",
+  "ろく":"六",
+  "わざ":"技"
+};
+
+const KANJI_KEYS = Object.keys(KANJI_DICT).sort((a,b)=>b.length-a.length);
+const KANA_TOKENS = new Set(["です","ます","ですか","ですね","ですよ","でした","ますか","ません","ましょう","ました","します","しました","しましょう","して","しない","しますか","います","いました","いますか","ください","くださいね","いただきます","いただきました","ございます","ございました","すみません","すみませんでした","さようなら","こんにちは","こんばんは","おはよう","おはようございます","いらっしゃいませ","どういたしまして","おつかれさまでした","ごちそうさまでした","ただいま","おやすみ","おやすみなさい","ごめんなさい","よろしく","どうぞ","どうも","はい","いいえ","あれ","これ","それ","どれ","ここ","そこ","あそこ","どこ","いつ","もう","まだ","とても","ちょっと","ゆっくり","やっぱり","ぜひ"]);
+const KANJI_SUFFIXES = ["たくないです","たいです","くないです","くない","くて","でした","でしたか","ですよ","ですね","ですか","です","ましょう","ました","ますか","ません","ます","から","まで","より"];
+const KANJI_PARTICLES = new Set("はがをにでとものかねよへもわ".split(""));
+function isKanaChar(ch){ if(!ch) return false; const o=ch.codePointAt(0); return (o>=0x3040&&o<=0x30FF)||ch==="ー"||ch==="・"; }
+function rubyWord(kana, kanji){
+  if(kana.startsWith("お") && kanji.startsWith("お") && kanji.length>1 && kana.length>1 && !isKanaChar(kanji[1])){
+    return "お"+rubyWord(kana.slice(1), kanji.slice(1));
+  }
+  let i=0;
+  while(i<kana.length && i<kanji.length && kana[kana.length-1-i]===kanji[kanji.length-1-i] && isKanaChar(kanji[kanji.length-1-i])) i++;
+  if(i>0 && i<kanji.length){
+    const stemK=kanji.slice(0,-i), stemR=kana.slice(0,-i), oku=kanji.slice(-i);
+    if(stemK && stemR) return `<ruby>${esc(stemK)}<rt>${esc(stemR)}</rt></ruby>${esc(oku)}`;
+  }
+  return `<ruby>${esc(kanji)}<rt>${esc(kana)}</rt></ruby>`;
+}
+function splitPunct(s){
+  const marks="。、！？!?…「」『』・ ";
+  let i=0, lead="", trail="";
+  while(i<s.length && marks.includes(s[i])){ lead+=s[i]; i++; }
+  s=s.slice(i);
+  i=s.length;
+  while(i>0 && marks.includes(s[i-1])) i--;
+  return [lead, s.slice(0,i), s.slice(i)];
+}
+function prefixOk(tok){
+  if(!tok) return true;
+  if(KANA_TOKENS.has(tok) || KANJI_DICT[tok]) return true;
+  for(const k of KANJI_KEYS){ if(tok.startsWith(k) && validRest(tok.slice(k.length))) return true; }
+  return false;
+}
+function validRest(rest){
+  if(rest==="") return true;
+  if(KANA_TOKENS.has(rest) || KANJI_DICT[rest]) return true;
+  for(const suf of KANJI_SUFFIXES){
+    if(rest===suf) return true;
+    if(rest.startsWith(suf) && validRest(rest.slice(suf.length))) return true;
+    if(rest.endsWith(suf) && validRest(rest.slice(0,-suf.length))) return true;
+  }
+  if(KANJI_PARTICLES.has(rest[0]) && validRest(rest.slice(1))) return true;
+  return prefixOk(rest);
+}
+function annotateToken(tok){
+  if(!tok) return tok;
+  if(KANA_TOKENS.has(tok)) return esc(tok);
+  if(KANJI_DICT[tok]) return rubyWord(tok, KANJI_DICT[tok]);
+  for(const k of KANJI_KEYS){
+    if(tok.startsWith(k) && validRest(tok.slice(k.length))){
+      return rubyWord(k, KANJI_DICT[k]) + annotateToken(tok.slice(k.length));
+    }
+  }
+  return esc(tok);
+}
+function dictAnnotate(text){
+  return String(text).split(/([ 　、。！？!?,/])/).map(p=>{
+    if(!p || /^[ 　、。！？!?,/]+$/.test(p)) return p;
+    const [lead,core,trail]=splitPunct(p);
+    return esc(lead)+annotateToken(core)+esc(trail);
+  }).join("");
+}
+function kanjiOn(){ return S.kanji!==false; }
+function jpTextHTML(kana, kanji, hideKanji){
+  if(!kana) return "";
+  if(hideKanji || !kanjiOn()) return esc(kana);
+  if(kanji){
+    const [lead,core,trail]=splitPunct(kana);
+    const kcore=splitPunct(kanji)[1];
+    if(!core.includes(" ") && kcore && !kcore.includes(" ") && !kcore.includes("。")){
+      return esc(lead)+rubyWord(core,kcore)+esc(trail);
+    }
+  }
+  return dictAnnotate(kana);
+}
+function mixHTML(s){
+  if(s==null || s==="") return "";
+  s=String(s);
+  if(!kanjiOn()) return esc(s);
+  const re=/[\u3040-\u30ff\u4e00-\u9faf々ー]+/g;
+  let out="", last=0, m;
+  while((m=re.exec(s))){
+    out+=esc(s.slice(last,m.index));
+    out+=dictAnnotate(m[0]);
+    last=m.index+m[0].length;
+  }
+  return out+esc(s.slice(last));
+}
+
 
 /* =====================================================================
    MOTOR
@@ -614,8 +1134,9 @@ const DAILY_COOLDOWN_DAYS = 14;
 const STORE_KEY = "harald-japansk-v1";
 const defaultState = { points:0, streak:0, bestStreak:0, lastDay:null, stopsWon:0, romaji:true, sound:true,
   correct:0, answered:0, week:null, matches:0,
-  dailyDate:null, dailyIds:[], dailyDone:null,
-  dailyLast:{date:null, correct:0, total:8, points:0}, dailyHistory:{} };
+  dailyDate:null, dailyIds:[], dailyDone:null, dailyPlace:null,
+  dailyLast:{date:null, correct:0, total:8, points:0}, dailyHistory:{},
+  kanji:true, wish:null };
 let S = load();
 function load(){ try{ return Object.assign({}, defaultState, JSON.parse(localStorage.getItem(STORE_KEY)||"{}")); }catch(e){ return {...defaultState}; } }
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
@@ -626,8 +1147,12 @@ const rnd = n => Math.floor(Math.random()*n);
 const pick = a => a[rnd(a.length)];
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; }
 const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function dayStr(d=new Date()){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function isoWeek(d=new Date()){ const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil(((t-y0)/86400000+1)/7); }
+let DATE_OVERRIDE=null; // YYYY-MM-DD, for tester
+function nowDate(){ if(DATE_OVERRIDE){ const [y,m,d]=DATE_OVERRIDE.split("-").map(Number); return new Date(y,m-1,d,12,0,0); } return new Date(); }
+function dayStr(d=nowDate()){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function addDays(s,n){ const [y,m,d]=s.split("-").map(Number); const t=Date.UTC(y,m-1,d)+n*86400000; const x=new Date(t); return x.getUTCFullYear()+"-"+String(x.getUTCMonth()+1).padStart(2,"0")+"-"+String(x.getUTCDate()).padStart(2,"0"); }
+function tomorrowStr(){ return addDays(dayStr(),1); }
+function isoWeek(d=nowDate()){ const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil(((t-y0)/86400000+1)/7); }
 function weekNums(){ return Object.keys(WEEK_CONTENT).map(Number).sort((a,b)=>a-b); }
 function currentWeek(){
   const ws = weekNums();
@@ -664,7 +1189,8 @@ function beep(ok){
 
 /* --- visning av japansk --- */
 function jpHTML(o, hideRo){
-  return `<span class="jp">${esc(o.jp)}</span>${o.kanji?`<span class="kanji jp">${esc(o.kanji)}</span>`:""}${(S.romaji && !hideRo && o.ro)?`<span class="ro">${esc(o.ro)}</span>`:""}`;
+  const hideKanji = !!hideRo; // kana-lesing: kanji ville avslørt svaret
+  return `<span class="jp">${jpTextHTML(o.jp, o.kanji, hideKanji)}</span>${(S.romaji && !hideRo && o.ro)?`<span class="ro">${esc(o.ro)}</span>`:""}`;
 }
 function choiceHTML(c, hideRo){ return (typeof c==="string") ? esc(c) : jpHTML(c, hideRo); }
 
@@ -774,27 +1300,39 @@ function usedIdsLastDays(hist, today, days){
   });
   return used;
 }
-function pickDailyIds(dateStr, history){
+function allQuestionMap(){
+  const m={};
+  DAILY_POOL.forEach(q=>{ m[q.id]=q; });
+  PLACES.forEach(p=> (p.questions||[]).forEach(q=>{ m[q.id]=q; }));
+  return m;
+}
+function pickDailyIds(dateStr, history, placeId){
   const used = usedIdsLastDays(history, dateStr, DAILY_COOLDOWN_DAYS);
-  let pool = DAILY_POOL.filter(q=>!used.has(q.id));
-  if(pool.length < DAILY_N){
+  const rand = rngFrom(hashStr("daily-"+dateStr+(placeId?"-"+placeId:"")));
+  const picked=[], seen=new Set();
+  if(placeId && placeOf(placeId)){
+    const dqs = placeOf(placeId).questions||[];
+    let avail = dqs.filter(q=>!used.has(q.id));
+    if(avail.length<DEST_N) avail = dqs.slice();
+    shuffleSeeded(avail, rand).slice(0, DEST_N).forEach(q=>{ picked.push(q.id); seen.add(q.id); });
+  }
+  const need = DAILY_N - picked.length;
+  let pool = DAILY_POOL.filter(q=>!used.has(q.id) && !seen.has(q.id));
+  if(pool.length < need){
     const last = {};
     Object.keys(history||{}).forEach(d=>{
       if(d===dateStr) return;
       (history[d]||[]).forEach(id=>{ if(!last[id] || d>last[id]) last[id]=d; });
     });
-    pool = DAILY_POOL.slice().sort((a,b)=>{
+    pool = DAILY_POOL.filter(q=>!seen.has(q.id)).slice().sort((a,b)=>{
       const da=last[a.id]||"0000", db=last[b.id]||"0000";
       if(da!==db) return da<db ? -1 : 1;
       return a.id<b.id ? -1 : 1;
     });
   }
-  const rand = rngFrom(hashStr("daily-"+dateStr));
   const byCat = {};
   pool.forEach(q=>{ (byCat[q.tema]=byCat[q.tema]||[]).push(q); });
   const cats = shuffleSeeded(Object.keys(byCat), rand);
-  const picked = [];
-  const seen = new Set();
   for(const c of cats){
     if(picked.length>=DAILY_N) break;
     const cand = shuffleSeeded(byCat[c], rand).find(q=>!seen.has(q.id));
@@ -805,21 +1343,25 @@ function pickDailyIds(dateStr, history){
     if(picked.length>=DAILY_N) break;
     picked.push(q.id); seen.add(q.id);
   }
-  return picked;
+  return shuffleSeeded(picked, rand);
+}
+function wishPlaceFor(dateStr){
+  return (S.wish && S.wish.forDate===dateStr && S.wish.placeId) ? S.wish.placeId : null;
 }
 function getTodayDaily(dateStr){
   if(S.dailyDate===dateStr && Array.isArray(S.dailyIds) && S.dailyIds.length===DAILY_N) return S.dailyIds;
   S.dailyHistory = pruneDailyHistory(S.dailyHistory||{}, dateStr);
-  const ids = pickDailyIds(dateStr, S.dailyHistory);
+  const placeId = wishPlaceFor(dateStr);
+  const ids = pickDailyIds(dateStr, S.dailyHistory, placeId);
   S.dailyDate = dateStr;
   S.dailyIds = ids;
+  S.dailyPlace = placeId;
   S.dailyHistory[dateStr] = ids;
   save();
   return ids;
 }
 function dailyQsFor(dateStr){
-  const byId = {};
-  DAILY_POOL.forEach(q=>{ byId[q.id]=q; });
+  const byId = allQuestionMap();
   return getTodayDaily(dateStr).map(id=>fromCustom(byId[id])).filter(Boolean);
 }
 
@@ -833,6 +1375,7 @@ function renderHome(){
   const wk = currentWeek(), w = W();
   const b = curBelt();
   const today = dayStr();
+  getTodayDaily(today); // lås dagens sett tidlig, slik at «I dag reiser du til X» vises på forsiden
   const playedToday = S.lastDay===today;
   const nextIdx = Math.min(S.stopsWon, STOPS.length-1);
   const allDone = S.stopsWon>=STOPS.length;
@@ -848,18 +1391,35 @@ function renderHome(){
         const done = S.dailyDone===today;
         const last = S.dailyLast||{};
         if(done){
+          const place = S.dailyPlace && S.dailyDate===today ? placeOf(S.dailyPlace) : null;
+          const trip = place ? `<p style="margin:4px 0">✈️ I dag reiste du til <b>${esc(place.name)}</b>!</p>` : "";
           return `<div class="card daily-card done">
             <h3>⭐ Dagens utfordring</h3>
+            ${trip}
             <p style="margin:4px 0"><b>Ferdig i dag!</b> ${last.correct||0}/${last.total||DAILY_N} riktige · +${last.points||0} poeng</p>
             <p class="muted" style="margin:4px 0 8px">Kom tilbake i morgen for nye oppgaver!</p>
             <button class="btn ghost" id="btnDailyReplay">Prøv igjen (ingen ekstra poeng)</button>
           </div>`;
         }
-        return `<div class="card daily-card">
+        const place = S.dailyPlace && S.dailyDate===today ? placeOf(S.dailyPlace) : null;
+          const trip = place ? `<p style="margin:4px 0 8px"><b>✈️ I dag reiser du til ${esc(place.name)}!</b> <span class="jp">${jpTextHTML(place.jp, place.kanji, false)}</span></p>` : `<p class="muted" style="margin:4px 0 8px">Åtte nye oppgaver i dag – judo, reise, mat og mer. Nytt sett i morgen!</p>`;
+          return `<div class="card daily-card">
           <h3>⭐ Dagens utfordring</h3>
-          <p class="muted" style="margin:4px 0 8px">Åtte nye oppgaver i dag – judo, reise, mat og mer. Nytt sett i morgen!</p>
+          ${trip}
           <button class="btn gold" id="btnDaily">⭐ Start dagens utfordring</button>
         </div>`;
+      })()}
+    ${(()=>{
+        const tom=tomorrowStr();
+        const w = (S.wish && S.wish.forDate===tom && placeOf(S.wish.placeId)) ? placeOf(S.wish.placeId) : null;
+        if(w){
+          return `<div class="wish-banner">
+            <b>✈️ I morgen reiser du til ${esc(w.name)}!</b>
+            <div class="jp" style="margin:4px 0">${jpTextHTML(w.jp,w.kanji,false)}${S.romaji?` <span class="ro" style="display:inline">${esc(w.ro)}</span>`:""}</div>
+            <button class="btn ghost" id="btnWish" style="margin:8px 0 0">Endre reisemål for i morgen</button>
+          </div>`;
+        }
+        return `<button class="btn ghost" id="btnWish">✈️ Ønsk deg et reisemål for i morgen</button>`;
       })()}
     <div class="card">
       <h2>🗾 Reisen: Tokyo → Sapporo</h2>
@@ -869,10 +1429,11 @@ function renderHome(){
           const tag = i<S.stopsWon ? "✅ Vunnet" : (i===S.stopsWon ? "🥋 Kjemp!" : "🔒");
           return `<li class="stop ${cls}" data-stop="${i}">
             <div class="dot">${s.icon}</div>
-            <div class="info"><b>${esc(s.name)}</b> <span class="jp muted">${esc(s.kanji)}</span>
+            <div class="info"><b>${esc(s.name)}</b> <span class="jp muted">${jpTextHTML(s.jp,s.kanji,false)}</span>
               <div class="sub">${esc(s.sub)}${LEGS[i]?` · ${esc(LEGS[i])}`:""}</div></div>
             <span class="tag">${tag}</span></li>`; }).join("")}
       </ul>
+      <p class="muted maphint">Trykk på en by for å lese mer om den.</p>
     </div>
     <button class="btn" id="btnFight">${allDone ? "🏆 Kjemp igjen i Sapporo" : `🥋 Kjemp i ${esc(STOPS[nextIdx].name)}`}</button>
     <button class="btn alt" id="btnWeek">📚 Ukens trening (${esc(w.label)})</button>
@@ -886,7 +1447,8 @@ function renderHome(){
   $("#btnWeek").onclick = ()=> startMatch(null, "week");
   const bd = $("#btnDaily"); if(bd) bd.onclick = ()=> startDaily(false);
   const br = $("#btnDailyReplay"); if(br) br.onclick = ()=> startDaily(true);
-  app.querySelectorAll(".stop").forEach(el=>el.onclick=()=>{ const i=+el.dataset.stop; if(i<=S.stopsWon && i<STOPS.length) startMatch(i,"stop"); });
+  const bw = $("#btnWish"); if(bw) bw.onclick = ()=> renderWish();
+  app.querySelectorAll(".stop").forEach(el=>el.onclick=()=>{ const i=+el.dataset.stop; if(i>=0 && i<STOPS.length) renderPlaceInfo(STOPS[i].id, renderHome); });
   window.scrollTo(0,0);
 }
 
@@ -911,7 +1473,7 @@ function renderQuestion(){
     <div class="progress"><i style="width:${Math.min(100,(M.me/6)*100)}%"></i></div>
     <div class="card">
       <div class="qmeta"><span class="badge">${esc(q.tema||"Japansk")}</span><span>Spørsmål ${M.qi+1}</span></div>
-      <div class="prompt">${esc(q.prompt)}</div>
+      <div class="prompt">${mixHTML(q.prompt)}</div>
       ${q.show ? `<div class="show">${jpHTML(q.show, hideRo)}${speakBtn(q.show.jp)}</div>` : ""}
       <div class="choices">
         ${q.choices.map((c,i)=>`<button class="choice" data-i="${i}">${choiceHTML(c, hideRo)}</button>`).join("")}
@@ -952,7 +1514,7 @@ function answer(i){
   const sayTxt = typeof right==="string" ? (q.show? q.show.jp : null) : right.jp;
   fb.innerHTML = `<b>${ok? "✅ Riktig! " + pick(["すごい!","いいね!","やった!","かんぺき!"]) : "❌ Ikke helt."}</b>
     ${ok?"":`<div style="margin-top:6px">Riktig svar: ${rightTxt}</div>`}
-    ${q.explain?`<div style="margin-top:6px">💡 ${esc(q.explain)}</div>`:""}
+    ${q.explain?`<div style="margin-top:6px">💡 ${mixHTML(q.explain)}</div>`:""}
     ${sayTxt?`<div style="margin-top:6px">Hør: ${speakBtn(sayTxt)}</div>`:""}
     <button class="btn ${ok?"green":"alt"}" id="btnNext" style="margin-top:10px">${done?"Se resultat":"Neste ➜"}</button>`;
   bindSpeak();
@@ -1004,7 +1566,7 @@ let D = null; // dagens utfordring
 function startDaily(replay){
   const today = dayStr();
   const already = S.dailyDone===today;
-  D = { qs:dailyQsFor(today), qi:0, correct:0, gained:0, run:0, replay: already || !!replay, today, startedAt:Date.now() };
+  D = { qs:dailyQsFor(today), qi:0, correct:0, gained:0, run:0, replay: already || !!replay, today, placeId:S.dailyPlace||null, startedAt:Date.now() };
   renderDailyQ();
 }
 function renderDailyQ(){
@@ -1014,10 +1576,11 @@ function renderDailyQ(){
   app.innerHTML = `
     <div class="topline"><button class="iconbtn" id="btnQuit" aria-label="Avslutt">✖</button><b>⭐ Dagens utfordring</b></div>
     <div class="progress"><i style="width:${(D.qi/n)*100}%"></i></div>
+    ${(()=>{ const p=D.placeId&&placeOf(D.placeId); return p?`<div class="wish-banner" style="padding:10px 14px"><b>✈️ I dag reiser du til ${esc(p.name)}!</b> <span class="jp">${jpTextHTML(p.jp,p.kanji,false)}</span></div>`:""; })()}
     <p class="muted" style="text-align:center;margin:0 0 10px">Oppgave ${D.qi+1} av ${n}${D.replay?" · øving (ingen ekstra poeng)":""}</p>
     <div class="card">
       <div class="qmeta"><span class="badge">${esc(q.tema||"Japansk")}</span><span>⭐ I dag</span></div>
-      <div class="prompt">${esc(q.prompt)}</div>
+      <div class="prompt">${mixHTML(q.prompt)}</div>
       ${q.show ? `<div class="show">${jpHTML(q.show, hideRo)}${speakBtn(q.show.jp)}</div>` : ""}
       <div class="choices">
         ${q.choices.map((c,i)=>`<button class="choice" data-i="${i}">${choiceHTML(c, hideRo)}</button>`).join("")}
@@ -1054,7 +1617,7 @@ function answerDaily(i){
   const sayTxt = typeof right==="string" ? (q.show? q.show.jp : null) : right.jp;
   fb.innerHTML = `<b>${ok? "✅ Riktig! " + pick(["すごい!","いいね!","やった!","かんぺき!"]) : "❌ Ikke helt."}</b>
     ${ok?"":`<div style="margin-top:6px">Riktig svar: ${rightTxt}</div>`}
-    ${q.explain?`<div style="margin-top:6px">💡 ${esc(q.explain)}</div>`:""}
+    ${q.explain?`<div style="margin-top:6px">💡 ${mixHTML(q.explain)}</div>`:""}
     ${sayTxt?`<div style="margin-top:6px">Hør: ${speakBtn(sayTxt)}</div>`:""}
     <button class="btn ${ok?"green":"alt"}" id="btnNext" style="margin-top:10px">${last?"Se resultat":"Neste ➜"}</button>`;
   bindSpeak();
@@ -1095,12 +1658,79 @@ function finishDaily(){
 }
 
 
+
+function renderWish(){
+  const tom=tomorrowStr();
+  const cur=S.wish && S.wish.forDate===tom ? S.wish.placeId : null;
+  $("#hdrSub").textContent = "Ønsk reisemål for i morgen";
+  app.innerHTML = `
+    <div class="topline"><button class="iconbtn" id="back" aria-label="Tilbake">←</button><b>✈️ Reisemål for i morgen</b></div>
+    <div class="card">
+      <p>Velg hvor du vil «reise» i <b>morgendagens</b> utfordring. Da får du omtrent tre oppgaver om stedet. Trykk ℹ️ for å lese mer.</p>
+    </div>
+    <div class="placegrid">
+      ${PLACES.map(p=>`
+        <div class="place ${cur===p.id?"picked":""}" data-id="${p.id}">
+          <button class="infoi" data-info="${p.id}" title="Les mer" aria-label="Les mer om ${esc(p.name)}">ℹ️</button>
+          <div class="ico">${p.icon}</div>
+          <b>${esc(p.name)}</b>
+          <div class="jp">${jpTextHTML(p.jp,p.kanji,false)}</div>
+          ${S.romaji?`<div class="ro">${esc(p.ro)}</div>`:""}
+          <div class="sub">${esc(p.sub||"")}</div>
+        </div>`).join("")}
+    </div>`;
+  $("#back").onclick = renderHome;
+  app.querySelectorAll(".infoi").forEach(b=>b.onclick=e=>{ e.stopPropagation(); renderPlaceInfo(b.dataset.info, renderWish); });
+  app.querySelectorAll(".place").forEach(el=>el.onclick=()=>{
+    const id=el.dataset.id, p=placeOf(id);
+    if(!p) return;
+    S.wish={ forDate:tom, placeId:id };
+    save();
+    renderHome();
+  });
+  window.scrollTo(0,0);
+}
+function renderPlaceInfo(id, backFn){
+  const p=placeOf(id);
+  if(!p){ (backFn||renderHome)(); return; }
+  const idx=STOPS.findIndex(s=>s.id===p.id);
+  const canFight = idx>=0 && idx<=S.stopsWon && idx<STOPS.length;
+  $("#hdrSub").textContent = p.name;
+  app.innerHTML = `
+    <div class="topline"><button class="iconbtn" id="back" aria-label="Tilbake">←</button><b>${p.icon} ${esc(p.name)}</b></div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:3rem">${p.icon}</div>
+      <div class="show" style="margin:6px 0">${jpHTML(p,false)}${speakBtn(p.jp)}</div>
+      <p class="muted">${esc(p.sub||"")}</p>
+    </div>
+    <div class="card">
+      <h2>Visste du at …</h2>
+      <ul class="facts">${p.facts.map(f=>`<li>${mixHTML(f)}</li>`).join("")}</ul>
+    </div>
+    <div class="card">
+      <h2>Nyttige ord</h2>
+      <table class="wordlist">
+        ${p.words.map(v=>`<tr><td>${jpHTML(v,false)}</td><td>${esc(v.no)}</td><td style="text-align:right">${speakBtn(v.jp)}</td></tr>`).join("")}
+      </table>
+    </div>
+    ${canFight?`<button class="btn" id="btnFightHere">🥋 Kjemp i ${esc(p.name)}</button>`:""}
+    <button class="btn ghost" id="back2">Tilbake</button>`;
+  const goBack = ()=> (backFn||renderHome)();
+  $("#back").onclick = goBack;
+  $("#back2").onclick = goBack;
+  const bf=$("#btnFightHere"); if(bf) bf.onclick=()=> startMatch(idx,"stop");
+  bindSpeak();
+  window.scrollTo(0,0);
+}
+
+
 function renderSettings(){
   const ws = weekNums();
   app.innerHTML = `
     <div class="topline"><button class="iconbtn" id="back" aria-label="Tilbake">←</button><b>Innstillinger</b></div>
     <div class="card">
       <div class="toggle"><span>Vis romaji (latinske bokstaver)</span><label class="switch"><input type="checkbox" id="tRo" ${S.romaji?"checked":""}><span></span></label></div>
+      <div class="toggle"><span>Vis kanji (med furigana)</span><label class="switch"><input type="checkbox" id="tKj" ${S.kanji!==false?"checked":""}><span></span></label></div>
       <div class="toggle"><span>Lydeffekter</span><label class="switch"><input type="checkbox" id="tSnd" ${S.sound?"checked":""}><span></span></label></div>
       <div class="toggle"><span>Ukens tema</span><select id="selWeek">
         <option value="">Automatisk (uke ${isoWeek()})</option>
@@ -1114,9 +1744,10 @@ function renderSettings(){
     </div>`;
   $("#back").onclick = renderHome;
   $("#tRo").onchange = e=>{ S.romaji=e.target.checked; save(); };
+  $("#tKj").onchange = e=>{ S.kanji=e.target.checked; save(); };
   $("#tSnd").onchange = e=>{ S.sound=e.target.checked; save(); };
   $("#selWeek").onchange = e=>{ S.week = e.target.value ? +e.target.value : null; save(); };
-  $("#btnReset").onclick = ()=>{ if(confirm("Er du sikker? Belter, poeng og streak blir slettet.")){ const keep={romaji:S.romaji,sound:S.sound}; S={...defaultState,...keep}; save(); renderHome(); } };
+  $("#btnReset").onclick = ()=>{ if(confirm("Er du sikker? Belter, poeng og streak blir slettet.")){ const keep={romaji:S.romaji,sound:S.sound,kanji:S.kanji}; S={...defaultState,...keep}; save(); renderHome(); } };
 }
 
 function renderWords(){
@@ -1136,6 +1767,9 @@ $("#btnSettings").onclick = renderSettings;
 $("#btnWords").onclick = renderWords;
 window.__pickDailyIds = pickDailyIds;
 window.__DAILY_POOL = DAILY_POOL;
+window.__PLACES = PLACES;
+window.__setDate = s=>{ DATE_OVERRIDE=s||null; };
+window.__allQuestions = allQuestionMap;
 renderHome();
 </script>
 </body>

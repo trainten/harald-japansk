@@ -48,3 +48,16 @@ Oppgavebanken ligger i `DAILY_POOL` i `index.html` (judo, reise, mat, tall/tid/p
 Første gjennomføring om dagen gir poeng (10 per riktig, +5 ved tre på rad, +20 for alle riktige) og teller med på streaken. Etterpå kan han øve på nytt uten ekstra poeng. Når den er ferdig, vises «Kom tilbake i morgen for nye oppgaver!». Fremgangen lagres i `localStorage`.
 
 Hele banken er listet i `dagens-utfordring-oversikt.md` til gjennomgang før publisering.
+
+## Kanji og furigana
+Når **Vis kanji** er slått på (standard, under ⚙️), vises kanji sammen med kana som furigana, for eksempel <ruby>空港<rt>くうこう</rt></ruby>. Det gjelder dagens utfordring, bykampene, ukens tema og ordlisten. Romaji styres fortsatt av den egne innstillingen.
+
+Kana-lesing (der oppgaven er å lese hiragana/katakana) vises uten kanji, så svaret ikke gis bort. 🔊 Uttale bruker alltid kana-lesingen, ikke kanji.
+
+## Ønsk reisemål for i morgen
+Knappen **✈️ Ønsk deg et reisemål for i morgen** lar Harald velge blant 15 steder i Japan (reise-byene pluss blant annet Nara, Okinawa, Nikkō, Kamakura, Fuji-san, Hakone, Nagoya, Kanazawa og Kobe). Valget lagres i `localStorage` og gjelder **neste dag**. Da inneholder Dagens utfordring omtrent tre oppgaver om stedet, og skjermen viser «I dag reiser du til X!». Uten ønske er utfordringen som før.
+
+## Byinfo
+Trykk på en by på kartet (eller på ℹ️ i ønskelisten) for å åpne et infokort: navn med kanji, kana og romaji, noen fakta og nyttige ord. Er byen åpen på reisen, kan du også starte kampen derfra.
+
+Se `oppdatering-kanji-reisemal-oversikt.md` for alle infokort og destinasjonsspørsmål (til gjennomgang før publisering).
