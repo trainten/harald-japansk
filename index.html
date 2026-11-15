@@ -295,8 +295,160 @@ const WEEK_CONTENT = {
       { tema:"Matte", prompt:"Hvor mange meter er 1 キロメートル (kiromētoru)?",
         choices:["1 000 m","100 m","10 m","10 000 m"], explain:"キロ = kilo = 1000. 1 km = 1 000 m." }
     ]
+  },
+  47: {
+    label: "Uke 47",
+    topics: ["Lengder på reisen", "Manga og tegneserier", "Innebandy og judo", "Respekt og snille ord", "Søm og klær", "Bamser", "Lek i naturen", "Skrive kana riktig", "Sang", "Fortelle om seg selv"],
+    vocab: [
+      // Manga og tegneserier
+      { no:"tegneserie / manga", jp:"まんが", kanji:"漫画", ro:"manga", tema:"Manga" },
+      { no:"bilde / tegning", jp:"え", kanji:"絵", ro:"e", tema:"Manga" },
+      { no:"snakkeboble", jp:"ふきだし", kanji:"吹き出し", ro:"fukidashi", tema:"Manga" },
+      { no:"historie / fortelling", jp:"はなし", kanji:"話", ro:"hanashi", tema:"Manga" },
+      { no:"figur (i en historie)", jp:"キャラクター", ro:"kyarakutā", tema:"Manga" },
+      // Innebandy og judo
+      { no:"idrettshall", jp:"たいいくかん", kanji:"体育館", ro:"taiikukan", tema:"Sport" },
+      { no:"innebandy", jp:"フロアボール", ro:"furoabōru", tema:"Sport" },
+      { no:"kølle", jp:"スティック", ro:"sutikku", tema:"Sport" },
+      { no:"lag", jp:"チーム", ro:"chīmu", tema:"Sport" },
+      { no:"skudd (på mål)", jp:"シュート", ro:"shūto", tema:"Sport" },
+      { no:"vinne", jp:"かつ", kanji:"勝つ", ro:"katsu", tema:"Sport" },
+      { no:"drikkeflaske", jp:"すいとう", kanji:"水筒", ro:"suitō", tema:"Sport" },
+      { no:"sko", jp:"くつ", kanji:"靴", ro:"kutsu", tema:"Sport" },
+      // Søm og klær
+      { no:"nål", jp:"はり", kanji:"針", ro:"hari", tema:"Søm" },
+      { no:"tråd", jp:"いと", kanji:"糸", ro:"ito", tema:"Søm" },
+      { no:"stoff", jp:"ぬの", kanji:"布", ro:"nuno", tema:"Søm" },
+      { no:"klær", jp:"ふく", kanji:"服", ro:"fuku", tema:"Søm" },
+      { no:"sy", jp:"ぬう", kanji:"縫う", ro:"nuu", tema:"Søm" },
+      // Bamser
+      { no:"bamse / kosedyr", jp:"ぬいぐるみ", ro:"nuigurumi", tema:"Bamser" },
+      { no:"bjørn", jp:"くま", kanji:"熊", ro:"kuma", tema:"Bamser" },
+      { no:"søt", jp:"かわいい", ro:"kawaii", tema:"Bamser" },
+      // Lek i naturen
+      { no:"lek", jp:"あそび", kanji:"遊び", ro:"asobi", tema:"Natur" },
+      { no:"stein", jp:"いし", kanji:"石", ro:"ishi", tema:"Natur" },
+      { no:"blad (på tre)", jp:"はっぱ", kanji:"葉っぱ", ro:"happa", tema:"Natur" },
+      { no:"gress", jp:"くさ", kanji:"草", ro:"kusa", tema:"Natur" },
+      // Respekt og snille ord
+      { no:"venn", jp:"ともだち", kanji:"友達", ro:"tomodachi", tema:"Respekt" },
+      { no:"snill", jp:"やさしい", kanji:"優しい", ro:"yasashii", tema:"Respekt" },
+      { no:"bukk / respekt (i judo)", jp:"れい", kanji:"礼", ro:"rei", tema:"Respekt" },
+      // Skrive og ord
+      { no:"ord", jp:"ことば", kanji:"言葉", ro:"kotoba", tema:"Skrive" },
+      { no:"skrive", jp:"かく", kanji:"書く", ro:"kaku", tema:"Skrive" },
+      // Sang
+      { no:"synge", jp:"うたう", kanji:"歌う", ro:"utau", tema:"Sang" },
+      { no:"piano", jp:"ピアノ", ro:"piano", tema:"Sang" },
+      // Lengder
+      { no:"lang", jp:"ながい", kanji:"長い", ro:"nagai", tema:"Lengder" },
+      { no:"kort", jp:"みじかい", kanji:"短い", ro:"mijikai", tema:"Lengder" },
+      { no:"centimeter", jp:"センチメートル", ro:"senchimētoru", tema:"Lengder" },
+      { no:"millimeter", jp:"ミリメートル", ro:"mirimētoru", tema:"Lengder" }
+    ],
+    lengths: [
+      { text:"Lyntoget (しんかんせん) fra Tokyo til Osaka kjører ca. {v} {u}.", v:515, u:"km" },
+      { text:"Tokyo Tower (とうきょうタワー) er {v} {u} høyt.", v:333, u:"m" },
+      { text:"Akashi-broen ved Kobe er ca. {v} {u} lang.", v:3911, u:"m" },
+      { text:"En tatami-matte til judokonkurranser er {v} {u} lang.", v:2, u:"m" },
+      { text:"En innebandybane er {v} {u} lang.", v:40, u:"m" },
+      { text:"En innebandykølle kan være opptil {v} {u} lang.", v:114, u:"cm" },
+      { text:"En innebandyball er {v} {u} i diameter.", v:72, u:"mm" },
+      { text:"En synål er ca. {v} {u} lang.", v:4, u:"cm" },
+      { text:"Bamsen (ぬいぐるみ) til Harald er ca. {v} {u} høy.", v:30, u:"cm" }
+    ],
+    questions: [
+      // Manga og tegneserier
+      { tema:"Manga", prompt:"I en manga snakker figurene i bobler. Hva heter en snakkeboble på japansk?",
+        choices:[{jp:"ふきだし",ro:"fukidashi",kanji:"吹き出し"},{jp:"まんが",ro:"manga"},{jp:"はなし",ro:"hanashi"},{jp:"ふく",ro:"fuku"}],
+        explain:"ふきだし (吹き出し) = snakkeboble. まんが = tegneserie, はなし = historie." },
+      { tema:"Manga", prompt:"Hva betyr dette?", show:{jp:"まんがを よみます。",ro:"Manga o yomimasu."},
+        choices:["Jeg leser manga.","Jeg tegner manga.","Jeg kjøper manga.","Jeg selger manga."],
+        explain:"よみます = leser. かきます = tegner/skriver, かいます = kjøper." },
+      { tema:"Manga", prompt:"Japanske manga leses i en annen retning enn norske tegneserier. Hvilken vei leser du sidene?",
+        choices:["Fra høyre mot venstre","Fra venstre mot høyre","Nedenfra og opp","Bare midt på siden"],
+        explain:"Manga leses fra høyre mot venstre, så du begynner bakerst i boka (sett med norske øyne)!" },
+      { tema:"Manga", prompt:"Hvordan sier du «Jeg tegner et bilde»?",
+        choices:[{jp:"えを かきます。",ro:"E o kakimasu."},{jp:"えを たべます。",ro:"E o tabemasu."},{jp:"えを ききます。",ro:"E o kikimasu."},{jp:"えを のみます。",ro:"E o nomimasu."}],
+        explain:"え = bilde, かきます = tegner. ききます = hører, のみます = drikker." },
+      // Innebandy og judo
+      { tema:"Sport", prompt:"Du skal spille innebandy innendørs. Hvor er du?",
+        choices:[{jp:"たいいくかん",ro:"taiikukan",kanji:"体育館"},{jp:"としょかん",ro:"toshokan"},{jp:"びょういん",ro:"byōin"},{jp:"えき",ro:"eki"}],
+        explain:"たいいくかん (体育館) = idrettshall. としょかん = bibliotek, びょういん = sykehus, えき = stasjon." },
+      { tema:"Sport", prompt:"Hva betyr dette?", show:{jp:"チームが かちました!",ro:"Chīmu ga kachimashita!"},
+        choices:["Laget vant!","Laget tapte.","Laget spiser.","Laget sover."],
+        explain:"かちました = vant (av かつ). まけました = tapte." },
+      { tema:"Sport", prompt:"Etter en hard trening er du tørst. Hva tar du fram?",
+        choices:[{jp:"すいとう",ro:"suitō",kanji:"水筒"},{jp:"くつ",ro:"kutsu"},{jp:"スティック",ro:"sutikku"},{jp:"はり",ro:"hari"}],
+        explain:"すいとう (水筒) = drikkeflaske. くつ = sko, スティック = kølle." },
+      { tema:"Sport", prompt:"Hva betyr シュート (shūto) i sport?",
+        choices:["skudd (på mål)","mål","sko","pause"],
+        explain:"シュート kommer fra «shoot». ゴール = mål, くつ = sko." },
+      // Respekt og snille ord
+      { tema:"Respekt", prompt:"I judo bukker man for å vise respekt. Hva sier dommeren når du skal bukke?",
+        choices:[{jp:"れい!",ro:"Rei!"},{jp:"まて!",ro:"Mate!"},{jp:"はじめ!",ro:"Hajime!"},{jp:"いっぽん!",ro:"Ippon!"}],
+        explain:"れい (礼) = bukk / respekt. Man bukker før og etter hver kamp." },
+      { tema:"Respekt", prompt:"Hva betyr やさしい (優しい)?",
+        choices:["snill","sterk","rask","sint"],
+        explain:"やさしい = snill. つよい = sterk, はやい = rask." },
+      { tema:"Respekt", prompt:"Noen står alene og ser på mens dere spiller. Hvordan spør du høflig «Vil du være med oss?»",
+        choices:[{jp:"いっしょに しませんか。",ro:"Issho ni shimasen ka."},{jp:"もう かえります。",ro:"Mō kaerimasu."},{jp:"だめです。",ro:"Dame desu."},{jp:"しずかに してください。",ro:"Shizuka ni shite kudasai."}],
+        explain:"いっしょに しませんか = Skal vi gjøre det sammen? Det er å inkludere andre." },
+      { tema:"Respekt", prompt:"Hva betyr dette?", show:{jp:"ともだちは やさしいです。",ro:"Tomodachi wa yasashii desu."},
+        choices:["Vennen min er snill.","Vennen min er sulten.","Vennen min er sint.","Vennen min er liten."],
+        explain:"ともだち = venn, やさしい = snill." },
+      // Søm og klær
+      { tema:"Søm", prompt:"Du skal sy. Hva trenger du sammen med nålen (はり)?",
+        choices:[{jp:"いと",ro:"ito",kanji:"糸"},{jp:"いし",ro:"ishi"},{jp:"はっぱ",ro:"happa"},{jp:"くま",ro:"kuma"}],
+        explain:"いと (糸) = tråd. いし = stein, はっぱ = blad, くま = bjørn." },
+      { tema:"Søm", prompt:"Hva betyr ふく (服)?",
+        choices:["klær","sko","lue","sekk"],
+        explain:"ふく = klær. くつ = sko, ぼうし = lue." },
+      // Bamser
+      { tema:"Bamser", prompt:"Hva heter en bamse eller et kosedyr på japansk?",
+        choices:[{jp:"ぬいぐるみ",ro:"nuigurumi"},{jp:"すいとう",ro:"suitō"},{jp:"ふきだし",ro:"fukidashi"},{jp:"たいいくかん",ro:"taiikukan"}],
+        explain:"ぬいぐるみ = kosedyr. くまの ぬいぐるみ = teddybjørn." },
+      { tema:"Bamser", prompt:"Hva betyr dette?", show:{jp:"くまの ぬいぐるみは かわいいです。",ro:"Kuma no nuigurumi wa kawaii desu."},
+        choices:["Teddybjørnen er søt.","Bjørnen er stor.","Teddybjørnen er gammel.","Bjørnen er sulten."],
+        explain:"くま = bjørn, ぬいぐるみ = kosedyr, かわいい = søt." },
+      // Lek i naturen
+      { tema:"Natur", prompt:"Dere leker ute i skogen. Hva er はっぱ (葉っぱ)?",
+        choices:["blad","stein","gress","blomst"],
+        explain:"はっぱ = blad. いし = stein, くさ = gress, はな = blomst." },
+      { tema:"Natur", prompt:"Hvordan sier du «La oss leke ute!»?",
+        choices:[{jp:"そとで あそぼう!",ro:"Soto de asobō!"},{jp:"うちで ねよう!",ro:"Uchi de neyō!"},{jp:"そとは さむいです。",ro:"Soto wa samui desu."},{jp:"ほんを よもう!",ro:"Hon o yomō!"}],
+        explain:"そと = ute, あそぼう = la oss leke." },
+      // Skrive kana riktig
+      { tema:"Skrive", prompt:"Hvilken skrivemåte er riktig for «vann» (mizu)?",
+        choices:[{jp:"みず",ro:"mizu"},{jp:"みす",ro:"misu"},{jp:"みつ",ro:"mitsu"},{jp:"にず",ro:"nizu"}],
+        explain:"みず = vann. Husk de to små strekene (゛) som gjør す til ず." },
+      { tema:"Skrive", prompt:"Hvilken skrivemåte er riktig for «judo» (jūdō)?",
+        choices:[{jp:"じゅうどう",ro:"jūdō"},{jp:"じゆうどう",ro:"jiyūdō"},{jp:"じゅどう",ro:"judō"},{jp:"じゅうど",ro:"jūdo"}],
+        explain:"じゅうどう: liten ゅ, og lang ū og ō skrives med う." },
+      { tema:"Skrive", prompt:"Hva betyr ことば (言葉)?",
+        choices:["ord","bokstav","bok","sang"],
+        explain:"ことば = ord / språk. ほん = bok, うた = sang." },
+      // Sang og advent
+      { tema:"Sang", prompt:"Hva betyr dette?", show:{jp:"いっしょに うたを うたいましょう。",ro:"Issho ni uta o utaimashō."},
+        choices:["La oss synge en sang sammen.","La oss lese en bok sammen.","La oss spise sammen.","La oss spille fotball sammen."],
+        explain:"うた = sang, うたいましょう = la oss synge." },
+      // Fortelle om seg selv
+      { tema:"Fortelle om seg selv", prompt:"Du forteller om deg selv i en judoklubb i Japan. Hvordan sier du «Jeg liker judo»?",
+        choices:[{jp:"じゅうどうが すきです。",ro:"Jūdō ga suki desu."},{jp:"じゅうどうが きらいです。",ro:"Jūdō ga kirai desu."},{jp:"じゅうどうを たべます。",ro:"Jūdō o tabemasu."},{jp:"じゅうどうは どこですか。",ro:"Jūdō wa doko desu ka."}],
+        explain:"すきです = liker. きらいです = liker ikke." },
+      // Lengder
+      { tema:"Lengder", prompt:"Hvor mange centimeter er 1 メートル (mētoru)?",
+        choices:["100 cm","10 cm","1 000 cm","1 cm"],
+        explain:"1 m = 100 cm." },
+      { tema:"Lengder", prompt:"Hvor mange millimeter er 1 センチメートル (senchimētoru)?",
+        choices:["10 mm","100 mm","1 mm","1 000 mm"],
+        explain:"1 cm = 10 mm." },
+      { tema:"Lengder", prompt:"Hva er det motsatte av ながい (lang)?",
+        choices:[{jp:"みじかい",ro:"mijikai",kanji:"短い"},{jp:"おおきい",ro:"ōkii"},{jp:"たかい",ro:"takai"},{jp:"はやい",ro:"hayai"}],
+        explain:"ながい = lang, みじかい = kort." }
+    ]
   }
-  // 47: { label:"Uke 47", topics:[...], vocab:[...], lengths:[...], questions:[...] },
+  // 48: { label:"Uke 48", topics:[...], vocab:[...], lengths:[...], questions:[...] },
 };
 
 /* =====================================================================
@@ -1232,7 +1384,7 @@ function lengthQuestion(fact){
   const choices = opts.map(x=>fmt(x)+" "+target);
   const factor = Math.pow(10, Math.abs(UNIT_EXP[fact.u]-UNIT_EXP[target]));
   const how = UNIT_EXP[fact.u] > UNIT_EXP[target] ? `ganger med ${fmt(factor)}` : `deler på ${fmt(factor)}`;
-  return { tema:"Matte", prompt: fact.text.replace("{v}", fmt(fact.v)).replace("{u}", fact.u) + ` Hvor mange ${target} er det?`,
+  return { tema:"Lengder", prompt: fact.text.replace("{v}", fmt(fact.v)).replace("{u}", fact.u) + ` Hvor mange ${target} er det?`,
     show:null, choices, answer:opts.indexOf(val),
     explain:`Fra ${fact.u} til ${target}: du ${how}. ${fmt(fact.v)} ${fact.u} = ${fmt(val)} ${target}.` };
 }
