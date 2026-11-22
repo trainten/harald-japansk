@@ -447,8 +447,170 @@ const WEEK_CONTENT = {
         choices:[{jp:"みじかい",ro:"mijikai",kanji:"短い"},{jp:"おおきい",ro:"ōkii"},{jp:"たかい",ro:"takai"},{jp:"はやい",ro:"hayai"}],
         explain:"ながい = lang, みじかい = kort." }
     ]
+  },
+  48: {
+    label: "Uke 48",
+    topics: ["Geometriske figurer", "De fire regneartene", "Håndball og judo", "Sløyd og verktøy", "Barns rettigheter", "Samarbeid i gruppe", "Hyggelige ord", "Sang og advent", "Bibelfortellinger", "Skrive kana riktig", "Låneord fra engelsk"],
+    vocab: [
+      // Geometriske figurer
+      { no:"sirkel / rund form", jp:"まる", kanji:"丸", ro:"maru", tema:"Figurer" },
+      { no:"trekant", jp:"さんかく", kanji:"三角", ro:"sankaku", tema:"Figurer" },
+      { no:"firkant", jp:"しかく", kanji:"四角", ro:"shikaku", tema:"Figurer" },
+      { no:"kvadrat", jp:"せいほうけい", kanji:"正方形", ro:"seihōkei", tema:"Figurer" },
+      { no:"rektangel", jp:"ちょうほうけい", kanji:"長方形", ro:"chōhōkei", tema:"Figurer" },
+      { no:"form / figur", jp:"かたち", kanji:"形", ro:"katachi", tema:"Figurer" },
+      { no:"hjørne", jp:"かど", kanji:"角", ro:"kado", tema:"Figurer" },
+      // De fire regneartene
+      { no:"pluss (legge til)", jp:"たす", kanji:"足す", ro:"tasu", tema:"Regnearter" },
+      { no:"minus (trekke fra)", jp:"ひく", kanji:"引く", ro:"hiku", tema:"Regnearter" },
+      { no:"ganger (gange)", jp:"かける", kanji:"掛ける", ro:"kakeru", tema:"Regnearter" },
+      { no:"delt på (dele)", jp:"わる", kanji:"割る", ro:"waru", tema:"Regnearter" },
+      { no:"svar", jp:"こたえ", kanji:"答え", ro:"kotae", tema:"Regnearter" },
+      // Håndball og judo
+      { no:"håndball", jp:"ハンドボール", ro:"handobōru", tema:"Sport" },
+      { no:"kaste", jp:"なげる", kanji:"投げる", ro:"nageru", tema:"Sport" },
+      { no:"pasning", jp:"パス", ro:"pasu", tema:"Sport" },
+      { no:"keeper / målvakt", jp:"ゴールキーパー", ro:"gōrukīpā", tema:"Sport" },
+      { no:"fallteknikk (judo)", jp:"うけみ", kanji:"受け身", ro:"ukemi", tema:"Sport" },
+      { no:"kastteknikk (judo)", jp:"なげわざ", kanji:"投げ技", ro:"nagewaza", tema:"Sport" },
+      // Sløyd og verktøy
+      { no:"sag", jp:"のこぎり", ro:"nokogiri", tema:"Sløyd" },
+      { no:"hammer", jp:"かなづち", ro:"kanazuchi", tema:"Sløyd" },
+      { no:"spiker", jp:"くぎ", ro:"kugi", tema:"Sløyd" },
+      { no:"planke / brett", jp:"いた", kanji:"板", ro:"ita", tema:"Sløyd" },
+      // Barns rettigheter
+      { no:"barn", jp:"こども", kanji:"子ども", ro:"kodomo", tema:"Barns rettigheter" },
+      { no:"arbeid / jobb", jp:"しごと", kanji:"仕事", ro:"shigoto", tema:"Barns rettigheter" },
+      { no:"å jobbe", jp:"はたらく", kanji:"働く", ro:"hataraku", tema:"Barns rettigheter" },
+      { no:"å lære / studere", jp:"べんきょうする", kanji:"勉強する", ro:"benkyō suru", tema:"Barns rettigheter" },
+      { no:"rettighet", jp:"けんり", kanji:"権利", ro:"kenri", tema:"Barns rettigheter" },
+      // Samarbeid
+      { no:"gruppe", jp:"グループ", ro:"gurūpu", tema:"Samarbeid" },
+      { no:"hjelpe", jp:"てつだう", kanji:"手伝う", ro:"tetsudau", tema:"Samarbeid" },
+      // Sang, advent og Bibelen
+      { no:"øving / trening", jp:"れんしゅう", kanji:"練習", ro:"renshū", tema:"Sang" },
+      { no:"engel", jp:"てんし", kanji:"天使", ro:"tenshi", tema:"Bibelen" },
+      { no:"Bibelen", jp:"せいしょ", kanji:"聖書", ro:"seisho", tema:"Bibelen" }
+    ],
+    lengths: [
+      { text:"Et origami-ark (おりがみ) er et kvadrat med sider på {v} {u}.", v:15, u:"cm" },
+      { text:"Kampflaten i judo er et kvadrat som er minst {v} {u} på hver side.", v:8, u:"m" },
+      { text:"En håndballbane er et rektangel som er {v} {u} langt.", v:40, u:"m" },
+      { text:"En håndballbane er {v} {u} bred.", v:20, u:"m" },
+      { text:"Et håndballmål er {v} {u} bredt.", v:3, u:"m" },
+      { text:"En 1-yen-mynt (いちえん) er en sirkel med diameter {v} {u}.", v:20, u:"mm" },
+      { text:"En 500-yen-mynt er en sirkel med diameter {v} {u}.", v:26.5, u:"mm" },
+      { text:"Lyntoget (しんかんせん) fra Tokyo til Nagoya kjører ca. {v} {u}.", v:342, u:"km" }
+    ],
+    questions: [
+      // Geometriske figurer
+      { tema:"Figurer", prompt:"Hvilken figur har tre hjørner?",
+        choices:[{jp:"さんかく",ro:"sankaku",kanji:"三角"},{jp:"しかく",ro:"shikaku",kanji:"四角"},{jp:"まる",ro:"maru",kanji:"丸"},{jp:"ほし",ro:"hoshi",kanji:"星"}],
+        explain:"さん = 3, かく = hjørne / vinkel. さんかく (三角) = trekant." },
+      { tema:"Figurer", prompt:"Hvor mange hjørner har en しかく (四角)?",
+        choices:["4","3","5","0"],
+        explain:"し (四) = 4, かく (角) = hjørne / vinkel. しかく = firkant." },
+      { tema:"Figurer", prompt:"Et origami-ark har fire like lange sider og rette hjørner. Hva heter figuren på japansk?",
+        choices:[{jp:"せいほうけい",ro:"seihōkei",kanji:"正方形"},{jp:"ちょうほうけい",ro:"chōhōkei",kanji:"長方形"},{jp:"さんかく",ro:"sankaku",kanji:"三角"},{jp:"まる",ro:"maru",kanji:"丸"}],
+        explain:"正方形 (せいほうけい) = kvadrat. 長方形 (ちょうほうけい) = rektangel, der to og to sider er like lange." },
+      { tema:"Figurer", prompt:"Hva betyr dette?", show:{jp:"まるい ボールです。",ro:"Marui bōru desu."},
+        choices:["Det er en rund ball.","Det er en firkantet ball.","Det er en stor ball.","Det er en ny ball."],
+        explain:"まるい = rund. まる = sirkel." },
+      { tema:"Figurer", prompt:"Pengene i Japan heter yen og skrives med tegnet 円. Hva betyr 円 også?",
+        choices:["sirkel / rund","trekant","firkant","stjerne"],
+        explain:"円 (uttales «en») betyr også sirkel. Passer bra – myntene er jo runde!" },
+      { tema:"Figurer", prompt:"Hvilken figur er det røde merket midt på det japanske flagget?",
+        choices:[{jp:"まる",ro:"maru",kanji:"丸"},{jp:"さんかく",ro:"sankaku",kanji:"三角"},{jp:"しかく",ro:"shikaku",kanji:"四角"},{jp:"ほし",ro:"hoshi",kanji:"星"}],
+        explain:"Flagget har en rød sirkel som er sola. Det kalles ひのまる (日の丸)." },
+      { tema:"Figurer", prompt:"Et origami-ark er et kvadrat med sider på 15 cm. Hvor lang er omkretsen?",
+        choices:["60 cm","30 cm","45 cm","225 cm"],
+        explain:"Et kvadrat har fire like sider: 15 + 15 + 15 + 15 = 60 cm." },
+      { tema:"Figurer", prompt:"En håndballbane er et rektangel som er 40 m langt og 20 m bredt. Hvor lang er omkretsen?",
+        choices:["120 m","60 m","80 m","800 m"],
+        explain:"40 + 20 + 40 + 20 = 120 m." },
+      // De fire regneartene
+      { tema:"Regnearter", prompt:"Hva betyr dette?", show:{jp:"2たす3は5です。",ro:"Ni tasu san wa go desu."},
+        choices:["2 + 3 = 5","5 − 2 = 3","2 × 3 = 6","3 + 5 = 8"],
+        explain:"たす = pluss. に = 2, さん = 3, ご = 5." },
+      { tema:"Regnearter", prompt:"Hva betyr dette?", show:{jp:"10ひく4は6です。",ro:"Jū hiku yon wa roku desu."},
+        choices:["10 − 4 = 6","10 + 4 = 14","10 × 4 = 40","4 + 6 = 10"],
+        explain:"ひく = minus. じゅう = 10, よん = 4, ろく = 6." },
+      { tema:"Regnearter", prompt:"Hva betyr dette?", show:{jp:"3かける4は12です。",ro:"San kakeru yon wa jūni desu."},
+        choices:["3 × 4 = 12","3 + 4 = 7","12 − 4 = 8","12 : 4 = 3"],
+        explain:"かける = ganger. さん = 3, よん = 4, じゅうに = 12." },
+      { tema:"Regnearter", prompt:"Hvilket ord betyr «delt på» i matte?",
+        choices:[{jp:"わる",ro:"waru",kanji:"割る"},{jp:"かける",ro:"kakeru",kanji:"掛ける"},{jp:"たす",ro:"tasu",kanji:"足す"},{jp:"ひく",ro:"hiku",kanji:"引く"}],
+        explain:"わる = delt på. たす = pluss, ひく = minus, かける = ganger." },
+      { tema:"Regnearter", prompt:"Hva betyr こたえ (答え)?",
+        choices:["svar","spørsmål","oppgave","feil"],
+        explain:"こたえ = svar. しつもん = spørsmål." },
+      // Håndball og judo
+      { tema:"Sport", prompt:"I håndball roper du til lagkameraten din. Hvordan sier du «Kast ballen!»?",
+        choices:[{jp:"ボールを なげて!",ro:"Bōru o nagete!"},{jp:"ボールを たべて!",ro:"Bōru o tabete!"},{jp:"ボールを よんで!",ro:"Bōru o yonde!"},{jp:"ボールを かいて!",ro:"Bōru o kaite!"}],
+        explain:"なげて = kast! (av なげる). たべて = spis, よんで = les, かいて = skriv/tegn." },
+      { tema:"Sport", prompt:"I judo øver du på å falle trygt før du lærer kast. Hva heter fallteknikk?",
+        choices:[{jp:"うけみ",ro:"ukemi",kanji:"受け身"},{jp:"なげわざ",ro:"nagewaza",kanji:"投げ技"},{jp:"れい",ro:"rei",kanji:"礼"},{jp:"まて",ro:"mate"}],
+        explain:"うけみ = fallteknikk. なげわざ = kastteknikk." },
+      { tema:"Sport", prompt:"Hva betyr dette?", show:{jp:"ゴールキーパーが ボールを とりました!",ro:"Gōrukīpā ga bōru o torimashita!"},
+        choices:["Keeperen tok ballen!","Keeperen mistet ballen.","Keeperen kastet ballen langt.","Keeperen sov."],
+        explain:"とりました = tok. ゴールキーパー = keeper." },
+      { tema:"Sport", prompt:"Både i håndball og i judo er det viktig å kaste. Hvilket verb betyr «kaste»?",
+        choices:[{jp:"なげる",ro:"nageru",kanji:"投げる"},{jp:"はしる",ro:"hashiru",kanji:"走る"},{jp:"とぶ",ro:"tobu",kanji:"跳ぶ"},{jp:"ける",ro:"keru",kanji:"蹴る"}],
+        explain:"なげる = kaste. はしる = løpe, とぶ = hoppe, ける = sparke." },
+      // Sløyd og verktøy
+      { tema:"Sløyd", prompt:"Du skal slå inn en spiker (くぎ). Hva bruker du?",
+        choices:[{jp:"かなづち",ro:"kanazuchi"},{jp:"のこぎり",ro:"nokogiri"},{jp:"はり",ro:"hari",kanji:"針"},{jp:"はさみ",ro:"hasami"}],
+        explain:"かなづち = hammer. のこぎり = sag, はり = nål, はさみ = saks." },
+      { tema:"Sløyd", prompt:"Du skal dele en planke (いた) i to. Hva trenger du?",
+        choices:[{jp:"のこぎり",ro:"nokogiri"},{jp:"かなづち",ro:"kanazuchi"},{jp:"くぎ",ro:"kugi"},{jp:"いと",ro:"ito",kanji:"糸"}],
+        explain:"のこぎり = sag. Japanske sager skjærer når du drar dem mot deg!" },
+      // Barns rettigheter
+      { tema:"Barns rettigheter", prompt:"Alle barn har rett til å leke. Hvordan sier du «Barn leker»?",
+        choices:[{jp:"こどもが あそびます。",ro:"Kodomo ga asobimasu."},{jp:"こどもが はたらきます。",ro:"Kodomo ga hatarakimasu."},{jp:"こどもが ねます。",ro:"Kodomo ga nemasu."},{jp:"こどもが たべます。",ro:"Kodomo ga tabemasu."}],
+        explain:"あそびます = leker. はたらきます = jobber, ねます = sover, たべます = spiser." },
+      { tema:"Barns rettigheter", prompt:"Hva betyr dette?", show:{jp:"こどもは しごとを しません。べんきょうします。",ro:"Kodomo wa shigoto o shimasen. Benkyō shimasu."},
+        choices:["Barn jobber ikke. De lærer.","Barn jobber hele dagen.","Barn spiser ikke. De sover.","Voksne jobber ikke."],
+        explain:"しごと = arbeid, べんきょうします = lærer / studerer. Barn har rett til å lære – ikke til å måtte jobbe." },
+      { tema:"Barns rettigheter", prompt:"Hva betyr けんり (権利)?",
+        choices:["rettighet","regel","straff","lønn"],
+        explain:"けんり = rettighet. こどもの けんり = barns rettigheter." },
+      // Samarbeid og hyggelige ord
+      { tema:"Samarbeid", prompt:"Dere jobber i gruppe. Hvordan spør du høflig «Kan du hjelpe meg?»",
+        choices:[{jp:"てつだって くれませんか。",ro:"Tetsudatte kuremasen ka."},{jp:"かえって くれませんか。",ro:"Kaette kuremasen ka."},{jp:"ねて くれませんか。",ro:"Nete kuremasen ka."},{jp:"たべて くれませんか。",ro:"Tabete kuremasen ka."}],
+        explain:"てつだう = hjelpe. てつだって くれませんか = Kan du hjelpe meg?" },
+      { tema:"Hyggelige ord", prompt:"Gruppen din har gjort en kjempejobb. Hva sier du for å rose dem?",
+        choices:[{jp:"すごいね!",ro:"Sugoi ne!"},{jp:"だめだね。",ro:"Dame da ne."},{jp:"つまらないね。",ro:"Tsumaranai ne."},{jp:"うるさいね。",ro:"Urusai ne."}],
+        explain:"すごい = kjempebra! だめ = ikke bra, つまらない = kjedelig, うるさい = bråkete." },
+      { tema:"Hyggelige ord", prompt:"En venn har hjulpet deg. Hvordan takker du?",
+        choices:[{jp:"てつだって くれて ありがとう!",ro:"Tetsudatte kurete arigatō!"},{jp:"いただきます!",ro:"Itadakimasu!"},{jp:"おやすみなさい!",ro:"Oyasumi nasai!"},{jp:"はじめ!",ro:"Hajime!"}],
+        explain:"てつだって くれて ありがとう = takk for at du hjalp meg." },
+      // Sang, advent og Bibelen
+      { tema:"Sang", prompt:"Hva betyr dette?", show:{jp:"まいにち うたの れんしゅうを します。",ro:"Mainichi uta no renshū o shimasu."},
+        choices:["Jeg øver på sang hver dag.","Jeg synger aldri.","Jeg hører på en sang i dag.","Jeg skriver en sang hver dag."],
+        explain:"まいにち = hver dag, うた = sang, れんしゅう = øving." },
+      { tema:"Bibelen", prompt:"I juleevangeliet kommer en engel til gjeterne. Hva betyr てんし (天使)?",
+        choices:["engel","stjerne","konge","sau"],
+        explain:"てんし = engel. ほし = stjerne." },
+      { tema:"Bibelen", prompt:"Hva heter Bibelen på japansk?",
+        choices:[{jp:"せいしょ",ro:"seisho",kanji:"聖書"},{jp:"まんが",ro:"manga",kanji:"漫画"},{jp:"てがみ",ro:"tegami",kanji:"手紙"},{jp:"じしょ",ro:"jisho",kanji:"辞書"}],
+        explain:"せいしょ (聖書) = Bibelen. まんが = tegneserie, てがみ = brev, じしょ = ordbok." },
+      // Skrive kana riktig
+      { tema:"Skrive", prompt:"Hvilken skrivemåte er riktig for «håndball» (handobōru)?",
+        choices:[{jp:"ハンドボール",ro:"handobōru"},{jp:"ハンドボル",ro:"handoboru"},{jp:"ハントボール",ro:"hantobōru"},{jp:"ハンドポール",ro:"handopōru"}],
+        explain:"ー gjør vokalen lang (bō). ド og ボ har to små streker (゛), ikke ring (゜)." },
+      { tema:"Skrive", prompt:"Hvilken skrivemåte er riktig for «pasning» (pasu)?",
+        choices:[{jp:"パス",ro:"pasu"},{jp:"バス",ro:"basu"},{jp:"ハス",ro:"hasu"},{jp:"パズ",ro:"pazu"}],
+        explain:"パ med liten ring (゜) = pa. バス (basu) betyr buss!" },
+      { tema:"Skrive", prompt:"Hvilken skrivemåte er riktig for «øving» (renshū)?",
+        choices:[{jp:"れんしゅう",ro:"renshū"},{jp:"れんしゆう",ro:"renshiyū"},{jp:"れんしゅ",ro:"renshu"},{jp:"れんしょう",ro:"renshō"}],
+        explain:"れんしゅう: liten ゅ, og den lange ū skrives med う." },
+      // Låneord fra engelsk
+      { tema:"Låneord", prompt:"ゴールキーパー (gōrukīpā) er et låneord. Hvilket engelsk ord kommer det fra?",
+        choices:["goalkeeper","goldfish","golf player","gatekeeper"],
+        explain:"ゴール = goal, キーパー = keeper. Lange vokaler skrives med ー i katakana." }
+    ]
   }
-  // 48: { label:"Uke 48", topics:[...], vocab:[...], lengths:[...], questions:[...] },
+  // 49: { label:"Uke 49", topics:[...], vocab:[...], lengths:[...], questions:[...] },
 };
 
 /* =====================================================================
@@ -802,6 +964,9 @@ function placeTitle(p){ return `${p.icon} ${p.name}`; }
 
 /* Kanji + furigana */
 const KANJI_DICT = {
+  "まんが":"漫画",
+  "じゅうに":"十二",
+  "よんで":"読んで",
   "だいじょうぶですか":"大丈夫ですか",
   "ひゃくごじゅうえん":"百五十円",
   "いってらっしゃい":"行ってらっしゃい",
@@ -1192,7 +1357,7 @@ const KANJI_DICT = {
 };
 
 const KANJI_KEYS = Object.keys(KANJI_DICT).sort((a,b)=>b.length-a.length);
-const KANA_TOKENS = new Set(["です","ます","ですか","ですね","ですよ","でした","ますか","ません","ましょう","ました","します","しました","しましょう","して","しない","しますか","います","いました","いますか","ください","くださいね","いただきます","いただきました","ございます","ございました","すみません","すみませんでした","さようなら","こんにちは","こんばんは","おはよう","おはようございます","いらっしゃいませ","どういたしまして","おつかれさまでした","ごちそうさまでした","ただいま","おやすみ","おやすみなさい","ごめんなさい","よろしく","どうぞ","どうも","はい","いいえ","あれ","これ","それ","どれ","ここ","そこ","あそこ","どこ","いつ","もう","まだ","とても","ちょっと","ゆっくり","やっぱり","ぜひ"]);
+const KANA_TOKENS = new Set(["しません","しませんか","です","ます","ですか","ですね","ですよ","でした","ますか","ません","ましょう","ました","します","しました","しましょう","して","しない","しますか","います","いました","いますか","ください","くださいね","いただきます","いただきました","ございます","ございました","すみません","すみませんでした","さようなら","こんにちは","こんばんは","おはよう","おはようございます","いらっしゃいませ","どういたしまして","おつかれさまでした","ごちそうさまでした","ただいま","おやすみ","おやすみなさい","ごめんなさい","よろしく","どうぞ","どうも","はい","いいえ","あれ","これ","それ","どれ","ここ","そこ","あそこ","どこ","いつ","もう","まだ","とても","ちょっと","ゆっくり","やっぱり","ぜひ"]);
 const KANJI_SUFFIXES = ["たくないです","たいです","くないです","くない","くて","でした","でしたか","ですよ","ですね","ですか","です","ましょう","ました","ますか","ません","ます","から","まで","より"];
 const KANJI_PARTICLES = new Set("はがをにでとものかねよへもわ".split(""));
 function isKanaChar(ch){ if(!ch) return false; const o=ch.codePointAt(0); return (o>=0x3040&&o<=0x30FF)||ch==="ー"||ch==="・"; }
